@@ -19,7 +19,8 @@ export default function RegistrationForm({ onRegister }) {
 
       if (response.ok) {
         const data = await response.json();
-        onRegister(data);
+        localStorage.setItem('token', data.token);
+        onRegister(data.user);
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Registration failed');
