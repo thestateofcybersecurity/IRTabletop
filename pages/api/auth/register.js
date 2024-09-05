@@ -1,31 +1,16 @@
-import clientPromise from '../../../lib/mongodb';
-import bcrypt from 'bcryptjs';
+import { createUser } from '../../../models/User';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const client = await clientPromise;
-      const db = client.db();
-      const { username, email, password } = req.body;
+      const { email, password, name } = req.body;
 
-      // Check if user already exists
-      const existingUser = await db.collection('users').findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({ error: 'User already exists' });
+      if (!email || !password || !name) {
+        return res.status(400).json({ error: 'Missing required fields' });
       }
 
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Insert the new user
-      const result = await db.collection('users').insertOne({
-        username,
-        email,
-        password: hashedPassword,
-        createdAt: new Date()
-      });
-
-      res.status(201).json({ message: 'User registered successfully', userId: result.insertedId });
+      const user = await createUser({ email, password, name });
+      res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
       console.error('Registration error:', error);
       res.status(500).json({ error: 'Error registering user' });
