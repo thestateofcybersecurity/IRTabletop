@@ -18,19 +18,21 @@ export default function Home() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Validate token and set user
-      // This is a simplified example. In a real application, you'd want to verify the token with your backend.
       setUser(JSON.parse(localStorage.getItem('user')));
     }
 
     async function fetchData() {
-      const tacticRes = await fetch('/api/tactics');
-      const techniqueRes = await fetch('/api/techniques');
-      const mitigationRes = await fetch('/api/mitigations');
+      try {
+        const tacticRes = await fetch('/api/tactics');
+        const techniqueRes = await fetch('/api/techniques');
+        const mitigationRes = await fetch('/api/mitigations');
 
-      setTactics(await tacticRes.json());
-      setTechniques(await techniqueRes.json());
-      setMitigations(await mitigationRes.json());
+        setTactics(await tacticRes.json());
+        setTechniques(await techniqueRes.json());
+        setMitigations(await mitigationRes.json());
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     }
     fetchData();
   }, []);
@@ -48,9 +50,8 @@ export default function Home() {
   };
 
   const handleRegistration = (userData) => {
-    // After successful registration, you might want to automatically log the user in
-    // or redirect them to the login page
-    setIsLogin(true);
+    // After successful registration, automatically log the user in
+    handleLogin(userData);
   };
 
   return (
