@@ -1,36 +1,39 @@
-import { connectToDatabase } from '../lib/mongodb';
-import bcrypt from 'bcryptjs';
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+
+export default function RegistrationForm() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
     try {
-      const { db } = await connectToDatabase();
-      const { username, email, password } = req.body;
-
-      // Check if user already exists
-      const existingUser = await db.collection('users').findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({ error: 'User already exists' });
-      }
-
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Insert the new user
-      const result = await db.collection('users').insertOne({
-        username,
-        email,
-        password: hashedPassword,
-        createdAt: new Date()
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password }),
       });
 
-      res.status(201).json({ message: 'User registered successfully', userId: result.insertedId });
+      if (res.ok) {
+        router.push('/login'); // Redirect to login page after successful registration
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Registration failed');
+      }
     } catch (error) {
-      console.error('Registration error:', error);
-      res.status(500).json({ error: 'Error registering user' });
+      setError('An error occurred. Please try again.');
     }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-8">
+      {/* Form fields remain the same */}
+    </form>
+  );
 }
