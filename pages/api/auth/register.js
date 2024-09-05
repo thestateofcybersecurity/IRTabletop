@@ -1,8 +1,6 @@
 import { connectToDatabase } from '../../../lib/mongodb';
-import bcrypt from 'bcryptjs';c
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
-console.log('Request body:', req.body);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
