@@ -19,7 +19,7 @@ export default function RegistrationForm({ onRegister }) {
 
       if (response.ok) {
         const data = await response.json();
-        onRegister(data); // Pass the registration data to the parent component
+        onRegister(data);
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Registration failed');
