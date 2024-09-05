@@ -1,11 +1,10 @@
-import clientPromise from '../../lib/mongodb';
+import { connectToDatabase } from '../../lib/mongodb';
 import { fetchMitreData, categorizeMitreData } from '../../lib/taxiiClient';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const client = await clientPromise;
-      const db = client.db('mitre_cache');
+      const { db } = await connectToDatabase();
 
       const mitreData = await fetchMitreData();
       if (!mitreData || mitreData.length === 0) {
