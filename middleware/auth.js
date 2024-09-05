@@ -1,6 +1,5 @@
-import jwt from 'jsonwebtoken';
-import config from '../config';
 import { findUserById } from '../models/User';
+import jwt from 'jsonwebtoken';
 
 export async function authenticateUser(req, res, next) {
   try {
@@ -9,7 +8,7 @@ export async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const decoded = jwt.verify(token, config.jwt.secret);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await findUserById(decoded.id);
 
     if (!user) {
