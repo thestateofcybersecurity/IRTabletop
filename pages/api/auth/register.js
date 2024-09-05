@@ -1,10 +1,11 @@
-import { connectToDatabase } from '../../../lib/mongodb';
+import clientPromise from '../../../lib/mongodb';
 import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { db } = await connectToDatabase();
+      const client = await clientPromise;
+      const db = client.db();
       const { username, email, password } = req.body;
 
       // Check if user already exists
