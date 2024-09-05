@@ -46,12 +46,6 @@ const handleLogout = () => {
   localStorage.removeItem('user');
 };
 
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  };
-
   const handleRegistration = (userData) => {
     // After successful registration, automatically log the user in
     handleLogin(userData);
