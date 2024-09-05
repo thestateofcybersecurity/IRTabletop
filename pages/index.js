@@ -53,10 +53,7 @@ export default function Home() {
       </Head>
 
       <Header user={user} onLogout={handleLogout} />
-      <div>
-        <h1>MITRE ATT&CK Data</h1>
-        {/* Render your data here */}
-      </div>
+    
       <main className="my-8">
         <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
         {user ? (
