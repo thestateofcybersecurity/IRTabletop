@@ -1,22 +1,54 @@
-import { createUser } from '../../../models/User';
+import { connectToDatabase } from '../../../lib/mongodb';
+import bcrypt from 'bcryptjs';c
+import jwt from 'jsonwebtoken';
+
+console.log('Request body:', req.body);
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    try {
-      const { email, password, name } = req.body;
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-      if (!email || !password || !name) {
-        return res.status(400).json({ error: 'Missing required fields' });
-      }
+  try {
+    const { db } = await connectToDatabase();
+    const { username, email, password } = req.body;
 
-      const user = await createUser({ email, password, name });
-      res.status(201).json({ message: 'User registered successfully', user });
-    } catch (error) {
-      console.error('Registration error:', error);
-      res.status(500).json({ error: 'Error registering user' });
+    // Basic validation
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Missing required fields' });
     }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+
+    // Check if user already exists
+    const existingUser = await db.collection('users').findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert the new user
+    const result = await db.collection('users').insertOne({
+      username,
+      email,
+      password: hashedPassword,
+      createdAt: new Date()
+    });
+
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: result.insertedId, email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' } // Token expires in 1 day
+    );
+
+    res.status(201).json({ 
+      message: 'User registered successfully', 
+      user: { id: result.insertedId, username, email },
+      token 
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Error registering user' });
   }
 }
