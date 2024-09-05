@@ -1,5 +1,4 @@
 import { connectToDatabase } from '../../lib/mongodb';
-import { getMitreTactics } from '../../lib/mitre-api';
 import { authenticateUser } from '../../middleware/auth';
 
 export default async function handler(req, res) {
@@ -8,14 +7,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    await authenticateUser(req, res, async () => {
-      const { irExperience, securityMaturity } = req.body;
+    // Use the authenticateUser middleware
+    await new Promise((resolve, reject) => {
+      authenticateUser(req, res, (result) => {
+        if (result instanceof Error) {
+          return reject(result);
+        }
+        resolve(result);
+      });
+    });
 
-      if (!irExperience || !securityMaturity) {
-        return res.status(400).json({ error: 'Missing required fields' });
-      }
+    const { db } = await connectToDatabase();
+    const { irExperience, securityMaturity } = req.body;
 
-      const { db } = await connectToDatabase();
+    if (!irExperience || !securityMaturity) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
 
       const scenario = await db.collection('scenarios').aggregate([
         { $match: { experience: irExperience, maturity: securityMaturity } },
@@ -33,10 +40,12 @@ export default async function handler(req, res) {
         mitreTactics,
       };
 
-      res.status(200).json(fullScenario);
-    });
+    res.status(200).json(scenario);
   } catch (error) {
     console.error('Error generating scenario:', error);
+    if (error.message === 'Unauthorized') {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
     res.status(500).json({ error: 'Error generating scenario' });
   }
 }
