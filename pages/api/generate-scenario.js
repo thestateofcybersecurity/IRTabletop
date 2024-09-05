@@ -1,55 +1,37 @@
-import { useState } from 'react';
+import { connectToDatabase } from '../../lib/mongodb';
+import { getMitreTactics } from '../../lib/mitre-api';
 
-export default function ScenarioGenerator({ setScenario }) {
-  const [irExperience, setIrExperience] = useState('');
-  const [securityMaturity, setSecurityMaturity] = useState('');
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    try {
+      const { irExperience, securityMaturity } = req.body;
+      const { db } = await connectToDatabase();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await fetch('/api/generate-scenario', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ irExperience, securityMaturity }),
-    });
-    const data = await response.json();
-    setScenario(data);
-  };
+      // Fetch a random scenario from MongoDB based on input criteria
+      const scenario = await db.collection('scenarios').aggregate([
+        { $match: { experience: irExperience, maturity: securityMaturity } },
+        { $sample: { size: 1 } }
+      ]).toArray();
 
-  return (
-    <form onSubmit={handleSubmit} className="mb-8">
-      <div className="mb-4">
-        <label htmlFor="irExperience" className="block mb-2">IR Experience Level:</label>
-        <select
-          id="irExperience"
-          value={irExperience}
-          onChange={(e) => setIrExperience(e.target.value)}
-          className="w-full p-2 border rounded"
-          required
-        >
-          <option value="">Select experience level</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
-        </select>
-      </div>
-      <div className="mb-4">
-        <label htmlFor="securityMaturity" className="block mb-2">Security Maturity:</label>
-        <select
-          id="securityMaturity"
-          value={securityMaturity}
-          onChange={(e) => setSecurityMaturity(e.target.value)}
-          className="w-full p-2 border rounded"
-          required
-        >
-          <option value="">Select maturity level</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-      </div>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        Generate Scenario
-      </button>
-    </form>
-  );
+      if (scenario.length === 0) {
+        return res.status(404).json({ error: 'No matching scenario found' });
+      }
+
+      // Fetch relevant MITRE ATT&CK tactics
+      const mitreTactics = await getMitreTactics(scenario[0].tactics);
+
+      // Combine scenario with MITRE tactics
+      const fullScenario = {
+        ...scenario[0],
+        mitreTactics,
+      };
+
+      res.status(200).json(fullScenario);
+    } catch (error) {
+      res.status(500).json({ error: 'Error generating scenario' });
+    }
+  } else {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
 }
