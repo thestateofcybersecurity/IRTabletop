@@ -8,7 +8,7 @@ const config = {
     expiresIn: '1d',
   },
   mitre: {
-    apiUrl: 'https://api.mitre.org/att&ck/v1',
+    apiUrl: 'https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json',
   },
 };
 
