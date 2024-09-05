@@ -3,13 +3,11 @@ import { useState } from 'react';
 export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+    setError('');
 
     try {
       const response = await fetch('/api/auth/login', {
@@ -18,17 +16,17 @@ export default function LoginForm({ onLogin }) {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) {
-        throw new Error('Invalid credentials');
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        onLogin(data.user);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Login failed');
       }
-
-      const data = await response.json();
-      onLogin(data);
     } catch (error) {
       console.error('Login error:', error);
-      setError('Invalid email or password. Please try again.');
-    } finally {
-      setIsLoading(false);
+      setError('An error occurred during login');
     }
   };
 
