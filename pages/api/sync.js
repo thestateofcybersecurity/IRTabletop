@@ -8,6 +8,10 @@ export default async function handler(req, res) {
       const db = client.db('mitre_cache');
 
       const mitreData = await fetchMitreData();
+      if (!mitreData || mitreData.length === 0) {
+        throw new Error('No data received from MITRE ATT&CK');
+      }
+
       const { tactics, techniques, mitigations } = categorizeMitreData(mitreData);
 
       await db.collection('tactics').deleteMany({});
@@ -21,7 +25,7 @@ export default async function handler(req, res) {
       res.status(200).json({ message: 'Data synchronized successfully' });
     } catch (error) {
       console.error('Sync error:', error);
-      res.status(500).json({ error: 'Failed to synchronize data' });
+      res.status(500).json({ error: 'Failed to synchronize data', details: error.message });
     }
   } else {
     res.setHeader('Allow', ['POST']);
