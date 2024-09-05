@@ -1,5 +1,5 @@
+import { connectToDatabase } from '../../../lib/mongodb';
 import { fetchMitreData, categorizeMitreData } from '../../../lib/taxiiClient';
-import clientPromise from '../../../lib/mongodb';
 
 export default async function handler(req, res) {
   // Verify that this is a cron job request
@@ -8,8 +8,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const client = await clientPromise;
-    const db = client.db('mitre_cache');
+    const { db } = await connectToDatabase();
 
     const mitreData = await fetchMitreData();
     const { tactics, techniques, mitigations } = categorizeMitreData(mitreData);
