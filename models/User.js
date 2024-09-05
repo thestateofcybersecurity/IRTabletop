@@ -1,5 +1,6 @@
 import { connectToDatabase } from '../lib/mongodb';
 import bcrypt from 'bcryptjs';
+import { ObjectId } from 'mongodb';
 
 export async function createUser(userData) {
   const { db } = await connectToDatabase();
@@ -24,4 +25,13 @@ export async function createUser(userData) {
 export async function findUserByEmail(email) {
   const { db } = await connectToDatabase();
   return db.collection('users').findOne({ email });
+}
+
+export async function findUserById(id) {
+  const { db } = await connectToDatabase();
+  return db.collection('users').findOne({ _id: ObjectId(id) });
+}
+
+export async function validatePassword(user, inputPassword) {
+  return bcrypt.compare(inputPassword, user.password);
 }
