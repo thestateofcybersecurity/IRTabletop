@@ -15,42 +15,45 @@ export default function Home() {
   const [mitigations, setMitigations] = useState([]);
   const [isLogin, setIsLogin] = useState(true);
 
-useEffect(() => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    // Here you would typically verify the token with your backend
-    // For now, we'll just parse the stored user data
-    const user = JSON.parse(localStorage.getItem('user'));
-    setUser(user);
-  }
-
-  async function fetchData() {
-    try {
-      const tacticRes = await fetch('/api/tactics');
-      const techniqueRes = await fetch('/api/techniques');
-      const mitigationRes = await fetch('/api/mitigations');
-
-      setTactics(await tacticRes.json());
-      setTechniques(await techniqueRes.json());
-      setMitigations(await mitigationRes.json());
-    } catch (error) {
-      console.error('Error fetching data:', error);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      setUser(user);
     }
-  }
-  fetchData();
-}, []);
 
-const handleLogout = () => {
-  setUser(null);
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-};
+    async function fetchData() {
+      try {
+        const tacticRes = await fetch('/api/tactics');
+        const techniqueRes = await fetch('/api/techniques');
+        const mitigationRes = await fetch('/api/mitigations');
 
-  const handleRegistration = (userData) => {
-    // After successful registration, automatically log the user in
-    handleLogin(userData);
+        setTactics(await tacticRes.json());
+        setTechniques(await techniqueRes.json());
+        setMitigations(await mitigationRes.json());
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('token', userData.token);
+    localStorage.setItem('user', JSON.stringify(userData.user));
   };
 
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  };
+
+  const handleRegistration = (userData) => {
+    handleLogin(userData);
+  };
+  
   return (
     <div className="container mx-auto px-4">
 
