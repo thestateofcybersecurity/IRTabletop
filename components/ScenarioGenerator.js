@@ -4,12 +4,12 @@ export default function ScenarioGenerator({ setScenario }) {
   const [irExperience, setIrExperience] = useState('');
   const [securityMaturity, setSecurityMaturity] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
+    setError('');
 
     try {
       const token = localStorage.getItem('token');
