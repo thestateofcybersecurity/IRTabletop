@@ -1,18 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function ScenarioGenerator({ setScenario }) {
   const [irExperience, setIrExperience] = useState('');
   const [securityMaturity, setSecurityMaturity] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [token, setToken] = useState('');
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      setToken(storedToken);
-    }
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,10 +12,7 @@ export default function ScenarioGenerator({ setScenario }) {
     setError('');
 
     try {
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
+      const token = localStorage.getItem('token');
       const response = await fetch('/api/generate-scenario', {
         method: 'POST',
         headers: { 
@@ -34,9 +23,6 @@ export default function ScenarioGenerator({ setScenario }) {
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error('Unauthorized. Please log in again.');
-        }
         throw new Error('Failed to generate scenario');
       }
 
@@ -44,7 +30,7 @@ export default function ScenarioGenerator({ setScenario }) {
       setScenario(data);
     } catch (error) {
       console.error('Error generating scenario:', error);
-      setError(error.message || 'An error occurred while generating the scenario. Please try again.');
+      setError('An error occurred while generating the scenario. Please try again.');
     } finally {
       setIsLoading(false);
     }
