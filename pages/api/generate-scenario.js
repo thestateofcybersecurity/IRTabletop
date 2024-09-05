@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Use the authenticateUser middleware
+    // Authenticate the user
     await new Promise((resolve, reject) => {
       authenticateUser(req, res, (result) => {
         if (result instanceof Error) {
@@ -24,21 +24,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-      const scenario = await db.collection('scenarios').aggregate([
-        { $match: { experience: irExperience, maturity: securityMaturity } },
-        { $sample: { size: 1 } }
-      ]).toArray();
+    // Fetch random tactic, technique, and mitigation
+    const [tactic] = await db.collection('tactics').aggregate([{ $sample: { size: 1 } }]).toArray();
+    const [technique] = await db.collection('techniques').aggregate([{ $sample: { size: 1 } }]).toArray();
+    const [mitigation] = await db.collection('mitigations').aggregate([{ $sample: { size: 1 } }]).toArray();
 
-      if (scenario.length === 0) {
-        return res.status(404).json({ error: 'No matching scenario found' });
-      }
-
-      const mitreTactics = await getMitreTactics(scenario[0].tactics);
-
-      const fullScenario = {
-        ...scenario[0],
-        mitreTactics,
-      };
+    // Generate scenario
+    const scenario = {
+      title: `${irExperience} level scenario for ${securityMaturity} maturity`,
+      description: `An attacker is using the ${technique.name} technique, which is part of the ${tactic.name} tactic. Your team needs to respond and implement the ${mitigation.name} mitigation.`,
+      tactic: tactic,
+      technique: technique,
+      mitigation: mitigation,
+      irExperience: irExperience,
+      securityMaturity: securityMaturity
+    };
 
     res.status(200).json(scenario);
   } catch (error) {
