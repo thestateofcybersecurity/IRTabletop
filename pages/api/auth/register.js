@@ -1,21 +1,36 @@
-import { createUser } from '../../../models/User';
+import { connectToDatabase } from '../../../lib/mongodb';
+import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method === 'POST') {
+    try {
+      const { db } = await connectToDatabase();
+      const { username, email, password } = req.body;
 
-  try {
-    const { email, password, name } = req.body;
+      // Check if user already exists
+      const existingUser = await db.collection('users').findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ error: 'User already exists' });
+      }
 
-    if (!email || !password || !name) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Insert the new user
+      const result = await db.collection('users').insertOne({
+        username,
+        email,
+        password: hashedPassword,
+        createdAt: new Date()
+      });
+
+      res.status(201).json({ message: 'User registered successfully', userId: result.insertedId });
+    } catch (error) {
+      console.error('Registration error:', error);
+      res.status(500).json({ error: 'Error registering user' });
     }
-
-    const user = await createUser({ email, password, name });
-    res.status(201).json({ message: 'User created successfully', user });
-  } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).json({ error: 'Error creating user' });
+  } else {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
