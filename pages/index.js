@@ -6,6 +6,7 @@ import ScenarioGenerator from '../components/ScenarioGenerator';
 import TabletopGuide from '../components/TabletopGuide';
 import LoginForm from '../components/LoginForm';
 import RegistrationForm from '../components/RegistrationForm';
+import DataLoadTrigger from '../components/DataLoadTrigger';
 
 export default function Home() {
   const [scenario, setScenario] = useState(null);
