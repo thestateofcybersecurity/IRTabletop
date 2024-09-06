@@ -19,7 +19,6 @@ export default function Home() {
   const [actions, setActions] = useState([]);
   const [metrics, setMetrics] = useState(null);
   const [currentStep, setCurrentStep] = useState('login');
-  const [roles, setRoles] = useState({}); // Initialize roles here
 
   useEffect(() => {
     const token = localStorage.getItem('token');
