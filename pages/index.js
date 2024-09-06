@@ -28,10 +28,6 @@ export default function Home() {
     }
   }, []);
 
-  const handleRoleAssignment = (assignedRoles) => {
-    setRoles(assignedRoles); // Assign roles here
-  };
-  
   const handleLogin = (userData) => {
     setUser(userData);
     localStorage.setItem('token', userData.token);
