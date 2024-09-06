@@ -6,9 +6,7 @@ import TabletopGuide from '../components/TabletopGuide';
 import LoginForm from '../components/LoginForm';
 import RegistrationForm from '../components/RegistrationForm';
 import DataLoadTrigger from '../components/DataLoadTrigger';
-import RoleAssignment from '../components/RoleAssignment';
 import ReportingTemplate from '../components/ReportingTemplate';
-import MetricsTracker from '../components/Metrics';
 
 const ScenarioGenerator = ({ onGenerate }) => {
   const [formData, setFormData] = useState({
