@@ -21,6 +21,8 @@ export default function Home() {
   const [assignedRoles, setAssignedRoles] = useState({});
   const [actions, setActions] = useState([]);
   const [metrics, setMetrics] = useState({});
+  const [inject, setInject] = useState(null);
+  const [roles, setRoles] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -55,6 +57,12 @@ export default function Home() {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // Reset all exercise states
+    setScenario(null);
+    setActions([]);
+    setRoles({});
+    setMetrics(null);
+    setInject(null);
   };
 
   const handleRegistration = (userData) => {
@@ -62,12 +70,17 @@ export default function Home() {
     handleLogin(userData);
   };
 
-  const handleRoleAssignment = (roles) => {
-    setAssignedRoles(roles);
+  const addAction = (action) => {
+    setActions([...actions, { ...action, timestamp: new Date().toLocaleTimeString() }]);
   };
 
-  const addAction = (action) => {
-    setActions([...actions, action]);
+  const assignRoles = (assignedRoles) => {
+    setRoles(assignedRoles);
+  };
+
+  const handleScenarioGeneration = (scenarioData) => {
+    setScenario(scenarioData);
+    setInject(getRandomInject());
   };
 
   const updateMetrics = (newMetrics) => {
@@ -80,18 +93,43 @@ export default function Home() {
       <Header user={user} onLogout={handleLogout} />
     
       <main className="my-8">
-        {user ? (     
-          <>
-            <ScenarioGenerator setScenario={setScenario} />
-            {scenario && (
+        {user ? (
+          <div className="container mx-auto p-4">
+            {/* Step 1: Generate Scenario */}
+            <ScenarioGenerator setScenario={handleScenarioGeneration} />
+            
+            {/* Step 2: Assign Roles */}
+            {scenario && !Object.keys(roles).length && (
+              <RoleAssignment assignRoles={assignRoles} />
+            )}
+            
+            {/* Step 3: Begin Tabletop Guide and Metrics Tracking */}
+            {Object.keys(roles).length > 0 && scenario && (
               <>
-                <RoleAssignment assignRoles={handleRoleAssignment} />
-                <TabletopGuide scenario={scenario} addAction={addAction} />
+                <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} inject={inject} />
                 <MetricsTracker scenario={scenario} addAction={addAction} updateMetrics={updateMetrics} />
-                <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />
               </>
             )}
-          </>
+            
+            {/* Step 4: Display Summary of Actions */}
+            {actions.length > 0 && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold mb-4">Summary of Actions</h2>
+                <ul className="list-disc pl-6">
+                  {actions.map((action, index) => (
+                    <li key={index} className="mb-2">
+                      <strong>{action.timestamp}:</strong> {action.description}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {/* Step 5: Display Incident Report and PDF Export */}
+            {scenario && actions.length > 0 && (
+              <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />
+            )}
+          </div>
         ) : (
           <div>
             {isLogin ? (
@@ -128,5 +166,7 @@ export default function Home() {
 
       <Footer />
     </div>
+  );
+}
   );
 }
