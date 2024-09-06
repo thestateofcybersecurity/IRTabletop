@@ -312,12 +312,12 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     }
   };
 
-  //const handleMetricUpdate = (metricType) => {
-    //setMetrics(prevMetrics => ({
-     // ...prevMetrics,
-     // [metricType]: new Date().toLocaleTimeString()
-   // }));
- // };
+  const handleNoteChange = (e) => {
+    setNotes(prevNotes => ({
+      ...prevNotes,
+      [`step${currentStep + 1}`]: e.target.value
+    }));
+  };
 
   const goToPreviousStep = () => {
     setCurrentStep(currentStep - 1);
@@ -367,19 +367,37 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
 
   return (
     <div className="tabletop-guide">
-      <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
-      <div className="mb-4">
-        <p className="font-semibold">{steps[currentStep].initialQuestion}</p>
-        {steps[currentStep].content}
+      <div className="scenario-summary mb-6 p-4 bg-gray-100 rounded">
+        <h2 className="text-xl font-bold mb-2">Scenario Summary</h2>
+        <p><strong>Title:</strong> {scenario.title}</p>
+        <p><strong>Description:</strong> {scenario.description}</p>
       </div>
+
+      <h2 className="text-2xl font-bold mb-4">{scenario.steps[currentStep].title}</h2>
+      <div className="mb-4">
+        <p className="font-semibold">{scenario.steps[currentStep].question}</p>
+      </div>
+    
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Recommendations:</h3>
         {steps[currentStep].recommendations}
       </div>
+        
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
         {steps[currentStep].discussionPrompts}
       </div>
+
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Notes:</h3>
+        <textarea
+          value={notes[`step${currentStep + 1}`] || ''}
+          onChange={handleNoteChange}
+          className="w-full p-2 border rounded"
+          rows="4"
+        />
+      </div>
+        
       <div className="flex justify-between">
         <button 
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
