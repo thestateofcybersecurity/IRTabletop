@@ -86,8 +86,8 @@ export default function Home() {
               <LoginForm onLogin={handleLogin} />
             ) : (
               <RegistrationForm onRegister={handleRegistration} />
-              <DataLoadTrigger />
             )}
+              <DataLoadTrigger />
           </div>
         )}
       </main>
