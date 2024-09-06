@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getRandomInject } from '../utils/injects';
+import { getRandomInject } from '/components/Injects';
 
 export default function TabletopGuide({ scenario, roles, onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);
