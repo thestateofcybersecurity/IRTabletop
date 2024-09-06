@@ -15,7 +15,8 @@
     "next": "latest",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "jspdf": "^2.5.1"
   },
   "devDependencies": {
     "eslint": "8.22.0",
