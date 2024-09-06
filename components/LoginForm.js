@@ -7,7 +7,6 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { dispatch } = useAppContext();
-  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
