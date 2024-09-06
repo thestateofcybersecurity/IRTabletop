@@ -308,13 +308,14 @@ export default function TabletopGuide({ scenario, addAction }) {
   }, [addAction]);
 
   // Define handleActionComplete to track when an action is completed
-  const handleActionComplete = (description, actor) => {
+  const handleActionComplete = (description, role) => {
+    const assignedRole = roles?.[role] || 'Unassigned';
     addAction({
       description,
-      actor,
-      timestamp: new Date().toLocaleTimeString()
+      actor: assignedRole,
+      timestamp: new Date().toLocaleTimeString(),
     });
-  }; 
+  };
 
   if (!scenario) {
     return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
