@@ -22,20 +22,37 @@ export default function TabletopGuide({ scenario, addAction }) {
     return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
   }
 
+  const handleActionComplete = (description, actor) => {
+    addAction({ description, actor, timestamp: new Date().toLocaleTimeString() });
+  };
+  
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Tabletop Exercise Guide</h2>
 
       {/* Random Inject Display */}
-      {inject && (
+      {currentInject && (
         <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
-          <strong>Random Inject:</strong> {inject.description}
+          <strong>Random Inject:</strong> {currentInject.description}
         </div>
       )}
 
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <h3 className="text-xl font-semibold mb-2">Scenario: {scenario.title}</h3>
         <p className="mb-4">{scenario.description}</p>
+
+        {/* Display all scenario details */}
+        {Object.entries(scenario).map(([key, value]) => {
+          if (typeof value === 'string' || typeof value === 'number') {
+            return (
+              <div key={key} className="mb-4">
+                <h4 className="text-lg font-semibold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}:</h4>
+                <p>{value}</p>
+              </div>
+            );
+          }
+          return null;
+        })}
 
         <h4 className="text-lg font-semibold mb-2">Tactic:</h4>
         <p className="mb-4">{scenario.tactic.name}</p>
@@ -87,7 +104,7 @@ export default function TabletopGuide({ scenario, addAction }) {
               <li>What indicators of compromise (IoCs) were observed?</li>
               <li>Could earlier detection have prevented the breach?</li>
             </ul>
-            <button className="ml-4 text-blue-500" onClick={() => addAction({ description: 'Discussed detection methods.', actor: roles['Security Analyst'] })}>
+            <button className="ml-4 text-blue-500" onClick={() => handleActionComplete('Discussed detection methods.', roles['Security Analyst'])}>
               Mark as Completed
             </button>
           </li>
