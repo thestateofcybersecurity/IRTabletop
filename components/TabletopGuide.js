@@ -587,7 +587,6 @@ export default function TabletopGuide({ scenario, addAction }) {
     </ul>
   </li>
 </ul>
-      </div>
     </div>
   );
 }
