@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext';
 import api from '../utils/api';
+import React, { useState } from 'react';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -25,7 +26,11 @@ export default function LoginForm() {
       }
 
       // Call the onLogin function passed from the parent component
-      onLogin(data);
+      if (typeof onLogin === 'function') {
+        onLogin(data);
+      } else {
+        console.error('onLogin is not a function');
+      }
     } catch (error) {
       setError(error.message || 'Invalid email or password');
     }
