@@ -66,9 +66,12 @@ export default function Home() {
             <ScenarioGenerator setScenario={setScenario} />
             {scenario && <TabletopGuide scenario={scenario} />}
           </>
-        ) : (
-          <LoginForm onLogin={handleLogin} />
-        )}
+        ) :
+            {isLogin ? (
+              <LoginForm onLogin={handleLogin} />
+            ) : (
+              <RegistrationForm onRegister={handleRegistration} />
+            )}
         <DataLoadTrigger />
       </main>
 
