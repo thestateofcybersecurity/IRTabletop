@@ -18,17 +18,23 @@ export default async function handler(req, res) {
     });
 
     const { db } = await connectToDatabase();
+    console.log('Connected to database'); // Log successful database connection
+
     const { 
       irExperience, 
       securityMaturity, 
       industrySector, 
       incidentType, 
+      incidentSeverity,
+      teamSize,
       attackTarget, 
       complianceRequirements, 
       stakeholderInvolvement 
     } = req.body;
 
-    if (!irExperience || !securityMaturity) {
+    console.log('Received request body:', req.body); // Log the received request body
+
+    if (!irExperience || !securityMaturity || !incidentType || !incidentSeverity) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -45,6 +51,8 @@ export default async function handler(req, res) {
     const [tactic] = await db.collection('tactics').aggregate([{ $sample: { size: 1 } }]).toArray();
     const [technique] = await db.collection('techniques').aggregate([{ $sample: { size: 1 } }]).toArray();
     const [mitigation] = await db.collection('mitigations').aggregate([{ $sample: { size: 1 } }]).toArray();
+
+    console.log('Fetched random tactic, technique, and mitigation'); // Log successful data fetch
 
     if (!tactic || !technique || !mitigation) {
       throw new Error('Failed to fetch required data from database');
@@ -63,17 +71,19 @@ export default async function handler(req, res) {
       industrySector,
       incidentType,
       incidentSeverity,
+      teamSize: parseInt(teamSize),
       attackTarget,
       complianceRequirements,
       stakeholderInvolvement
     };
     
+    console.log('Generated scenario:', scenario); // Log the generated scenario
     res.status(200).json(scenario);
   } catch (error) {
     console.error('Error generating scenario:', error);
     if (error.message === 'Unauthorized') {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    res.status(500).json({ error: 'Error generating scenario' });
+    res.status(500).json({ error: 'Error generating scenario', details: error.message });
   }
 }
