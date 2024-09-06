@@ -3,6 +3,7 @@ import { getRandomInject } from '/components/Injects';
 
 export default function TabletopGuide({ scenario, roles, onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [actions, setActions] = useState([]);
   const [notes, setNotes] = useState({}); // Store user notes for each step
   
   const steps = [
