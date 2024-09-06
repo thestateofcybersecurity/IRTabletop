@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,6 +10,106 @@ import DataLoadTrigger from '../components/DataLoadTrigger';
 import RoleAssignment from '../components/RoleAssignment';
 import ReportingTemplate from '../components/ReportingTemplate';
 import MetricsTracker from '../components/Metrics';
+
+const ScenarioGenerator = ({ onGenerate }) => {
+  const [formData, setFormData] = useState({
+    irExperience: '',
+    securityMaturity: '',
+    industrySector: '',
+    incidentType: '',
+    incidentSeverity: '',
+    teamSize: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      // Simulating API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      onGenerate({
+        ...formData,
+        title: `${formData.incidentSeverity} ${formData.incidentType} Incident in ${formData.industrySector}`,
+        description: `A ${formData.incidentSeverity} ${formData.incidentType} incident has occurred in a ${formData.industrySector} organization with ${formData.irExperience} IR experience and ${formData.securityMaturity} security maturity.`
+      });
+    } catch (error) {
+      console.error('Error generating scenario:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label htmlFor="irExperience" className="block mb-1">IR Experience Level:</label>
+        <select id="irExperience" value={formData.irExperience} onChange={handleChange} className="w-full p-2 border rounded" required>
+          <option value="">Select experience level</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+      {/* Add similar blocks for other form fields */}
+      <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600" disabled={isLoading}>
+        {isLoading ? 'Generating...' : 'Generate Scenario'}
+      </button>
+    </form>
+  );
+};
+
+const MetricsTracker = () => {
+  const [containmentStart, setContainmentStart] = useState(null);
+  const [recoveryStart, setRecoveryStart] = useState(null);
+
+  return (
+    <div>
+      <button onClick={() => setContainmentStart(new Date())} className="bg-green-500 text-white p-2 rounded mr-2">
+        Mark Containment Start
+      </button>
+      <button onClick={() => setRecoveryStart(new Date())} className="bg-yellow-500 text-white p-2 rounded">
+        Mark Recovery Start
+      </button>
+      <div className="mt-2">
+        <p>Containment Start: {containmentStart ? containmentStart.toLocaleString() : 'Not set'}</p>
+        <p>Recovery Start: {recoveryStart ? recoveryStart.toLocaleString() : 'Not set'}</p>
+      </div>
+    </div>
+  );
+};
+
+const RoleAssignment = ({ scenario }) => {
+  const [roles, setRoles] = useState([]);
+
+  const assignRoles = () => {
+    // Simulating role assignment
+    setRoles([
+      { title: "Incident Commander", assignee: "John Doe" },
+      { title: "Technical Lead", assignee: "Jane Smith" },
+      { title: "Communications Officer", assignee: "Mike Johnson" }
+    ]);
+  };
+
+  return (
+    <div>
+      <button onClick={assignRoles} className="bg-purple-500 text-white p-2 rounded mb-2">Re-Assign Roles</button>
+      {roles.length > 0 ? (
+        <ul>
+          {roles.map((role, index) => (
+            <li key={index}>{role.title}: {role.assignee}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No roles assigned yet. Click "Re-Assign Roles" to generate assignments.</p>
+      )}
+    </div>
+  );
+};
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -113,27 +213,45 @@ export default function Home() {
     }
   };
 
-  return (
-    <div className="container mx-auto px-4">
-      <Header user={user} onLogout={handleLogout} />
-      <main className="my-8">
-        <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
-        {renderCurrentStep()}
-        {!user && (
-          <p className="mt-4">
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-blue-500 hover:text-blue-700"
-            >
-              {isLogin ? "Register here" : "Login here"}
-            </button>
-          </p>
-        )}
-        {user && user.isAdmin && <DataLoadTrigger />}
-      </main>
 
-      <Footer />
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">IR Tabletop Scenario Generator</h1>
+        <div>
+          Welcome, {user.name}
+          <button onClick={handleLogout} className="ml-4 bg-red-500 text-white px-4 py-2 rounded">Log Out</button>
+        </div>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Generate Scenario</h2>
+          <ScenarioGenerator onGenerate={setScenario} />
+        </div>
+
+        {scenario && (
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Current Scenario</h2>
+            <p><strong>Title:</strong> {scenario.title}</p>
+            <p><strong>Description:</strong> {scenario.description}</p>
+          </div>
+        )}
+
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Metrics Tracking</h2>
+          <MetricsTracker />
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Assigned Roles</h2>
+          <RoleAssignment scenario={scenario} />
+        </div>
+      </div>
+
+      <footer className="mt-8 text-center text-gray-500">
+        © 2024 IR Tabletop Generator. All rights reserved.
+      </footer>
     </div>
   );
 }
