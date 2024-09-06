@@ -60,6 +60,7 @@ export default function Home() {
       <Header user={user} onLogout={handleLogout} />
     
       <main className="my-8">
+        <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
         {user ? (
           <>
             <ScenarioGenerator setScenario={setScenario} />
@@ -68,6 +69,19 @@ export default function Home() {
         ) : (
           <div>
             <div className="flex justify-center mb-4">
+              <button
+                onClick={() => setIsLogin(true)}
+                className={`px-4 py-2 mr-2 ${isLogin ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setIsLogin(false)}
+                className={`px-4 py-2 ${!isLogin ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              >
+                Register
+              </button>
+            </div>
             {isLogin ? (
               <LoginForm onLogin={handleLogin} />
             ) : (
