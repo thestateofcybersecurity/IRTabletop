@@ -181,8 +181,6 @@ export default function ScenarioGenerator({ onGenerate }) {
             placeholder="e.g., CEO, Legal Team, PR Department"
           />
         </div>
-
-      {error && <p className="text-red-500">{error}</p>}
       
       <button 
         type="submit" 
