@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../contexts/AppContext';
-import { getRandomInject } from './Injects';
+import { getRandomInject } from '../utils/injects';
 
-export default function TabletopGuide({ scenario, addAction }) {
-  const [currentInject, setCurrentInject] = useState(null);
+export default function TabletopGuide() {
   const { state, dispatch } = useAppContext();
   const { scenario, currentStep } = state;
-  const previousInjects = useRef([]); // Track previously generated injects
+  const [currentInject, setCurrentInject] = useState(null);
+  const previousInjects = useRef([]);
   const steps = [
     {
       title: 'Step 1: Detection',
@@ -272,19 +272,23 @@ export default function TabletopGuide({ scenario, addAction }) {
       ),
     }
   ];
+  
+  // Effect to periodically generate injects
+  useEffect(() => {
+    const injectInterval = setInterval(() => {
+      const newInject = generateUniqueInject();
+      setCurrentInject(newInject);
+      dispatch({
+        type: 'ADD_ACTION',
+        payload: {
+          description: `New inject: ${newInject.description}`,
+          timestamp: new Date().toLocaleTimeString()
+        }
+      });
+    }, 5 * 60 * 1000);
 
-  const handleCompleteStep = (role) => {
-    addAction({
-      description: `Completed: ${steps[currentStep].title}`,
-      actor: role,
-      timestamp: new Date().toLocaleTimeString(),
-    });
-    setCurrentStep((prevStep) => (prevStep + 1 < steps.length ? prevStep + 1 : prevStep)); // Move to the next step
-  };
-
-  const goToPreviousStep = () => {
-    setCurrentStep((prevStep) => (prevStep - 1 >= 0 ? prevStep - 1 : prevStep));
-  };
+    return () => clearInterval(injectInterval);
+  }, [dispatch]);
 
   const generateUniqueInject = () => {
     let inject;
@@ -294,20 +298,26 @@ export default function TabletopGuide({ scenario, addAction }) {
     previousInjects.current.push(inject.description);
     return inject;
   };
-  
-  // Effect to periodically generate injects
-  useEffect(() => {
-    const injectInterval = setInterval(() => {
-      const newInject = generateUniqueInject();
-      setCurrentInject(newInject);
-      addAction({
-        description: `New inject: ${newInject.description}`,
-        timestamp: new Date().toLocaleTimeString()
-      });
-    }, 5 * 60 * 1000); // Generate new inject every 5 minutes
 
-    return () => clearInterval(injectInterval);
-  }, [addAction]);
+  const handleCompleteStep = (role) => {
+    dispatch({
+      type: 'ADD_ACTION',
+      payload: {
+        description: `Completed: ${steps[currentStep].title}`,
+        actor: role,
+        timestamp: new Date().toLocaleTimeString(),
+      }
+    });
+    dispatch({ type: 'SET_CURRENT_STEP', payload: currentStep + 1 });
+  };
+
+  const goToPreviousStep = () => {
+    dispatch({ type: 'SET_CURRENT_STEP', payload: currentStep - 1 });
+  };
+
+  if (!scenario) {
+    return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
+  }
 
   // Define handleActionComplete to track when an action is completed
   const handleActionComplete = (description, role) => {
