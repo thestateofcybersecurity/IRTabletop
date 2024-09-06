@@ -40,9 +40,13 @@ export default function ReportGenerator({ scenario, roles, actions, notes, exerc
     doc.setFontSize(16);
     doc.text('User Notes', 10, 180);
     doc.setFontSize(12);
-    Object.keys(notes).forEach((step, index) => {
-      doc.text(`${step}: ${notes[step]}`, 10, 190 + (index * 10));
-    });
+    if (notes && Object.keys(notes).length > 0) {
+      Object.keys(notes).forEach((step, index) => {
+        doc.text(`${step}: ${notes[step]}`, 10, 190 + (index * 10));
+      });
+    } else {
+      doc.text('No notes were recorded.', 10, 190);
+    }
 
     // Add action timeline
     doc.setFontSize(16);
@@ -94,8 +98,11 @@ export default function ReportGenerator({ scenario, roles, actions, notes, exerc
         <ul>
           {Object.keys(notes).map((step, index) => (
             <li key={index}><strong>{step}:</strong> {notes[step]}</li>
-          ))}
-        </ul>
+            ))}
+          </ul>
+        ) : (
+          <p>No notes were recorded.</p>
+        )}
       </div>
 
       <div className="mb-4">
