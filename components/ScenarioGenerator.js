@@ -21,15 +21,17 @@ export default function ScenarioGenerator({ setScenario }) {
       // Here you would typically make an API call to generate the scenario
       // For now, we'll create a scenario object based on the form inputs
       const generatedScenario = {
+        title: `${incidentSeverity} ${incidentType} Incident in ${industrySector} Sector`,
+        description: `A ${incidentSeverity} ${incidentType} incident has occurred in a ${industrySector} organization with ${irExperience} IR experience and ${securityMaturity} security maturity.`,
         irExperience,
         securityMaturity,
         industrySector,
         incidentType,
         incidentSeverity,
         teamSize: parseInt(teamSize),
-        // Add any other fields that your scenario might need
-        title: `${incidentSeverity} ${incidentType} Incident in ${industrySector} Sector`,
-        description: `A ${incidentSeverity} ${incidentType} incident has occurred in a ${industrySector} organization with ${irExperience} IR experience and ${securityMaturity} security maturity.`
+        tactic: { name: 'Sample Tactic' },  // Placeholder, replace with actual data if available
+        technique: { name: 'Sample Technique' },  // Placeholder, replace with actual data if available
+        mitigation: { name: 'Sample Mitigation' }  // Placeholder, replace with actual data if available
       };
 
       setScenario(generatedScenario);
