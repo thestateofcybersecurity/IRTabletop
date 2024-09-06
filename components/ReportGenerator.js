@@ -40,31 +40,18 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
     }
     
     // Scenario Steps
-  if (scenario && scenario.steps && scenario.steps.length > 0) {
-    addText('Scenario Steps', 16, true);
-    scenario.steps.forEach((step, index) => {
-      addText(`Step ${index + 1}: ${step.title}`, 14, true);
-      addText(`Initial Question: ${step.initialQuestion}`);
-      
-      addText('Content:', 12, true);
-      addText(step.content);
-      
-      addText('Recommendations:', 12, true);
-      step.recommendations.forEach((rec, recIndex) => {
-        addText(`${recIndex + 1}. ${rec}`);
+    if (scenario && scenario.steps && scenario.steps.length > 0) {
+      addText('Scenario Steps', 16, true);
+      scenario.steps.forEach((step, index) => {
+        addText(`Step ${index + 1}: ${step.title}`, 14, true);
+        addText(`Initial Question: ${step.question}`);
+        
+        if (notes && notes[`step${index + 1}`]) {
+          addText('User Notes:', 12, true);
+          addText(notes[`step${index + 1}`]);
+        }
       });
-      
-      addText('Discussion Prompts:', 12, true);
-      step.discussionPrompts.forEach((prompt, promptIndex) => {
-        addText(`${promptIndex + 1}. ${prompt}`);
-      });
-      
-      if (notes && notes[`step${index + 1}`]) {
-        addText('User Notes:', 12, true);
-        addText(notes[`step${index + 1}`]);
-      }
-    });
-  }
+    }
     
     // Action Timeline
     if (actions && actions.length > 0) {
@@ -81,7 +68,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
   if (!scenario) {
     return <div>No scenario data available. Please generate a scenario first.</div>;
   }
-  
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Exercise Report</h2>
@@ -92,59 +79,45 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         <p><strong>Description:</strong> {scenario.description}</p>
       </div>
 
-      <div className="mb-4">
-        <h3 className="text-xl font-semibold">Assigned Roles</h3>
-        <ul>
-          {roles.map((role, index) => (
-            <li key={index}>{role.title}: {role.assignee}</li>
-          ))}
-        </ul>
-      </div>
+      {roles && roles.length > 0 && (
+        <div className="mb-4">
+          <h3 className="text-xl font-semibold">Assigned Roles</h3>
+          <ul>
+            {roles.map((role, index) => (
+              <li key={index}>{role.title}: {role.assignee}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
-      <div className="mb-4">
-        <h3 className="text-xl font-semibold">Scenario Steps</h3>
-        {scenario.steps.map((step, index) => (
-          <div key={index} className="mb-4">
-            <h4 className="text-lg font-semibold">{step.title}</h4>
-            <p><strong>Initial Question:</strong> {step.initialQuestion}</p>
-            <div>
-              <strong>Content:</strong>
-              <p>{step.content}</p>
+      {scenario.steps && scenario.steps.length > 0 && (
+        <div className="mb-4">
+          <h3 className="text-xl font-semibold">Scenario Steps</h3>
+          {scenario.steps.map((step, index) => (
+            <div key={index} className="mb-4">
+              <h4 className="text-lg font-semibold">{step.title}</h4>
+              <p><strong>Initial Question:</strong> {step.question}</p>
+              {notes && notes[`step${index + 1}`] && (
+                <div>
+                  <strong>User Notes:</strong>
+                  <p>{notes[`step${index + 1}`]}</p>
+                </div>
+              )}
             </div>
-            <div>
-              <strong>Recommendations:</strong>
-              <ul>
-                {step.recommendations.map((rec, recIndex) => (
-                  <li key={recIndex}>{rec}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <strong>Discussion Prompts:</strong>
-              <ul>
-                {step.discussionPrompts.map((prompt, promptIndex) => (
-                  <li key={promptIndex}>{prompt}</li>
-                ))}
-              </ul>
-            </div>
-            {notes && notes[`step${index + 1}`] && (
-              <div>
-                <strong>User Notes:</strong>
-                <p>{notes[`step${index + 1}`]}</p>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="mb-4">
-        <h3 className="text-xl font-semibold">Action Timeline</h3>
-        <ul>
-          {actions.map((action, index) => (
-            <li key={index}>{action.timestamp}: {action.description}</li>
           ))}
-        </ul>
-      </div>
+        </div>
+      )}
+
+      {actions && actions.length > 0 && (
+        <div className="mb-4">
+          <h3 className="text-xl font-semibold">Action Timeline</h3>
+          <ul>
+            {actions.map((action, index) => (
+              <li key={index}>{action.timestamp}: {action.description}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <button 
         onClick={generateReport} 
