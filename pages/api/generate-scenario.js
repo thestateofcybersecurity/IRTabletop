@@ -72,7 +72,7 @@ export default async function handler(req, res) {
       steps: [
         {
           title: 'Detection',
-          question: `How would your team detect this ${incidentType} incident using your current tools and processes?`
+          question: `How would your team detect this incident using your current tools and processes?`
         },
         {
           title: 'Analysis',
