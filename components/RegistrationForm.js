@@ -33,8 +33,9 @@ export default function RegistrationForm({ onRegister }) {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Register</h2>
       <div className="mb-4">
-        <label htmlFor="username" className="block mb-2">Username</label>
+        <label htmlFor="username" className="block mb-2">Username:</label>
         <input
           type="text"
           id="username"
@@ -45,7 +46,7 @@ export default function RegistrationForm({ onRegister }) {
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="email" className="block mb-2">Email</label>
+        <label htmlFor="email" className="block mb-2">Email:</label>
         <input
           type="email"
           id="email"
@@ -56,7 +57,7 @@ export default function RegistrationForm({ onRegister }) {
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="password" className="block mb-2">Password</label>
+        <label htmlFor="password" className="block mb-2">Password:</label>
         <input
           type="password"
           id="password"
