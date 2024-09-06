@@ -1,15 +1,15 @@
-import { useState } from 'react';
+//import { useState } from 'react';
 
-export default function ScenarioGenerator({ setScenario }) {
-  const [irExperience, setIrExperience] = useState('');
-  const [securityMaturity, setSecurityMaturity] = useState('');
-  const [industrySector, setIndustrySector] = useState('');
-  const [incidentType, setIncidentType] = useState('');
-  const [attackTarget, setAttackTarget] = useState('');
-  const [complianceRequirements, setComplianceRequirements] = useState('');
-  const [stakeholderInvolvement, setStakeholderInvolvement] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+//export default function ScenarioGenerator({ setScenario }) {
+//  const [irExperience, setIrExperience] = useState('');
+//  const [securityMaturity, setSecurityMaturity] = useState('');
+//  const [industrySector, setIndustrySector] = useState('');
+//  const [incidentType, setIncidentType] = useState('');
+//  const [attackTarget, setAttackTarget] = useState('');
+//  const [complianceRequirements, setComplianceRequirements] = useState('');
+//  const [stakeholderInvolvement, setStakeholderInvolvement] = useState('');
+//  const [isLoading, setIsLoading] = useState(false);
+//  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
