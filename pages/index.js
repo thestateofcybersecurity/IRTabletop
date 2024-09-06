@@ -29,6 +29,10 @@ export default function Home() {
     }
   }, []);
 
+  const handleRoleAssignment = (assignedRoles) => {
+    setRoles(assignedRoles); // Assign roles here
+  };
+  
   const handleLogin = (userData) => {
     setUser(userData);
     localStorage.setItem('token', userData.token);
@@ -90,6 +94,7 @@ export default function Home() {
           <>
             <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} />
             <MetricsTracker scenario={scenario} addAction={addAction} updateMetrics={updateMetrics} />
+            <RoleAssignment assignRoles={handleRoleAssignment} />
             {actions.length > 0 && (
               <div className="mt-8">
                 <h2 className="text-2xl font-bold mb-4">Summary of Actions</h2>
@@ -137,10 +142,6 @@ export default function Home() {
         )}
         {user && user.isAdmin && <DataLoadTrigger />}
       </main>
-    <div>
-      {/* Ensure that roles are passed down to the TabletopGuide */}
-      <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} />
-    </div>
 
       <Footer />
     </div>
