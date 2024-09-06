@@ -81,7 +81,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
             <li>How well did the communication flow during the incident? Were any stakeholders left out?</li>
             <li>Did the team follow established processes, or were any processes missed?</li>
           </ul>
-        <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step1: e.target.value })} />
+        <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step2: e.target.value })} />
         </div>
       ),
     },
@@ -114,7 +114,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
             <li>Did any communication issues delay or complicate containment?</li>
             <li>Were additional vulnerabilities discovered during containment?</li>
           </ul>
-      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step1: e.target.value })} />
+      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step3: e.target.value })} />
         </div>
       ),
     },
@@ -146,7 +146,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
             <li>Were any critical data sources (logs, system snapshots) missing or corrupted?</li>
             <li>Was there enough documentation and tracking of forensic processes?</li>
           </ul>
-      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step1: e.target.value })} />
+      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step4: e.target.value })} />
         </div>
       ),
     },
@@ -176,7 +176,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
             <li>How well did communication flow during the notification process?</li>
             <li>Were any key stakeholders unaware of the incident until later stages?</li>
           </ul>
-      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step1: e.target.value })} />
+      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step5: e.target.value })} />
         </div>
       ),
     },
@@ -209,7 +209,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
             <li>Did the mitigation create any further vulnerabilities or issues?</li>
             <li>Were the mitigation steps sufficient to prevent further exploitation?</li>
           </ul>
-      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step1: e.target.value })} />
+      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step6: e.target.value })} />
         </div>
       ),
     },
@@ -241,7 +241,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
             <li>Were there any delays in restoring systems due to untested backups?</li>
             <li>Were recovery efforts prioritized based on business impact?</li>
           </ul>
-      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step1: e.target.value })} />
+      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step7: e.target.value })} />
         </div>
       ),
     },
@@ -274,7 +274,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
             <li>What gaps were identified in the incident response playbook?</li>
             <li>How can the response process be improved for future incidents?</li>
           </ul>
-      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step1: e.target.value })} />
+      <textarea placeholder="Add your notes here" onChange={(e) => setNotes({ ...notes, step8: e.target.value })} />
         </div>
       ),
     }
