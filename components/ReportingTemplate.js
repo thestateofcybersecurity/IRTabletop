@@ -1,12 +1,17 @@
+import React from 'react';
+import { useAppContext } from '../contexts/AppContext';
 import PDFExport from './PDFExport';
+import CSVExport from './CSVExport';
 
-export default function ReportingTemplate({ scenario, actions }) {
+export default function ReportingTemplate() {
+  const { state } = useAppContext();
+  const { scenario, actions, metrics } = state;
   if (!scenario) {
     return <p>No scenario to report on yet. Complete a scenario to generate the report.</p>;
   }
 
   return (
-    <div className="mt-8">
+    <div className="reporting-template">
       <h2 className="text-2xl font-bold mb-4">Incident Response Report</h2>
 
       <div id="report-content" className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -46,6 +51,11 @@ export default function ReportingTemplate({ scenario, actions }) {
             <li key={index} className="mb-2">{recommendation}</li>
           ))}
         </ul>
+      </div>
+
+      <div className="export-options">
+        <PDFExport scenario={scenario} actions={actions} metrics={metrics} />
+        <CSVExport scenario={scenario} actions={actions} metrics={metrics} />
       </div>
 
       {/* Add PDF Export Button */}
