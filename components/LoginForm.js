@@ -26,9 +26,8 @@ export default function LoginForm() {
         throw new Error(data.error || 'Login failed');
       }
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      router.push('/dashboard'); // Redirect to dashboard or home page
+      // Call the onLogin function passed from the parent component
+      onLogin(data);
     } catch (error) {
       setError(error.message || 'Invalid email or password');
     }
