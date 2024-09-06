@@ -1,4 +1,6 @@
-// Define available roles in the tabletop exercise
+
+import { useState } from 'react';
+
 const availableRoles = [
   { id: 1, role: "Incident Commander" },
   { id: 2, role: "Security Analyst" },
@@ -8,7 +10,6 @@ const availableRoles = [
   { id: 6, role: "Network Engineer" }
 ];
 
-// Component for role assignment
 export default function RoleAssignment({ assignRoles }) {
   const [assignedRoles, setAssignedRoles] = useState({});
 
@@ -16,28 +17,51 @@ export default function RoleAssignment({ assignRoles }) {
     setAssignedRoles({ ...assignedRoles, [role]: person });
   };
 
-  const handleSubmit = () => {
-    assignRoles(assignedRoles); // Pass the assigned roles back to the main app
+  const handleAutoAssign = () => {
+    const autoAssigned = {};
+    availableRoles.forEach((roleObj, index) => {
+      autoAssigned[roleObj.role] = `Team Member ${index + 1}`;
+    });
+    setAssignedRoles(autoAssigned);
+    assignRoles(autoAssigned);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    assignRoles(assignedRoles);
   };
 
   return (
     <div className="mb-8">
       <h2 className="text-xl font-bold mb-4">Assign Roles to Team Members</h2>
       <form onSubmit={handleSubmit}>
-        {availableRoles.map((role) => (
-          <div key={role.id} className="mb-4">
-            <label className="block mb-2">{role.role}</label>
+        {availableRoles.map((roleObj) => (
+          <div key={roleObj.id} className="mb-4">
+            <label className="block mb-2">{roleObj.role}</label>
             <input
               type="text"
               className="w-full p-2 border rounded"
-              placeholder={`Assign a person to ${role.role}`}
-              onChange={(e) => handleAssignRole(role.role, e.target.value)}
+              placeholder={`Assign a person to ${roleObj.role}`}
+              value={assignedRoles[roleObj.role] || ''}
+              onChange={(e) => handleAssignRole(roleObj.role, e.target.value)}
             />
           </div>
         ))}
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Assign Roles
-        </button>
+        <div className="flex justify-between">
+          <button
+            type="button"
+            onClick={handleAutoAssign}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            Auto Assign Roles
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Confirm Role Assignment
+          </button>
+        </div>
       </form>
     </div>
   );
