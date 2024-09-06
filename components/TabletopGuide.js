@@ -3,7 +3,17 @@ import { getRandomInject } from './Injects';
 
 export default function TabletopGuide({ scenario, addAction }) {
   const [currentInject, setCurrentInject] = useState(null);
+  const previousInjects = useRef([]); // Track previously generated injects
 
+  const generateUniqueInject = () => {
+    let inject;
+    do {
+      inject = getRandomInject();
+    } while (previousInjects.current.includes(inject.description));
+    previousInjects.current.push(inject.description);
+    return inject;
+  };
+  
   useEffect(() => {
     // Get a new random inject every 5 minutes
     const injectInterval = setInterval(() => {
