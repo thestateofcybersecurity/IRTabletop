@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function ScenarioGenerator({ onGenerate }) {
   console.log('Rendering ScenarioGenerator');
+  
   const [formData, setFormData] = useState({
     irExperience: '',
     securityMaturity: '',
@@ -14,7 +15,6 @@ export default function ScenarioGenerator({ onGenerate }) {
     stakeholderInvolvement: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');  // Added error state
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -24,7 +24,6 @@ export default function ScenarioGenerator({ onGenerate }) {
     console.log('handleSubmit called');
     e.preventDefault();
     setIsLoading(true);
-    setError('');
 
     try {
       const response = await fetch('/api/generate-scenario', {
