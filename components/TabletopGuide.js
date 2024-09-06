@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import React from 'react';
+import { useAppContext } from '../contexts/AppContext';
 import { getRandomInject } from './Injects';
 
 export default function TabletopGuide({ scenario, addAction }) {
   const [currentInject, setCurrentInject] = useState(null);
-  const [currentStep, setCurrentStep] = useState(0); // Initialize currentStep state
+  const { state, dispatch } = useAppContext();
+  const { scenario, currentStep } = state;
   const previousInjects = useRef([]); // Track previously generated injects
   const steps = [
     {
@@ -344,7 +346,9 @@ export default function TabletopGuide({ scenario, addAction }) {
   };
 
   return (          
-    <div className="tabletop-guide mt-8">
+    <div className="tabletop-guide" role="region" aria-label="Tabletop Exercise Guide">
+      <h2 id="step-title">{steps[currentStep].title}</h2>
+      <div className="step-content" aria-labelledby="step-title">
       {/* Progress Indicator */}
       <div className="progress-indicator mb-4">
         <span>Step {currentStep + 1} of {steps.length}</span>
@@ -362,10 +366,22 @@ export default function TabletopGuide({ scenario, addAction }) {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="navigation-buttons mt-4 flex justify-between">
-        {currentStep > 0 && <button className="btn-secondary" onClick={goToPreviousStep}>Previous</button>}
+      <div className="navigation-buttons">
+        {currentStep > 0 && (
+          <button 
+            onClick={goToPreviousStep}
+            aria-label="Go to previous step"
+            className="btn-secondary"
+          >
+            Previous
+          </button>
+        )}
         {currentStep < steps.length - 1 && (
-          <button className="btn-primary" onClick={() => handleActionComplete('Completed', roles['Next Role'])}>
+          <button 
+            onClick={() => handleCompleteStep()}
+            aria-label="Go to next step"
+            className="btn-primary"
+          >
             Next
           </button>
         )}
