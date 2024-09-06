@@ -95,9 +95,10 @@ export default function ReportGenerator({ scenario, roles, actions, notes, exerc
 
       <div className="mb-4">
         <h3 className="text-xl font-semibold">User Notes</h3>
-        <ul>
-          {Object.keys(notes).map((step, index) => (
-            <li key={index}><strong>{step}:</strong> {notes[step]}</li>
+        {notes && Object.keys(notes).length > 0 ? (
+          <ul>
+            {Object.keys(notes).map((step, index) => (
+              <li key={index}><strong>{step}:</strong> {notes[step]}</li>
             ))}
           </ul>
         ) : (
