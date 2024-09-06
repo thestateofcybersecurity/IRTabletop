@@ -1,3 +1,5 @@
+import PDFExport from './PDFExport';
+
 export default function ReportingTemplate({ scenario, actions }) {
   if (!scenario) {
     return <p>No scenario to report on yet. Complete a scenario to generate the report.</p>;
@@ -7,7 +9,7 @@ export default function ReportingTemplate({ scenario, actions }) {
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Incident Response Report</h2>
 
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div id="report-content" className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <h3 className="text-xl font-semibold mb-2">Incident Overview</h3>
         <p><strong>Date:</strong> {new Date().toLocaleDateString()}</p>
         <p><strong>Scenario Title:</strong> {scenario.title}</p>
@@ -22,13 +24,14 @@ export default function ReportingTemplate({ scenario, actions }) {
           ))}
         </ul>
 
-        <h4 className="text-lg font-semibold mt-4 mb-2">Team Actions</h4>
+        <h4 className="text-lg font-semibold mt-4 mb-2">Metrics</h4>
         <ul className="list-disc pl-6">
-          {actions.map((action, index) => (
-            <li key={index} className="mb-2">
-              <strong>{action.actor}:</strong> {action.actionTaken}
-            </li>
-          ))}
+          {metrics && (
+            <>
+              <li>Containment Time: {metrics.containmentTime || "Not marked yet"}</li>
+              <li>Recovery Time: {metrics.recoveryTime || "Not marked yet"}</li>
+            </>
+          )}
         </ul>
 
         <h4 className="text-lg font-semibold mt-4 mb-2">Forensic Evidence Collected</h4>
@@ -44,6 +47,9 @@ export default function ReportingTemplate({ scenario, actions }) {
           ))}
         </ul>
       </div>
+
+      {/* Add PDF Export Button */}
+      <PDFExport actions={actions} scenario={scenario} metrics={metrics} />
     </div>
   );
 }
