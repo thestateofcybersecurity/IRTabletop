@@ -385,15 +385,6 @@ export default function TabletopGuide({ scenario, addAction }) {
             Next
           </button>
         )}
-        {currentStep === steps.length - 1 && (
-          <button className="btn-primary" onClick={exportToPDF}>Export to PDF</button>
-        )}
-        <button
-          className="ml-4 text-blue-500"
-          onClick={() => handleActionComplete('Completed detection discussion.', roles?.['Security Analyst'] || 'Unassigned')}
-        >
-          Mark as Completed
-        </button>
       </div>
     </div>
   );
