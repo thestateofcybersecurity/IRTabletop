@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext';
 import api from '../utils/api';
-import { useRouter } from 'next/router';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
