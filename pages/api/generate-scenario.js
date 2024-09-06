@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     }
 
     // Check if collections exist and have data
-    const collections = ['tactics', 'techniques', 'mitigations'];
+    const collections = ['tactics', 'techniques', 'mitigations', 'groups', 'software', 'relationships'];
     for (const collection of collections) {
       const count = await db.collection(collection).countDocuments();
       console.log(`${collection} count:`, count);
@@ -47,10 +47,13 @@ export default async function handler(req, res) {
     const [tactic] = await db.collection('tactics').aggregate([{ $sample: { size: 1 } }]).toArray();
     const [technique] = await db.collection('techniques').aggregate([{ $sample: { size: 1 } }]).toArray();
     const [mitigation] = await db.collection('mitigations').aggregate([{ $sample: { size: 1 } }]).toArray();
+    const [groups] = await db.collection('groups').aggregate([{ $sample: { size: 1 } }]).toArray();
+    const [software] = await db.collection('software').aggregate([{ $sample: { size: 1 } }]).toArray();
+    const [relationships] = await db.collection('relationships').aggregate([{ $sample: { size: 1 } }]).toArray();
 
-    console.log('Fetched random tactic, technique, and mitigation'); // Log successful data fetch
+    console.log('Fetched random tactic, technique, groups, software, relationships, and mitigation'); // Log successful data fetch
 
-    if (!tactic || !technique || !mitigation) {
+    if (!tactic || !technique || !mitigation || !groups || !software || !relationships) {
       throw new Error('Failed to fetch required data from database');
     }
 
