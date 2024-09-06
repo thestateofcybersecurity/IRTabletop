@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useAppContext } from '../contexts/AppContext';
-import { getRandomInject } from '/components/Injects';
+import React, { useState, useEffect } from 'react';
+import { getRandomInject } from '../utils/injects';
 
-export default function TabletopGuide() {
-  const { state, dispatch } = useAppContext();
-  const { scenario, currentStep } = state;
-  const [currentInject, setCurrentInject] = useState(null);
-  const previousInjects = useRef([]);
+export default function TabletopGuide({ scenario, roles, onComplete }) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [actions, setActions] = useState([]);
+  const [metrics, setMetrics] = useState({
+    containmentStart: null,
+    recoveryStart: null
+  });
+  
   const steps = [
     {
       title: 'Step 1: Detection',
@@ -273,23 +275,17 @@ export default function TabletopGuide() {
     }
   ];
   
-  // Effect to periodically generate injects
   useEffect(() => {
     const injectInterval = setInterval(() => {
-      const newInject = generateUniqueInject();
-      setCurrentInject(newInject);
-      dispatch({
-        type: 'ADD_ACTION',
-        payload: {
-          description: `New inject: ${newInject.description}`,
-          timestamp: new Date().toLocaleTimeString()
-        }
-      });
+      const newInject = getRandomInject();
+      setActions(prevActions => [...prevActions, {
+        description: `New inject: ${newInject.description}`,
+        timestamp: new Date().toLocaleTimeString()
+      }]);
     }, 5 * 60 * 1000);
 
     return () => clearInterval(injectInterval);
-  }, [dispatch]);
-
+  }, []);
   const generateUniqueInject = () => {
     let inject;
     do {
@@ -299,16 +295,23 @@ export default function TabletopGuide() {
     return inject;
   };
 
-  const handleCompleteStep = (role) => {
-    dispatch({
-      type: 'ADD_ACTION',
-      payload: {
-        description: `Completed: ${steps[currentStep].title}`,
-        actor: role,
-        timestamp: new Date().toLocaleTimeString(),
-      }
-    });
-    dispatch({ type: 'SET_CURRENT_STEP', payload: currentStep + 1 });
+  const handleCompleteStep = () => {
+    setActions(prevActions => [...prevActions, {
+      description: `Completed: ${steps[currentStep].title}`,
+      timestamp: new Date().toLocaleTimeString()
+    }]);
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      onComplete(actions, metrics);
+    }
+  };
+
+  const handleMetricUpdate = (metricType) => {
+    setMetrics(prevMetrics => ({
+      ...prevMetrics,
+      [metricType]: new Date().toLocaleTimeString()
+    }));
   };
 
   const goToPreviousStep = () => {
@@ -356,35 +359,48 @@ export default function TabletopGuide() {
   };
 
   return (
-    <div className="tabletop-guide" role="region" aria-label="Tabletop Exercise Guide">
-      <h2 id="step-title">{steps[currentStep].title}</h2>
-      <div className="step-content" aria-labelledby="step-title">
-        <p className="mb-4 font-semibold">{steps[currentStep].initialQuestion}</p>
+    <div className="tabletop-guide">
+      <h2 className="text-2xl font-bold mb-4">{steps[currentStep].title}</h2>
+      <div className="mb-4">
+        <p className="font-semibold">{steps[currentStep].initialQuestion}</p>
         {steps[currentStep].content}
-        <h4 className="mt-4 font-semibold">Recommendations:</h4>
+      </div>
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Recommendations:</h3>
         {steps[currentStep].recommendations}
-        <h4 className="mt-4 font-semibold">Discussion Prompts:</h4>
+      </div>
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
         {steps[currentStep].discussionPrompts}
       </div>
-      <div className="navigation-buttons mt-4 flex justify-between">
-        {currentStep > 0 && (
-          <button 
-            onClick={goToPreviousStep}
-            aria-label="Go to previous step"
-            className="btn-secondary"
-          >
-            Previous
-          </button>
-        )}
-        {currentStep < steps.length - 1 && (
-          <button 
-            onClick={() => handleCompleteStep()}
-            aria-label="Go to next step"
-            className="btn-primary"
-          >
-            Next
-          </button>
-        )}
+      <div className="flex justify-between">
+        <button 
+          onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+          className="bg-gray-500 text-white p-2 rounded"
+          disabled={currentStep === 0}
+        >
+          Previous
+        </button>
+        <button 
+          onClick={handleCompleteStep}
+          className="bg-blue-500 text-white p-2 rounded"
+        >
+          {currentStep === steps.length - 1 ? 'Complete Exercise' : 'Next Step'}
+        </button>
+      </div>
+      <div className="mt-4">
+        <button 
+          onClick={() => handleMetricUpdate('containmentStart')}
+          className="bg-green-500 text-white p-2 rounded mr-2"
+        >
+          Mark Containment Start
+        </button>
+        <button 
+          onClick={() => handleMetricUpdate('recoveryStart')}
+          className="bg-yellow-500 text-white p-2 rounded"
+        >
+          Mark Recovery Start
+        </button>
       </div>
     </div>
   );
