@@ -42,67 +42,34 @@ export default function Home() {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // Reset all exercise states
     setScenario(null);
-    setRoles({});
     setActions([]);
+    setRoles({});
     setMetrics(null);
-    setCurrentStep('login');
+    setInject(null);
   };
 
-  const handleScenarioGeneration = (generatedScenario) => {
-    setScenario(generatedScenario);
-    setInject(getRandomInject());
-    setCurrentStep('assignRoles');
+  const handleRegistration = (userData) => {
+    // After successful registration, automatically log the user in
+    handleLogin(userData);
   };
 
   const addAction = (action) => {
     setActions(prevActions => [...prevActions, action]);
   };
 
-  const handleRoleAssignment = (assignedRoles) => {
+  const assignRoles = (assignedRoles) => {
     setRoles(assignedRoles);
-    setCurrentStep('runExercise');
+  };
+
+  const handleScenarioGeneration = (scenarioData) => {
+    setScenario(scenarioData);
+    setInject(getRandomInject());
   };
 
   const updateMetrics = (newMetrics) => {
     setMetrics(newMetrics);
-  };
-
-  const renderCurrentStep = () => {
-    switch (currentStep) {
-      case 'login':
-        return isLogin ? (
-          <LoginForm onLogin={handleLogin} />
-        ) : (
-          <RegistrationForm onRegister={handleRegistration} />
-        );
-      case 'generateScenario':
-        return <ScenarioGenerator setScenario={handleScenarioGeneration} />;
-      case 'assignRoles':
-        return <RoleAssignment assignRoles={handleRoleAssignment} />;
-      case 'runExercise':
-        return (
-          <>
-            <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} />
-            <MetricsTracker scenario={scenario} addAction={addAction} updateMetrics={updateMetrics} />
-            {actions.length > 0 && (
-              <div className="mt-8">
-                <h2 className="text-2xl font-bold mb-4">Summary of Actions</h2>
-                <ul className="list-disc pl-6">
-                  {actions.map((action, index) => (
-                    <li key={index} className="mb-2">
-                      <strong>{action.timestamp}:</strong> {action.description} {action.actor && `(Actor: ${action.actor})`}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />
-          </>
-        );
-      default:
-        return null;
-    }
   };
   
   return (
