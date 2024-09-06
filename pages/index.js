@@ -104,7 +104,7 @@ export default function Home() {
         return null;
     }
   };
-  
+
   return (
     <div className="container mx-auto px-4">
       <Head>
@@ -116,68 +116,17 @@ export default function Home() {
     
       <main className="my-8">
         <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
-        {user ? (
-          <div>
-            {!scenario && <ScenarioGenerator setScenario={setScenario} />}
-            
-            {scenario && !Object.keys(roles).length && (
-              <RoleAssignment assignRoles={assignRoles} />
-            )}
-            
-            {scenario && Object.keys(roles).length > 0 && (
-              <>
-                <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} />
-                <MetricsTracker scenario={scenario} addAction={addAction} updateMetrics={updateMetrics} />
-              </>
-            )}
-            
-            {actions.length > 0 && (
-              <div className="mt-8">
-                <h2 className="text-2xl font-bold mb-4">Summary of Actions</h2>
-                <ul className="list-disc pl-6">
-                  {actions.map((action, index) => (
-                    <li key={index} className="mb-2">
-                      <strong>{action.timestamp}:</strong> {action.description} {action.actor && `(Actor: ${action.actor})`}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {scenario && actions.length > 0 && (
-              <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />
-            )}
-          </div>
-        ) : (
-          <div>
-            {isLogin ? (
-              <>
-                <LoginForm onLogin={handleLogin} />
-                <p className="mt-4">
-                  Don't have an account?{' '}
-                  <button
-                    onClick={() => setIsLogin(false)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Register here
-                  </button>
-                </p>
-              </>
-            ) : (
-              <>
-                <RegistrationForm onRegister={handleRegistration} />
-                <p className="mt-4">
-                  Already have an account?{' '}
-                  <button
-                    onClick={() => setIsLogin(true)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Login here
-                  </button>
-                </p>
-              </>
-            )}
-          </div>
+        {renderCurrentStep()}
+        {!user && (
+          <p className="mt-4">
+            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-blue-500 hover:text-blue-700"
+            >
+              {isLogin ? "Register here" : "Login here"}
+            </button>
+          </p>
         )}
         {user && user.isAdmin && <DataLoadTrigger />}
       </main>
