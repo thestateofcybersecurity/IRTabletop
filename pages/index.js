@@ -28,6 +28,14 @@ export default function Home() {
     }
   }, []);
 
+  const handleLogin = useCallback((data) => {
+    console.log('handleLogin called with:', data); // Debugging log
+    setUser(data.user);
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    setCurrentStep('generateScenario');
+  }, []);
+  
   const handleLogin = (userData) => {
     console.log('handleLogin called with:', userData); // Debugging log
     setUser(userData.user);
