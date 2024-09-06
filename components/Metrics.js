@@ -10,6 +10,14 @@ export default function MetricsTracker({ scenario, addAction }) {
     recoveryStartTime: null
   });
 
+  const updateMetricsAfterAction = (actionType) => {
+    if (actionType === 'containment') {
+      markContainmentStart();
+    } else if (actionType === 'recovery') {
+      markRecoveryStart();
+    }
+  };
+
   const markContainmentStart = () => {
     setMetrics({ ...metrics, containmentStartTime: new Date() });
     addAction({ description: 'Marked containment start time.', timestamp: new Date().toLocaleTimeString() });
