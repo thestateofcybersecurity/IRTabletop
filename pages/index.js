@@ -16,7 +16,6 @@ export default function Home() {
   const [scenario, setScenario] = useState(null);
   const [roles, setRoles] = useState({});
   const [actions, setActions] = useState([]);
-  const [metrics, setMetrics] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -41,7 +40,6 @@ export default function Home() {
     setScenario(null);
     setRoles({});
     setActions([]);
-    setMetrics(null);
     setCurrentStep('login');
   };
 
@@ -55,9 +53,8 @@ export default function Home() {
     setCurrentStep('runExercise');
   };
 
-  const handleExerciseComplete = (completedActions, completedMetrics) => {
+  const handleExerciseComplete = (completedActions) => {
     setActions(completedActions);
-    setMetrics(completedMetrics);
     setCurrentStep('generateReport');
   };
 
