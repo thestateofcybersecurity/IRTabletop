@@ -55,10 +55,12 @@ export default async function handler(req, res) {
     }
 
     const scenario = {
-      title: `${incidentSeverity} ${incidentType} Incident`,
-      description: `A ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} IR experience faces a ${incidentType} targeting their ${attackTarget}. ${complianceRequirements ? `Compliance with ${complianceRequirements} is required.` : ''} ${stakeholderInvolvement ? `Key stakeholders involved: ${stakeholderInvolvement}.` : ''}`,
-      businessImpact: "High",  // New field for business impact
-      attackVector: "Spearphishing",  // New field for attack vector
+      title: `${tactic.name} Tactic with ${technique.name} Technique and ${mitigation.name} Mitigation`,
+      description: `A ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} incident response (IR) experience faces a security incident where the attacker employed the ${tactic.name} tactic and leveraged the ${technique.name} technique. In response, the team must implement ${mitigation.name} as part of the remediation efforts. ${
+    complianceRequirements ? `Compliance with ${complianceRequirements} is required, adding further complexity.` : ''
+  } ${stakeholderInvolvement ? `Key stakeholders involved in this scenario: ${stakeholderInvolvement}.` : ''} The team must address the situation while minimizing business impact and ensuring recovery and continuity.`,
+      //businessImpact: "High",  // New field for business impact
+      //attackVector: "Spearphishing",  // New field for attack vector
       tactic,  // Randomized tactic
       technique,  // Randomized technique
       mitigation,  // Randomized mitigation
