@@ -85,7 +85,7 @@ export default function Home() {
           <div>Error: Scenario not generated. Please go back and generate a scenario first.</div>
         );
       case 'runExercise':
-        return scenario && Object.keys(roles).length > 0 ? (
+        return scenario ? (
           <>
             <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} />
             <MetricsTracker scenario={scenario} addAction={addAction} updateMetrics={updateMetrics} />
@@ -104,7 +104,7 @@ export default function Home() {
             {metrics && <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />}
           </>
         ) : (
-          <div>Error: Scenario or roles not properly set. Please go back and complete previous steps.</div>
+          <div>Error: Scenario not properly set. Please go back and generate a scenario first.</div>
         );
       default:
         return null;
