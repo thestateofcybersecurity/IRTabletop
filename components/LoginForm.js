@@ -24,13 +24,15 @@ export default function LoginForm() {
         throw new Error(data.error || 'Login failed');
       }
 
-      // Call the onLogin function passed from the parent component
+      console.log('Login successful, data:', data); // Debugging log
+
       if (typeof onLogin === 'function') {
         onLogin(data);
       } else {
-        console.error('onLogin is not a function');
+        console.error('onLogin is not a function', onLogin); // Debugging log
       }
     } catch (error) {
+      console.error('Login error:', error); // Debugging log
       setError(error.message || 'Invalid email or password');
     }
   };
