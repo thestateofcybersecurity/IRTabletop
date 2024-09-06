@@ -36,14 +36,6 @@ export default function Home() {
     setCurrentStep('generateScenario');
   }, []);
   
-  const handleLogin = (userData) => {
-    console.log('handleLogin called with:', userData); // Debugging log
-    setUser(userData.user);
-    localStorage.setItem('token', userData.token);
-    localStorage.setItem('user', JSON.stringify(userData.user));
-    setCurrentStep('generateScenario');
-  };
-
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('token');
