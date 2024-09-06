@@ -69,6 +69,26 @@ export default function RoleAssignment({ assignRoles, scenario }) {
     }
   }, [scenario]);
 
+  const handleAssignRole = (role, person) => {
+    setAssignedRoles({ ...assignedRoles, [role]: person });
+  };
+
+  const validateRoles = () => {
+    if (Object.keys(assignedRoles).length < availableRoles.length) {
+      setError('All roles must be assigned before proceeding.');
+      return false;
+    }
+    setError('');
+    return true;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateRoles()) {
+      assignRoles(assignedRoles);
+    }
+  };
+
   return (
     <div className="mb-8">
       <h2 className="text-xl font-bold mb-4">Assigned Roles Based on Scenario</h2>
