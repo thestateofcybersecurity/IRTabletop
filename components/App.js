@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ScenarioGenerator from './ScenarioGenerator';
 import TabletopGuide from './TabletopGuide';
 import MetricsTracker from './Metrics';
-import RoleAssignment from './Roles';
+import RoleAssignment from './RoleAssignment';
 import ReportingTemplate from './ReportingTemplate';
 import { getRandomInject } from './Injects';
 
