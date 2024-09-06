@@ -315,7 +315,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   };
 
   const goToPreviousStep = () => {
-    dispatch({ type: 'SET_CURRENT_STEP', payload: currentStep - 1 });
+    setCurrentStep(currentStep - 1);
   };
 
   if (!scenario) {
