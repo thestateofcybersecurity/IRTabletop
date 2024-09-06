@@ -55,15 +55,16 @@ export default async function handler(req, res) {
     }
 
     const scenario = {
-      title: `${tactic.name} Tactic with ${technique.name} Technique and ${mitigation.name} Mitigation`,
-      description: `A ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} incident response (IR) experience faces a security incident where the attacker employed the ${tactic.name} tactic and leveraged the ${technique.name} technique. In response, the team must implement ${mitigation.name} as part of the remediation efforts. ${
-    complianceRequirements ? `Compliance with ${complianceRequirements} is required, adding further complexity.` : ''
-  } ${stakeholderInvolvement ? `Key stakeholders involved in this scenario: ${stakeholderInvolvement}.` : ''} The team must address the situation while minimizing business impact and ensuring recovery and continuity.`,
+      title: `${group.name} Attack Using ${tactic.name} and ${technique.name}`,
+      description: `An adversary group known as ${group.name} (aliases: ${group.aliases.join(', ')}) has launched an attack against a ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} incident response experience. The group is known for targeting industries such as ${group.description}. In this scenario, the attackers have employed the ${tactic.name} tactic to achieve ${tactic.description}. The specific technique being used is ${technique.name}, which involves ${technique.description}. ${software.name} malware is being used in this attack. Mitigation efforts will require the organization to apply ${mitigation.name}, which involves ${mitigation.description}. The attack may impact key business operations and require urgent attention to contain and remediate.`,
       //businessImpact: "High",  // New field for business impact
       //attackVector: "Spearphishing",  // New field for attack vector
-      tactic,  // Randomized tactic
-      technique,  // Randomized technique
-      mitigation,  // Randomized mitigation
+      // MITRE-related data: Key elements for scenario realism
+      group,  // Attack group responsible
+      tactic,  // Tactic describing the attack phase
+      technique,  // Technique used to carry out the attack
+      software,  // Malware or tool involved in the attack
+      mitigation,  // Mitigation measure to counter the attack
       irExperience,
       securityMaturity,
       industrySector,
@@ -71,28 +72,32 @@ export default async function handler(req, res) {
       stakeholderInvolvement,
       steps: [
         {
-          title: 'Detection',
-          question: `How would your team detect this incident using your current tools and processes?`
+          title: 'Initial Access',
+          question: `How would your team detect an attacker gaining initial access through the ${technique.name} technique? What tools (e.g., SIEM, EDR) would help you detect this activity?`
         },
         {
-          title: 'Analysis',
-          question: `What steps would your team take to analyze the extent of the ${technique.name} technique used in this incident?`
+          title: 'Lateral Movement',
+          question: `What steps would your team take to detect and contain lateral movement within the network? How would you stop the adversary from accessing additional systems via ${tactic.name}?`
+        },
+        {
+          title: 'Persistence',
+          question: `What actions would your team take to prevent the adversary from establishing persistence? The technique employed is ${technique.name}.`
         },
         {
           title: 'Containment',
-          question: `How would your team contain the spread of this incident, considering the ${tactic.name} tactic employed?`
+          question: `Given the ${software.name} malware is active, what containment steps would your team take? How would you isolate the infected systems and prevent further spread of the attack?`
         },
         {
           title: 'Eradication',
-          question: `What steps would your team take to eradicate the threat, considering the ${mitigation.name} mitigation strategy?`
+          question: `What eradication methods would your team use to remove ${software.name} malware? How does the ${mitigation.name} mitigation strategy assist in fully removing the attack?`
         },
         {
           title: 'Recovery',
-          question: 'How would your team ensure that systems are securely restored and normal operations resumed?'
+          question: 'How would your team ensure that systems are securely restored and business operations can safely resume after the attack? What steps would be taken to verify no residual malware exists?'
         },
         {
           title: 'Lessons Learned',
-          question: 'What key lessons can be drawn from this incident to improve your organization\'s security posture?'
+          question: `What key lessons can your team draw from this incident? How can your organization improve its defenses against ${technique.name}?`
         }
       ]
     };
