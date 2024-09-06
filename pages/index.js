@@ -79,9 +79,13 @@ export default function Home() {
       case 'generateScenario':
         return <ScenarioGenerator setScenario={handleScenarioGeneration} />;
       case 'assignRoles':
-        return <RoleAssignment assignRoles={handleRoleAssignment} />;
+        return scenario ? (
+          <RoleAssignment assignRoles={handleRoleAssignment} scenario={scenario} />
+        ) : (
+          <div>Error: Scenario not generated. Please go back and generate a scenario first.</div>
+        );
       case 'runExercise':
-        return (
+        return scenario && Object.keys(roles).length > 0 ? (
           <>
             <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} />
             <MetricsTracker scenario={scenario} addAction={addAction} updateMetrics={updateMetrics} />
@@ -99,6 +103,8 @@ export default function Home() {
             )}
             <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />
           </>
+        ) : (
+          <div>Error: Scenario or roles not properly set. Please go back and complete previous steps.</div>
         );
       default:
         return null;
