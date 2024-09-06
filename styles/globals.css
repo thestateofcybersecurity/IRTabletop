@@ -56,28 +56,6 @@ a:hover {
   color: #004999;
 }
 
-/* --- Buttons --- */
-button, .btn {
-  display: inline-block;
-  font-size: 1rem;
-  padding: 0.75rem 1.5rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover, .btn:hover {
-  background-color: #0056b3;
-}
-
-button:focus, .btn:focus {
-  outline: 2px solid #0056b3;
-  outline-offset: 2px;
-}
-
 /* --- Responsive Grid Layout --- */
 .container {
   width: 100%;
@@ -199,25 +177,95 @@ img:hover {
   transition: all 0.3s ease;
 }
 
-/* --- Dark Mode (Optional) --- */
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
-  
-  .card, .navbar, .footer {
-    background-color: #1f1f1f;
-    color: white;
-  }
+/* General Layout */
+.tabletop-guide {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-  input, textarea {
-    background-color: #333;
-    color: white;
-  }
-  
-  button, a {
-    background-color: #007bff;
-  }
+/* Progress Indicator */
+.progress-indicator {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Step Content */
+.step-content {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #343a40;
+}
+
+.list-disc {
+  margin-left: 1.5rem;
+  font-size: 1rem;
+}
+
+/* Navigation Buttons */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.navigation-buttons button {
+  margin: 10px;
+}
+
+/* Dark Mode */
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #eaeaea;
+}
+
+body.dark-mode .step-content {
+  background-color: #333;
+  color: white;
+}
+
+body.dark-mode .btn-primary {
+  background-color: #007bff;
+}
+
+body.dark-mode .btn-secondary {
+  background-color: #6c757d;
 }
 
