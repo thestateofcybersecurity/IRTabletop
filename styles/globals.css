@@ -141,6 +141,10 @@ input:focus, select:focus, textarea:focus {
   outline: none;
 }
 
+form input, form select, form textarea {
+  margin-bottom: 1rem;
+}
+
 /* --- Navigation Bar --- */
 .navbar {
   background-color: #fff;
