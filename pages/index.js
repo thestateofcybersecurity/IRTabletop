@@ -7,6 +7,9 @@ import TabletopGuide from '../components/TabletopGuide';
 import LoginForm from '../components/LoginForm';
 import RegistrationForm from '../components/RegistrationForm';
 import DataLoadTrigger from '../components/DataLoadTrigger';
+import RoleAssignment from '../components/RoleAssignment';
+import ReportingTemplate from '../components/ReportingTemplate';
+import MetricsTracker from '../components/MetricsTracker';
 
 export default function Home() {
   const [scenario, setScenario] = useState(null);
@@ -15,6 +18,9 @@ export default function Home() {
   const [techniques, setTechniques] = useState([]);
   const [mitigations, setMitigations] = useState([]);
   const [isLogin, setIsLogin] = useState(true);
+  const [assignedRoles, setAssignedRoles] = useState({});
+  const [actions, setActions] = useState([]);
+  const [metrics, setMetrics] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -55,6 +61,18 @@ export default function Home() {
     // After successful registration, automatically log the user in
     handleLogin(userData);
   };
+
+  const handleRoleAssignment = (roles) => {
+    setAssignedRoles(roles);
+  };
+
+  const addAction = (action) => {
+    setActions([...actions, action]);
+  };
+
+  const updateMetrics = (newMetrics) => {
+    setMetrics(newMetrics);
+  };
   
   return (
     <div className="container mx-auto px-4">
@@ -62,10 +80,16 @@ export default function Home() {
       <Header user={user} onLogout={handleLogout} />
     
       <main className="my-8">
-        {user ? (
           <>
             <ScenarioGenerator setScenario={setScenario} />
-            {scenario && <TabletopGuide scenario={scenario} />}
+            {scenario && (
+              <>
+                <RoleAssignment assignRoles={handleRoleAssignment} />
+                <TabletopGuide scenario={scenario} addAction={addAction} />
+                <MetricsTracker scenario={scenario} addAction={addAction} updateMetrics={updateMetrics} />
+                <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />
+              </>
+            )}
           </>
         ) : (
           <div>
@@ -98,7 +122,6 @@ export default function Home() {
             )}
           </div>
         )}
-        {/* Only show DataLoadTrigger if user is logged in and has admin rights */}
         {user && user.isAdmin && <DataLoadTrigger />}
       </main>
 
