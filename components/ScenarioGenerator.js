@@ -191,5 +191,6 @@ export default function ScenarioGenerator({ onGenerate }) {
         {isLoading ? 'Generating...' : 'Generate Scenario'}
       </button>
     </form>
+  </div>
   );
 }
