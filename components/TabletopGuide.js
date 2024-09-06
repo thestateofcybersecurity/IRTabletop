@@ -14,19 +14,28 @@ export default function TabletopGuide({ scenario, addAction }) {
     return inject;
   };
   
+  // Effect to periodically generate injects
   useEffect(() => {
-    // Get a new random inject every 5 minutes
     const injectInterval = setInterval(() => {
-      const newInject = getRandomInject();
+      const newInject = generateUniqueInject();
       setCurrentInject(newInject);
       addAction({
         description: `New inject: ${newInject.description}`,
         timestamp: new Date().toLocaleTimeString()
       });
-    }, 5 * 60 * 1000);
+    }, 5 * 60 * 1000); // Generate new inject every 5 minutes
 
     return () => clearInterval(injectInterval);
   }, [addAction]);
+
+  // Define handleActionComplete to track when an action is completed
+  const handleActionComplete = (description, actor) => {
+    addAction({
+      description,
+      actor,
+      timestamp: new Date().toLocaleTimeString()
+    });
+  }; 
 
   if (!scenario) {
     return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
@@ -49,56 +58,12 @@ export default function TabletopGuide({ scenario, addAction }) {
         {renderSection('Tactic', scenario.tactic?.name)}
         {renderSection('Technique', scenario.technique?.name)}
         {renderSection('Mitigation', scenario.mitigation?.name)}
-        {renderSection('IR Experience Level', scenario.irExperience)}
-        {renderSection('Security Maturity', scenario.securityMaturity)}
-        {renderSection('Industry Sector', scenario.industrySector)}
-        {renderSection('Incident Type', scenario.incidentType)}
-        {renderSection('Incident Severity', scenario.incidentSeverity)}
-        {renderSection('Team Size', scenario.teamSize)}
 
       {currentInject && (
         <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
           <strong>Random Inject:</strong> {currentInject.description}
         </div>
       )}
-
-        <h4 className="text-lg font-semibold mb-2">Tactic:</h4>
-        <p className="mb-4">{scenario.tactic.name}</p>
-
-        <h4 className="text-lg font-semibold mb-2">Technique:</h4>
-        <p className="mb-4">{scenario.technique.name}</p>
-
-        <h4 className="text-lg font-semibold mb-2">Mitigation:</h4>
-        <p className="mb-4">{scenario.mitigation.name}</p>
-
-        <h4 className="text-lg font-semibold mb-2">Incident Response Experience Level:</h4>
-        <p className="mb-4">{scenario.irExperience}</p>
-
-        <h4 className="text-lg font-semibold mb-2">Security Maturity:</h4>
-        <p className="mb-4">{scenario.securityMaturity}</p>
-
-        <h4 className="text-lg font-semibold mb-2">Industry Sector:</h4>
-        <p className="mb-4">{scenario.industrySector}</p>
-
-        <h4 className="text-lg font-semibold mb-2">Incident Type:</h4>
-        <p className="mb-4">{scenario.incidentType}</p>
-
-        <h4 className="text-lg font-semibold mb-2">Attack Target:</h4>
-        <p className="mb-4">{scenario.attackTarget}</p>
-
-        {scenario.complianceRequirements && (
-          <>
-            <h4 className="text-lg font-semibold mb-2">Compliance Requirements:</h4>
-            <p className="mb-4">{scenario.complianceRequirements}</p>
-          </>
-        )}
-
-        {scenario.stakeholderInvolvement && (
-          <>
-            <h4 className="text-lg font-semibold mb-2">Stakeholder Involvement:</h4>
-            <p className="mb-4">{scenario.stakeholderInvolvement}</p>
-          </>
-        )}
 
         <h4 className="text-lg font-semibold mb-2">Tabletop Walkthrough Instructions:</h4>
         <ol className="mb-4 list-decimal pl-6">
