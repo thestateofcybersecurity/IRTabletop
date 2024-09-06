@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 
-export default function RegistrationForm({ onRegister }) {
+export default function RegistrationForm() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
@@ -17,60 +18,45 @@ export default function RegistrationForm({ onRegister }) {
         body: JSON.stringify({ username, email, password }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.token);
-        onRegister(data.user);
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'Registration failed');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
       }
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      router.push('/dashboard'); // Redirect to dashboard or home page
     } catch (error) {
-      console.error('Registration error:', error);
-      setError('An error occurred during registration');
+      setError(error.message || 'Error during registration');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Register</h2>
-      <div className="mb-4">
-        <label htmlFor="username" className="block mb-2">Username:</label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          className="w-full p-2 border rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="email" className="block mb-2">Email:</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full p-2 border rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="password" className="block mb-2">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full p-2 border rounded"
-        />
-      </div>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-        Register
-      </button>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Username"
+        required
+      />
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
+      />
+      {error && <p className="error">{error}</p>}
+      <button type="submit">Register</button>
     </form>
   );
 }
