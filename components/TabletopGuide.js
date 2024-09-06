@@ -308,16 +308,16 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      onComplete(actions, metrics, notes);
+      onComplete(actions, notes);
     }
   };
 
-  const handleMetricUpdate = (metricType) => {
-    setMetrics(prevMetrics => ({
-      ...prevMetrics,
-      [metricType]: new Date().toLocaleTimeString()
-    }));
-  };
+  //const handleMetricUpdate = (metricType) => {
+    //setMetrics(prevMetrics => ({
+     // ...prevMetrics,
+     // [metricType]: new Date().toLocaleTimeString()
+   // }));
+ // };
 
   const goToPreviousStep = () => {
     setCurrentStep(currentStep - 1);
