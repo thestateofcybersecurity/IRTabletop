@@ -29,9 +29,6 @@ export default function ScenarioGenerator({ setScenario }) {
         incidentType,
         incidentSeverity,
         teamSize: parseInt(teamSize),
-        tactic: { name: 'Sample Tactic' },  // Placeholder, replace with actual data if available
-        technique: { name: 'Sample Technique' },  // Placeholder, replace with actual data if available
-        mitigation: { name: 'Sample Mitigation' }  // Placeholder, replace with actual data if available
       };
 
       setScenario(generatedScenario);
