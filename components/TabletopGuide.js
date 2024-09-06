@@ -1,4 +1,23 @@
-export default function TabletopGuide({ scenario, roles, addAction, inject }) {
+import { useState, useEffect } from 'react';
+import { getRandomInject } from './Injects';
+
+export default function TabletopGuide({ scenario, addAction }) {
+  const [currentInject, setCurrentInject] = useState(null);
+
+  useEffect(() => {
+    // Get a new random inject every 5 minutes
+    const injectInterval = setInterval(() => {
+      const newInject = getRandomInject();
+      setCurrentInject(newInject);
+      addAction({
+        description: `New inject: ${newInject.description}`,
+        timestamp: new Date().toLocaleTimeString()
+      });
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(injectInterval);
+  }, [addAction]);
+
   if (!scenario) {
     return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
   }
