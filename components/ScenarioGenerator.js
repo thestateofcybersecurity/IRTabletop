@@ -43,7 +43,7 @@ export default function ScenarioGenerator({ onGenerate }) {
       onGenerate(generatedScenario);
     } catch (error) {
       console.error('Error generating scenario:', error);
-      setError('An error occurred while generating the scenario. Please try again.');
+      alert('An error occurred while generating the scenario. Please try again.');
     } finally {
       setIsLoading(false);
     }
