@@ -80,6 +80,7 @@ export default function Home() {
       <Header user={user} onLogout={handleLogout} />
     
       <main className="my-8">
+        {user ? (     
           <>
             <ScenarioGenerator setScenario={setScenario} />
             {scenario && (
