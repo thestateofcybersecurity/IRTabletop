@@ -39,46 +39,6 @@ export default function RoleAssignment({ scenario, onAssign }) {
     supplyChain: ["Incident Commander", "Security Analyst", "Threat Intelligence Analyst", "Legal Advisor", "Business Continuity Officer"]
   };
 
-  const assignAutomatedRoles = () => {
-    if (!scenario) {
-      console.error('Scenario details are missing. Please generate a scenario first.');
-      return;
-    }
-
-    const { incidentSeverity, incidentType, teamSize } = scenario;
-    
-    let rolesToAssign = roleCriteria[incidentSeverity] || roleCriteria.minor;
-    
-    // Further filter roles based on incident type
-    const typeRoles = roleByIncidentType[incidentType] || [];
-    rolesToAssign = rolesToAssign.filter(role => typeRoles.includes(role));
-
-    // Adjust roles based on available team size
-    const availableTeamSize = teamSize || 5; // Default to 5 if not specified
-    if (availableTeamSize < rolesToAssign.length) {
-      rolesToAssign = rolesToAssign.slice(0, availableTeamSize);
-    }
-
-    // Auto-assign roles to available team members
-    const assigned = rolesToAssign.reduce((acc, role, index) => {
-      acc[role] = `Team Member ${index + 1}`;
-      return acc;
-    }, {});
-
-    setAssignedRoles(assigned);
-    assignRoles(assigned);
-  };
-
-  useEffect(() => {
-    if (scenario) {
-      assignAutomatedRoles();
-    }
-  }, [scenario]);
-
-  const handleAssignRole = (role, person) => {
-    setAssignedRoles({ ...assignedRoles, [role]: person });
-  };
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Assign Roles</h2>
