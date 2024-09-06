@@ -221,7 +221,6 @@ export default function TabletopGuide({ scenario, addAction }) {
           </button>
         )}
       </div>
-    </div>
           
     <div>
       {/* Example usage of roles */}
