@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { RefreshCw } from 'lucide-react';
 
-export default function ScenarioGenerator({ setScenario }) {
+export default function ScenarioGenerator({ onGenerate }) {
   const [formData, setFormData] = useState({
     irExperience: '',
     securityMaturity: '',
@@ -30,7 +29,7 @@ export default function ScenarioGenerator({ setScenario }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming token is stored in localStorage
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(formData),
       });
@@ -40,7 +39,7 @@ export default function ScenarioGenerator({ setScenario }) {
       }
 
       const generatedScenario = await response.json();
-      setScenario(generatedScenario);
+      onGenerate(generatedScenario);
     } catch (error) {
       console.error('Error generating scenario:', error);
       setError('An error occurred while generating the scenario. Please try again.');
@@ -182,21 +181,15 @@ export default function ScenarioGenerator({ setScenario }) {
           />
         </div>
 
-        {error && <p className="text-red-500">{error}</p>}
-        
-        <button 
-          type="submit" 
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300 flex items-center justify-center w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <>
-              <RefreshCw className="animate-spin mr-2" size={20} />
-              Generating...
-            </>
-          ) : 'Generate Scenario'}
-        </button>
-      </form>
-    </div>
+      {error && <p className="text-red-500">{error}</p>}
+      
+      <button 
+        type="submit" 
+        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
+        disabled={isLoading}
+      >
+        {isLoading ? 'Generating...' : 'Generate Scenario'}
+      </button>
+    </form>
   );
 }
