@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../contexts/AppContext';
-import api from '../utils/api';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { dispatch } = useAppContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
