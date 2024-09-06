@@ -1,74 +1,69 @@
 import React from 'react';
 import { jsPDF } from 'jspdf';
 
-export default function ReportGenerator({ scenario, roles, actions, notes, exerciseDetails }) {
+export default function ReportGenerator({ scenario, roles, actions, notes }) {
   const generateReport = () => {
     const doc = new jsPDF();
+    let yPos = 10;
 
-    // Add title
-    doc.setFontSize(20);
-    doc.text('Incident Response Tabletop Exercise Report', 10, 20);
+    const addText = (text, fontSize = 12, isBold = false) => {
+      doc.setFontSize(fontSize);
+      if (isBold) doc.setFont(undefined, 'bold');
+      else doc.setFont(undefined, 'normal');
+      
+      const splitText = doc.splitTextToSize(text, 180);
+      doc.text(splitText, 15, yPos);
+      yPos += (splitText.length * fontSize * 0.35) + 5;
+      
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+    };
 
-    // Add Introduction
-    doc.setFontSize(16);
-    doc.text('Introduction', 10, 40);
-    doc.setFontSize(12);
-    doc.text(`In an effort to validate ${exerciseDetails.companyName}'s Incident Response Plan, a tabletop exercise was conducted. The exercise focused on validating the organization’s ability to respond and recover from security incidents.`, 10, 50);
-
-    // Add Scenario Details
-    doc.setFontSize(16);
-    doc.text('Scenario Details', 10, 70);
-    doc.setFontSize(12);
-    doc.text(`Title: ${scenario.title}`, 10, 80);
-    doc.text(`Description: ${scenario.description}`, 10, 90);
+    // Title
+    addText('Incident Response Tabletop Exercise Report', 20, true);
     
-    // Include dynamic questions from the scenario
-    doc.text('Key Questions:', 10, 100);
-    scenario.questions.forEach((question, index) => {
-      doc.text(`${index + 1}. ${question}`, 10, 110 + (index * 10));
+    // Scenario Summary
+    addText('Scenario Summary', 16, true);
+    addText(`Title: ${scenario.title}`);
+    addText(`Description: ${scenario.description}`);
+    
+    // Assigned Roles
+    addText('Assigned Roles', 16, true);
+    roles.forEach(role => {
+      addText(`${role.title}: ${role.assignee}`);
     });
-
-    // Add roles
-    doc.setFontSize(16);
-    doc.text('Assigned Roles', 10, 140);
-    doc.setFontSize(12);
-    roles.forEach((role, index) => {
-      doc.text(`${role.title}: ${role.assignee}`, 10, 150 + (index * 10));
-    });
-
-    // Add user notes for each step
-    doc.setFontSize(16);
-    doc.text('User Notes', 10, 180);
-    doc.setFontSize(12);
-    if (notes && Object.keys(notes).length > 0) {
-      Object.keys(notes).forEach((step, index) => {
-        doc.text(`${step}: ${notes[step]}`, 10, 190 + (index * 10));
+    
+    // Scenario Steps
+    addText('Scenario Steps', 16, true);
+    scenario.steps.forEach((step, index) => {
+      addText(`Step ${index + 1}: ${step.title}`, 14, true);
+      addText(`Initial Question: ${step.initialQuestion}`);
+      
+      addText('Content:', 12, true);
+      addText(step.content);
+      
+      addText('Recommendations:', 12, true);
+      step.recommendations.forEach((rec, recIndex) => {
+        addText(`${recIndex + 1}. ${rec}`);
       });
-    } else {
-      doc.text('No notes were recorded.', 10, 190);
-    }
-
-    // Add action timeline
-    doc.setFontSize(16);
-    doc.text('Action Timeline', 10, 230);
-    doc.setFontSize(12);
-    actions.forEach((action, index) => {
-      doc.text(`${action.timestamp}: ${action.description}`, 10, 240 + (index * 10));
+      
+      addText('Discussion Prompts:', 12, true);
+      step.discussionPrompts.forEach((prompt, promptIndex) => {
+        addText(`${promptIndex + 1}. ${prompt}`);
+      });
+      
+      if (notes && notes[`step${index + 1}`]) {
+        addText('User Notes:', 12, true);
+        addText(notes[`step${index + 1}`]);
+      }
     });
-
-    // Add debrief questions from the document
-    doc.addPage();
-    doc.setFontSize(16);
-    doc.text('Debrief/Hotwash Questions', 10, 20);
-    const debriefQuestions = [
-      "Are there any other issues you would like to discuss that were not raised?",
-      "What are the strengths of the contingency plan? What areas require closer examination?",
-      "Was the exercise beneficial? Did it help prepare you for follow-up testing?",
-      "What did you gain from the exercise?",
-      "How can we improve future exercises and tests?"
-    ];
-    debriefQuestions.forEach((question, index) => {
-      doc.text(`${index + 1}. ${question}`, 10, 30 + (index * 10));
+    
+    // Action Timeline
+    addText('Action Timeline', 16, true);
+    actions.forEach(action => {
+      addText(`${action.timestamp}: ${action.description}`);
     });
 
     // Save the PDF
@@ -78,6 +73,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes, exerc
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Exercise Report</h2>
+      
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Scenario Summary</h3>
         <p><strong>Title:</strong> {scenario.title}</p>
@@ -94,16 +90,39 @@ export default function ReportGenerator({ scenario, roles, actions, notes, exerc
       </div>
 
       <div className="mb-4">
-        <h3 className="text-xl font-semibold">User Notes</h3>
-        {notes && Object.keys(notes).length > 0 ? (
-          <ul>
-            {Object.keys(notes).map((step, index) => (
-              <li key={index}><strong>{step}:</strong> {notes[step]}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No notes were recorded.</p>
-        )}
+        <h3 className="text-xl font-semibold">Scenario Steps</h3>
+        {scenario.steps.map((step, index) => (
+          <div key={index} className="mb-4">
+            <h4 className="text-lg font-semibold">{step.title}</h4>
+            <p><strong>Initial Question:</strong> {step.initialQuestion}</p>
+            <div>
+              <strong>Content:</strong>
+              <p>{step.content}</p>
+            </div>
+            <div>
+              <strong>Recommendations:</strong>
+              <ul>
+                {step.recommendations.map((rec, recIndex) => (
+                  <li key={recIndex}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <strong>Discussion Prompts:</strong>
+              <ul>
+                {step.discussionPrompts.map((prompt, promptIndex) => (
+                  <li key={promptIndex}>{prompt}</li>
+                ))}
+              </ul>
+            </div>
+            {notes && notes[`step${index + 1}`] && (
+              <div>
+                <strong>User Notes:</strong>
+                <p>{notes[`step${index + 1}`]}</p>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       <div className="mb-4">
