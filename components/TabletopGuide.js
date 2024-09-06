@@ -168,35 +168,246 @@ export default function TabletopGuide({ scenario, roles, addAction, inject }) {
           </li>
         </ol>
 
-        <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
-        <ul className="mb-4 list-disc pl-6">
-          <li className="mb-2">What were the initial indicators of compromise?</li>
-          <li className="mb-2">How did the team determine the severity of the incident?</li>
-          <li className="mb-2">Were the containment measures effective in preventing further spread?</li>
-          <li className="mb-2">What challenges did the team face during forensics?</li>
-          <li className="mb-2">How well did communication flow during the incident? Were any stakeholders left out?</li>
-          <li className="mb-2">Did the team follow established processes, or were any processes missed?</li>
-          <li className="mb-2">Was evidence collected properly and preserved for legal and forensic review?</li>
-          <li className="mb-2">How quickly were systems recovered, and was the recovery process smooth?</li>
-          <li className="mb-2">What improvements can be made to the incident response process for future incidents?</li>
-          <li className="mb-2">Was there sufficient clarity around decision-making during the incident? Was there confusion about roles?</li>
-          <li className="mb-2">What additional tools or training might be needed to improve response times?</li>
-          <li className="mb-2">What lessons can we learn about prioritizing critical systems during a containment?</li>
-          <li className="mb-2">How did regulatory or compliance requirements impact the response?</li>
-          <li className="mb-2">Was the post-incident review conducted in a blameless and constructive manner?</li>
-          <li className="mb-2">How would this incident affect our external reputation (public relations)?</li>
-        </ul>
+<h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+<ul className="mb-4 list-disc pl-6">
+  <li className="mb-2">What were the initial indicators of compromise (IoCs)? 
+    <ul class="list-disc pl-6">
+      <li>Which systems or logs first showed signs of abnormal behavior?</li>
+      <li>Were there any patterns in the IoCs (e.g., malware signatures, unusual network traffic)?</li>
+      <li>Were any user-reported incidents part of the initial detection?</li>
+      <li>What tools or technologies identified these IoCs (e.g., SIEM, EDR)?</li>
+    </ul>
+  </li>
+  
+  <li className="mb-2">How did the team determine the severity of the incident? 
+    <ul class="list-disc pl-6">
+      <li>Was there a formal process for determining incident severity?</li>
+      <li>Were factors such as data exposure, system impact, and critical assets considered?</li>
+      <li>How was the potential business impact factored into the severity assessment?</li>
+      <li>Was the severity classification adjusted as more information became available?</li>
+    </ul>
+  </li>
+  
+  <li className="mb-2">Were the containment measures effective in preventing further spread? 
+    <ul class="list-disc pl-6">
+      <li>Which specific measures were implemented (e.g., network isolation, user lockout)?</li>
+      <li>Was there any sign of lateral movement after containment actions were taken?</li>
+      <li>Were any additional vulnerabilities discovered during containment?</li>
+      <li>Did any communication issues delay or complicate containment?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">What challenges did the team face during forensics? 
+    <ul class="list-disc pl-6">
+      <li>Were any critical data sources (logs, system snapshots) missing or corrupted?</li>
+      <li>Were there any difficulties in acquiring or preserving evidence?</li>
+      <li>Did the team encounter technical challenges with forensic tools?</li>
+      <li>Was there enough documentation and tracking of forensic processes?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">How well did communication flow during the incident? Were any stakeholders left out? 
+    <ul class="list-disc pl-6">
+      <li>Was there a clear chain of communication established at the onset of the incident?</li>
+      <li>How effectively were external stakeholders, such as customers and vendors, informed?</li>
+      <li>Were there any issues with keeping upper management or board members updated?</li>
+      <li>Were any key stakeholders unaware of the incident until later stages?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Did the team follow established processes, or were any processes missed? 
+    <ul class="list-disc pl-6">
+      <li>Was the incident response playbook followed, and if not, why?</li>
+      <li>Were there any deviations from the response protocols?</li>
+      <li>Did the team overlook any critical steps (e.g., stakeholder notification, legal reviews)?</li>
+      <li>Was the reason for any missed process due to unclear roles or lack of training?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Was evidence collected properly and preserved for legal and forensic review? 
+    <ul class="list-disc pl-6">
+      <li>Were there appropriate chain-of-custody procedures in place for collected evidence?</li>
+      <li>Was evidence collected in a way that would be admissible in a legal case?</li>
+      <li>Were forensic images taken of compromised systems to avoid data tampering?</li>
+      <li>Was there an audit trail maintained for all forensic activities?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">How quickly were systems recovered, and was the recovery process smooth? 
+    <ul class="list-disc pl-6">
+      <li>Were there any delays in restoring systems due to untested backups or other issues?</li>
+      <li>Were recovery efforts prioritized based on business impact (e.g., restoring critical systems first)?</li>
+      <li>Was there proper testing of systems post-recovery to ensure they were secure?</li>
+      <li>How was user access and business operations affected during recovery?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">What improvements can be made to the incident response process for future incidents? 
+    <ul class="list-disc pl-6">
+      <li>Were there any identified gaps in tools, processes, or people that delayed response?</li>
+      <li>Did any particular steps or procedures slow down containment or recovery?</li>
+      <li>Were all team members adequately trained for their roles in the incident response?</li>
+      <li>Were there any tools or processes that were insufficient or outdated?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Was there sufficient clarity around decision-making during the incident? Was there confusion about roles? 
+    <ul class="list-disc pl-6">
+      <li>Were decisions centralized around the Incident Commander or decentralized?</li>
+      <li>Was there any confusion about who had the authority to make decisions at key moments?</li>
+      <li>Did team members understand their roles and responsibilities?</li>
+      <li>Were any decisions delayed because of unclear communication or leadership gaps?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">What additional tools or training might be needed to improve response times? 
+    <ul class="list-disc pl-6">
+      <li>Were there any tools that were insufficient for detection or response?</li>
+      <li>Would additional training for forensic tools or malware analysis have sped up the response?</li>
+      <li>Did the team lack visibility into certain parts of the network or infrastructure?</li>
+      <li>Were there any collaboration tools or systems that could have improved communication?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">What lessons can we learn about prioritizing critical systems during a containment? 
+    <ul class="list-disc pl-6">
+      <li>Were critical systems prioritized correctly for protection and containment?</li>
+      <li>Did the business experience any significant downtime due to incorrect prioritization?</li>
+      <li>What additional measures could have been taken to protect mission-critical assets?</li>
+      <li>Were there any surprises in the dependencies between systems?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">How did regulatory or compliance requirements impact the response? 
+    <ul class="list-disc pl-6">
+      <li>Were there legal or regulatory deadlines that influenced the speed of response?</li>
+      <li>Was there sufficient documentation to meet compliance requirements (e.g., GDPR, HIPAA)?</li>
+      <li>Did the legal team provide adequate guidance on disclosure obligations?</li>
+      <li>Were third-party vendors or clients informed in compliance with regulations?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Was the post-incident review conducted in a blameless and constructive manner? 
+    <ul class="list-disc pl-6">
+      <li>Did the review focus on process improvement instead of assigning blame?</li>
+      <li>Were all team members given the opportunity to provide feedback?</li>
+      <li>Were lessons learned documented for future improvement?</li>
+      <li>Was the review used as an opportunity to train the team and close process gaps?</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">How would this incident affect our external reputation (public relations)? 
+    <ul class="list-disc pl-6">
+      <li>Was there any media coverage or social media exposure of the incident?</li>
+      <li>Did the PR team have a strategy in place for responding to public concerns?</li>
+      <li>Was there any customer fallout from the incident (e.g., loss of trust, churn)?</li>
+      <li>Were stakeholders reassured about the steps taken to contain and recover from the incident?</li>
+    </ul>
+  </li>
+</ul>
 
         <h4 className="text-lg font-semibold mb-2">Next Steps and Recommendations:</h4>
         <ul className="mb-4 list-disc pl-6">
-          <li className="mb-2">Enhance monitoring and detection tools to reduce detection time.</li>
-          <li className="mb-2">Conduct additional training on forensics tools and evidence collection.</li>
-          <li className="mb-2">Update incident response policies to reflect lessons learned during the exercise.</li>
-          <li className="mb-2">Evaluate the effectiveness of communication between different teams and stakeholders.</li>
-          <li className="mb-2">Ensure clear ownership and responsibility for decision-making in incident response teams.</li>
-          <li className="mb-2">Review and update system recovery processes to ensure minimal downtime.</li>
-          <li className="mb-2">Strengthen the organization’s compliance and regulatory response to security incidents.</li>
-        </ul>
+ <li className="mb-2">Enhance monitoring and detection tools to reduce detection time.
+    <ul class="list-disc pl-6">
+      <li>Implement better SIEM rules to catch earlier indicators of compromise.</li>
+      <li>Increase network visibility by deploying IDS/IPS or anomaly detection systems.</li>
+      <li>Regularly update threat intelligence feeds to ensure new threats are detected quickly.</li>
+      <li>Deploy endpoint detection and response (EDR) across critical systems to capture suspicious activities.</li>
+      <li>Use automated alerting and correlation tools to minimize detection delays.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Conduct additional training on forensics tools and evidence collection.
+    <ul class="list-disc pl-6">
+      <li>Schedule regular hands-on training sessions for forensic tools (e.g., FTK, EnCase, open-source tools).</li>
+      <li>Provide training on the legal and regulatory aspects of forensic evidence preservation.</li>
+      <li>Simulate forensic analysis during tabletop exercises to enhance team proficiency.</li>
+      <li>Ensure all team members know how to maintain chain of custody for evidence.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Update incident response policies to reflect lessons learned during the exercise.
+    <ul class="list-disc pl-6">
+      <li>Revise the incident classification and escalation policies to streamline decision-making.</li>
+      <li>Incorporate new procedures for containment and recovery into the response playbook.</li>
+      <li>Document best practices discovered during the exercise and share them with the team.</li>
+      <li>Ensure that the post-incident review process is formalized and part of every incident response.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Evaluate the effectiveness of communication between different teams and stakeholders.
+    <ul class="list-disc pl-6">
+      <li>Perform a communication audit to identify delays or miscommunication points during the incident.</li>
+      <li>Review how internal and external communications were handled and identify gaps.</li>
+      <li>Test and improve communication protocols between the SOC, legal, and executive teams.</li>
+      <li>Ensure that crisis communication templates and contact lists are always up to date.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Ensure clear ownership and responsibility for decision-making in incident response teams.
+    <ul class="list-disc pl-6">
+      <li>Clearly define the role of Incident Commander and assign authority for critical decisions.</li>
+      <li>Ensure that each role (forensics, containment, communications) has an assigned lead with decision-making power.</li>
+      <li>Use role-based incident response templates to clarify tasks and responsibilities for all team members.</li>
+      <li>Evaluate decision logs to see if there were delays or disputes in responsibilities during the incident.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Review and update system recovery processes to ensure minimal downtime.
+    <ul class="list-disc pl-6">
+      <li>Test recovery procedures in a controlled environment to identify potential issues.</li>
+      <li>Ensure that backups are regularly tested for integrity and ease of use in real incidents.</li>
+      <li>Prioritize critical systems for faster recovery and ensure that failover mechanisms are well-documented.</li>
+      <li>Enhance automation in recovery workflows to minimize human intervention during an incident.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Strengthen the organization’s compliance and regulatory response to security incidents.
+    <ul class="list-disc pl-6">
+      <li>Review regulatory requirements (e.g., GDPR, CCPA, HIPAA) to ensure that response timelines are met.</li>
+      <li>Conduct mock compliance audits to ensure that all evidence and documentation are properly maintained.</li>
+      <li>Ensure that all legal and compliance team members are trained on incident disclosure requirements.</li>
+      <li>Develop clear policies on when and how to involve law enforcement and regulatory bodies during incidents.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Implement automated incident response tools to accelerate detection, containment, and recovery.
+    <ul class="list-disc pl-6">
+      <li>Use SOAR (Security Orchestration, Automation, and Response) platforms to automate repetitive tasks.</li>
+      <li>Automate the collection and analysis of logs, alerts, and forensic data to improve response time.</li>
+      <li>Leverage machine learning for anomaly detection and predictive threat analysis.</li>
+      <li>Set up automated containment workflows that isolate compromised systems immediately.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Improve collaboration and coordination with third-party vendors and external security partners.
+    <ul class="list-disc pl-6">
+      <li>Ensure third-party security vendors are integrated into your incident response plans.</li>
+      <li>Conduct joint incident response simulations with key external partners (e.g., cloud service providers).</li>
+      <li>Review contracts and service level agreements (SLAs) to ensure they reflect your current security posture.</li>
+      <li>Verify that external parties can quickly be notified and assist in an emergency, including during off-hours.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Strengthen disaster recovery and business continuity plans (BCP) to minimize business disruption.
+    <ul class="list-disc pl-6">
+      <li>Test business continuity and disaster recovery plans under various attack scenarios (e.g., ransomware, DDoS).</li>
+      <li>Ensure that business-critical processes have redundancies and failover mechanisms.</li>
+      <li>Update BCP to account for new risks identified during the tabletop exercise.</li>
+      <li>Integrate response and recovery plans with external partners who are critical to business operations.</li>
+    </ul>
+  </li>
+
+  <li className="mb-2">Regularly conduct incident response tabletop exercises to reinforce team readiness.
+    <ul class="list-disc pl-6">
+      <li>Run tabletop exercises at least quarterly, focusing on various types of attacks (e.g., insider threats, phishing, supply chain attacks).</li>
+      <li>Rotate roles within the team to give each member experience in different parts of the response process.</li>
+      <li>Conduct post-exercise debriefs to discuss gaps and action items to be addressed before the next incident.</li>
+      <li>Ensure that lessons learned from each exercise are used to continuously update response playbooks and training plans.</li>
+    </ul>
+  </li>
+</ul>
       </div>
     </div>
   );
