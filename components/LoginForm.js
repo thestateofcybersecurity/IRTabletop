@@ -59,8 +59,11 @@ export default function LoginForm({ onLogin }) {
         />
       </div>
       {error && <p className="text-red-500 mb-4">{error}</p>}
-      <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-        Log In
+      <button 
+        type="submit" 
+        className={`w-full btn ${isLoading ? 'opacity-50' : ''}`}
+        disabled={isLoading}
+      >
         {isLoading ? 'Logging in...' : 'Log In'}
       </button>
     </form>
