@@ -87,7 +87,7 @@ export default function Home() {
             scenario={scenario}
             roles={roles}
             actions={actions}
-            metrics={metrics}
+            notes={notes}
           />
         );
       default:
