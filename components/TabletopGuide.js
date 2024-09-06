@@ -4,6 +4,52 @@ import { getRandomInject } from './Injects';
 export default function TabletopGuide({ scenario, addAction }) {
   const [currentInject, setCurrentInject] = useState(null);
   const previousInjects = useRef([]); // Track previously generated injects
+    const steps = [
+    {
+      title: 'Step 1: Detection',
+      content: (
+        <div>
+          <ul className="list-disc pl-6">
+            <li>What monitoring systems provided the first alert? (e.g., SIEM, EDR, IDS/IPS)</li>
+            <li>Was the detection internal or external (e.g., customer or partner reported the issue)?</li>
+            <li>How long after the compromise was the attack detected?</li>
+            <li>What indicators of compromise (IoCs) were observed?</li>
+            <li>Could earlier detection have prevented the breach?</li>
+          </ul>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Security Analyst'])}>Mark as Completed</button>
+        </div>
+      )
+    },
+    {
+      title: 'Step 2: Initial Evaluation',
+      content: (
+        <div>
+          <ul className="list-disc pl-6">
+            <li>Who was notified first (e.g., Incident Commander, SOC Team)?</li>
+            <li>What criteria were used to classify the incident (critical, major, minor)?</li>
+            <li>Was there any immediate triage or analysis done before escalation?</li>
+            <li>What priority level was assigned to the incident?</li>
+          </ul>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Incident Commander'])}>Mark as Completed</button>
+        </div>
+      )
+    },
+    // Add more steps in the same way
+  ];
+
+  const handleCompleteStep = (role) => {
+    addAction({
+      description: `Completed: ${steps[currentStep].title}`,
+      actor: role,
+      timestamp: new Date().toLocaleTimeString(),
+    });
+    setCurrentStep((prevStep) => (prevStep + 1 < steps.length ? prevStep + 1 : prevStep)); // Move to the next step
+  };
+
+  const goToPreviousStep = () => {
+    setCurrentStep((prevStep) => (prevStep - 1 >= 0 ? prevStep - 1 : prevStep));
+  };
+
 
   const generateUniqueInject = () => {
     let inject;
@@ -54,6 +100,25 @@ export default function TabletopGuide({ scenario, addAction }) {
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <h3 className="text-xl font-semibold mb-2">Scenario: {scenario.title}</h3>
         <p className="mb-4">{scenario.description}</p>
+
+      <div className="tabletop-guide mt-8">
+      {/* Progress Indicator */}
+      <div className="progress-indicator">
+        <span>Step {currentStep + 1} of {steps.length}</span>
+      </div>
+
+      {/* Step Content */}
+      <div className="step-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h3 className="text-xl font-semibold mb-4">{steps[currentStep].title}</h3>
+        {steps[currentStep].content}
+      </div>
+
+      {/* Navigation Buttons */}
+      <div className="navigation-buttons mt-4 flex justify-between">
+        {currentStep > 0 && <button className="btn-secondary" onClick={goToPreviousStep}>Previous</button>}
+        {currentStep < steps.length - 1 && <button className="btn-secondary" onClick={() => handleCompleteStep()}>Next</button>}
+      </div>
+    </div>
 
     <div>
       {/* Example usage of roles */}
