@@ -9,7 +9,7 @@ import RegistrationForm from '../components/RegistrationForm';
 import DataLoadTrigger from '../components/DataLoadTrigger';
 import RoleAssignment from '../components/RoleAssignment';
 import ReportingTemplate from '../components/ReportingTemplate';
-import MetricsTracker from '../components/MetricsTracker';
+import MetricsTracker from '../components/Metrics';
 
 export default function Home() {
   const [scenario, setScenario] = useState(null);
