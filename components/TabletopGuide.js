@@ -395,20 +395,6 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
           {currentStep === steps.length - 1 ? 'Complete Exercise' : 'Next Step'}
         </button>
       </div>
-      <div className="mt-4">
-        <button 
-          onClick={() => handleMetricUpdate('containmentStart')}
-          className="bg-green-500 text-white p-2 rounded mr-2"
-        >
-          Mark Containment Start
-        </button>
-        <button 
-          onClick={() => handleMetricUpdate('recoveryStart')}
-          className="bg-yellow-500 text-white p-2 rounded"
-        >
-          Mark Recovery Start
-        </button>
-      </div>
     </div>
   );
 }
