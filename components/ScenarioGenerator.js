@@ -13,7 +13,7 @@ export default function ScenarioGenerator({ onGenerate }) {
     stakeholderInvolvement: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState('');  // Added error state
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
