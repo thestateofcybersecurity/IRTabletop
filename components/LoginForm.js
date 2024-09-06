@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 
-export default function LoginForm() {
+export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  console.log('LoginForm rendered, onLogin type:', typeof onLogin); // Debugging log
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +29,7 @@ export default function LoginForm() {
         onLogin(data);
       } else {
         console.error('onLogin is not a function', onLogin); // Debugging log
+        throw new Error('onLogin is not a function');
       }
     } catch (error) {
       console.error('Login error:', error); // Debugging log
