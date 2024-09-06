@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext';
 import api from '../utils/api';
-import React, { useState } from 'react';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
