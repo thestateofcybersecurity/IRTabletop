@@ -3,8 +3,9 @@ import { getRandomInject } from './Injects';
 
 export default function TabletopGuide({ scenario, addAction }) {
   const [currentInject, setCurrentInject] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0); // Initialize currentStep state
   const previousInjects = useRef([]); // Track previously generated injects
-    const steps = [
+  const steps = [
     {
       title: 'Step 1: Detection',
       content: (
@@ -16,9 +17,11 @@ export default function TabletopGuide({ scenario, addAction }) {
             <li>What indicators of compromise (IoCs) were observed?</li>
             <li>Could earlier detection have prevented the breach?</li>
           </ul>
-          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Security Analyst'])}>Mark as Completed</button>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Security Analyst'])}>
+            Mark as Completed
+          </button>
         </div>
-      )
+      ),
     },
     {
       title: 'Step 2: Initial Evaluation',
@@ -30,11 +33,114 @@ export default function TabletopGuide({ scenario, addAction }) {
             <li>Was there any immediate triage or analysis done before escalation?</li>
             <li>What priority level was assigned to the incident?</li>
           </ul>
-          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Incident Commander'])}>Mark as Completed</button>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Incident Commander'])}>
+            Mark as Completed
+          </button>
         </div>
-      )
+      ),
     },
-    // Add more steps in the same way
+    {
+      title: 'Step 3: Containment',
+      content: (
+        <div>
+          <ul className="list-disc pl-6">
+            <li>Which systems were isolated to prevent the spread of the attack?</li>
+            <li>What communication channels were used to coordinate containment?</li>
+            <li>Were backup or redundant systems engaged?</li>
+            <li>Was there a decision to monitor the attacker further before containment, and why?</li>
+            <li>Was the containment fully successful, or were there breaches after the containment was applied?</li>
+          </ul>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Network Engineer'])}>
+            Mark as Completed
+          </button>
+        </div>
+      ),
+    },
+    {
+      title: 'Step 4: Forensics and Evidence Gathering',
+      content: (
+        <div>
+          <ul className="list-disc pl-6">
+            <li>What data and logs were collected for forensic analysis?</li>
+            <li>Were memory snapshots, disk images, or log files collected?</li>
+            <li>What forensic tools were used (e.g., FTK, EnCase, open-source tools)?</li>
+            <li>Was evidence collected in a forensically sound manner to preserve integrity (chain of custody)?</li>
+            <li>What artifacts were prioritized for collection (network traffic, file changes, etc.)?</li>
+          </ul>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Forensic Investigator'])}>
+            Mark as Completed
+          </button>
+        </div>
+      ),
+    },
+    {
+      title: 'Step 5: Notification and Stakeholder Involvement',
+      content: (
+        <div>
+          <ul className="list-disc pl-6">
+            <li>Who was notified about the incident, and when?</li>
+            <li>Which internal and external stakeholders were notified (e.g., Legal, PR, C-Suite)?</li>
+            <li>Were customers or partners impacted, and were they notified?</li>
+            <li>Was there a regulatory requirement to disclose the breach (GDPR, HIPAA, etc.)?</li>
+            <li>Were law enforcement agencies involved in the response?</li>
+          </ul>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Legal Advisor'])}>
+            Mark as Completed
+          </button>
+        </div>
+      ),
+    },
+    {
+      title: 'Step 6: Mitigation and Eradication',
+      content: (
+        <div>
+          <ul className="list-disc pl-6">
+            <li>What mitigation steps were taken (e.g., patching, reconfiguration, removing malware)?</li>
+            <li>Was a fix tested in a non-production environment before deployment?</li>
+            <li>Were any bypasses attempted or successful against the mitigation?</li>
+            <li>How was the success of the mitigation verified?</li>
+            <li>Was there any residual risk after mitigation, and how was it addressed?</li>
+          </ul>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Mitigation Lead'])}>
+            Mark as Completed
+          </button>
+        </div>
+      ),
+    },
+    {
+      title: 'Step 7: Recovery',
+      content: (
+        <div>
+          <ul className="list-disc pl-6">
+            <li>What steps were taken to recover systems and restore business operations?</li>
+            <li>Were systems restored from backups, or were new systems built?</li>
+            <li>What was the time required for full recovery?</li>
+            <li>Were there challenges in restoring services (e.g., data corruption, configuration issues)?</li>
+            <li>Was there any communication with customers about the recovery process?</li>
+          </ul>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Recovery Manager'])}>
+            Mark as Completed
+          </button>
+        </div>
+      ),
+    },
+    {
+      title: 'Step 8: Post-Incident Review',
+      content: (
+        <div>
+          <ul className="list-disc pl-6">
+            <li>What worked well during the response?</li>
+            <li>What areas need improvement?</li>
+            <li>Were there any major communication breakdowns?</li>
+            <li>Did the tools and processes in place meet the team’s needs?</li>
+            <li>What gaps were identified in detection, response, or recovery?</li>
+          </ul>
+          <button className="btn-primary" onClick={() => handleCompleteStep(roles['Incident Commander'])}>
+            Mark as Completed
+          </button>
+        </div>
+      ),
+    }
   ];
 
   const handleCompleteStep = (role) => {
@@ -49,7 +155,6 @@ export default function TabletopGuide({ scenario, addAction }) {
   const goToPreviousStep = () => {
     setCurrentStep((prevStep) => (prevStep - 1 >= 0 ? prevStep - 1 : prevStep));
   };
-
 
   const generateUniqueInject = () => {
     let inject;
@@ -95,15 +200,9 @@ export default function TabletopGuide({ scenario, addAction }) {
   );
 
   return (
-    <div className="mt-8">
-      <h2 className="text-2xl font-bold mb-4">Tabletop Exercise Guide</h2>
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h3 className="text-xl font-semibold mb-2">Scenario: {scenario.title}</h3>
-        <p className="mb-4">{scenario.description}</p>
-
-      <div className="tabletop-guide mt-8">
+    <div className="tabletop-guide mt-8">
       {/* Progress Indicator */}
-      <div className="progress-indicator">
+      <div className="progress-indicator mb-4">
         <span>Step {currentStep + 1} of {steps.length}</span>
       </div>
 
@@ -116,10 +215,14 @@ export default function TabletopGuide({ scenario, addAction }) {
       {/* Navigation Buttons */}
       <div className="navigation-buttons mt-4 flex justify-between">
         {currentStep > 0 && <button className="btn-secondary" onClick={goToPreviousStep}>Previous</button>}
-        {currentStep < steps.length - 1 && <button className="btn-secondary" onClick={() => handleCompleteStep()}>Next</button>}
+        {currentStep < steps.length - 1 && (
+          <button className="btn-secondary" onClick={() => handleCompleteStep(roles['Next Role'])}>
+            Next
+          </button>
+        )}
       </div>
     </div>
-
+          
     <div>
       {/* Example usage of roles */}
       <button onClick={() => handleActionComplete('Action completed', roles['Incident Commander'])}>
