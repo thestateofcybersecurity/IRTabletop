@@ -30,21 +30,6 @@ export default function Home() {
       const user = JSON.parse(localStorage.getItem('user'));
       setUser(user);
     }
-
-    async function fetchData() {
-      try {
-        const tacticRes = await fetch('/api/tactics');
-        const techniqueRes = await fetch('/api/techniques');
-        const mitigationRes = await fetch('/api/mitigations');
-
-        setTactics(await tacticRes.json());
-        setTechniques(await techniqueRes.json());
-        setMitigations(await mitigationRes.json());
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-    fetchData();
   }, []);
 
   const handleLogin = (userData) => {
@@ -71,7 +56,7 @@ export default function Home() {
   };
 
   const addAction = (action) => {
-    setActions([...actions, { ...action, timestamp: new Date().toLocaleTimeString() }]);
+    setActions(prevActions => [...prevActions, action]);
   };
 
   const assignRoles = (assignedRoles) => {
@@ -89,43 +74,43 @@ export default function Home() {
   
   return (
     <div className="container mx-auto px-4">
+      <Head>
+        <title>IR Tabletop Generator</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
       <Header user={user} onLogout={handleLogout} />
     
       <main className="my-8">
+        <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
         {user ? (
-          <div className="container mx-auto p-4">
-            {/* Step 1: Generate Scenario */}
-            <ScenarioGenerator setScenario={handleScenarioGeneration} />
+          <div>
+            {!scenario && <ScenarioGenerator setScenario={setScenario} />}
             
-            {/* Step 2: Assign Roles */}
             {scenario && !Object.keys(roles).length && (
               <RoleAssignment assignRoles={assignRoles} />
             )}
             
-            {/* Step 3: Begin Tabletop Guide and Metrics Tracking */}
-            {Object.keys(roles).length > 0 && scenario && (
+            {scenario && Object.keys(roles).length > 0 && (
               <>
-                <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} inject={inject} />
+                <TabletopGuide scenario={scenario} roles={roles} addAction={addAction} />
                 <MetricsTracker scenario={scenario} addAction={addAction} updateMetrics={updateMetrics} />
               </>
             )}
             
-            {/* Step 4: Display Summary of Actions */}
             {actions.length > 0 && (
               <div className="mt-8">
                 <h2 className="text-2xl font-bold mb-4">Summary of Actions</h2>
                 <ul className="list-disc pl-6">
                   {actions.map((action, index) => (
                     <li key={index} className="mb-2">
-                      <strong>{action.timestamp}:</strong> {action.description}
+                      <strong>{action.timestamp}:</strong> {action.description} {action.actor && `(Actor: ${action.actor})`}
                     </li>
                   ))}
                 </ul>
               </div>
             )}
             
-            {/* Step 5: Display Incident Report and PDF Export */}
             {scenario && actions.length > 0 && (
               <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />
             )}
