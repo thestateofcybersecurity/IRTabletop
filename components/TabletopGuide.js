@@ -28,6 +28,29 @@ export default function TabletopGuide({ scenario, addAction }) {
           <li>Deploy endpoint detection and response (EDR) across critical systems to capture suspicious activities.</li>
         </ul>
       ),
+      discussionPrompts: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+          <ul className="list-disc pl-6">
+            <li className="mb-2">What were the initial indicators of compromise (IoCs)? 
+              <ul className="list-disc pl-6">
+                <li>Which systems or logs first showed signs of abnormal behavior?</li>
+                <li>Were there any patterns in the IoCs (e.g., malware signatures, unusual network traffic)?</li>
+                <li>Were any user-reported incidents part of the initial detection?</li>
+                <li>What tools or technologies identified these IoCs (e.g., SIEM, EDR)?</li>
+              </ul>
+            </li>
+            <li className="mb-2">How did the team determine the severity of the incident? 
+              <ul className="list-disc pl-6">
+                <li>Was there a formal process for determining incident severity?</li>
+                <li>Were factors such as data exposure, system impact, and critical assets considered?</li>
+                <li>How was the potential business impact factored into the severity assessment?</li>
+                <li>Was the severity classification adjusted as more information became available?</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      ),
     },
     {
       title: 'Step 2: Initial Evaluation',
@@ -48,6 +71,15 @@ export default function TabletopGuide({ scenario, addAction }) {
           <li>Ensure clear ownership and responsibility for decision-making during the initial evaluation phase.</li>
           <li>Ensure prompt communication with key stakeholders to expedite the evaluation process.</li>
         </ul>
+      ),
+      discussionPrompts: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+          <ul className="list-disc pl-6">
+            <li>How well did the communication flow during the incident? Were any stakeholders left out?</li>
+            <li>Did the team follow established processes, or were any processes missed?</li>
+          </ul>
+        </div>
       ),
     },
     {
@@ -71,6 +103,16 @@ export default function TabletopGuide({ scenario, addAction }) {
           <li>Document all containment actions for forensic and legal purposes.</li>
         </ul>
       ),
+      discussionPrompts: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+          <ul className="list-disc pl-6">
+            <li>Were the containment measures effective in preventing further spread?</li>
+            <li>Did any communication issues delay or complicate containment?</li>
+            <li>Were additional vulnerabilities discovered during containment?</li>
+          </ul>
+        </div>
+      ),
     },
     {
       title: 'Step 4: Forensics and Evidence Gathering',
@@ -92,6 +134,16 @@ export default function TabletopGuide({ scenario, addAction }) {
           <li>Simulate forensic analysis during tabletop exercises to enhance team proficiency.</li>
         </ul>
       ),
+      discussionPrompts: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+          <ul className="list-disc pl-6">
+            <li>What challenges did the team face during forensics?</li>
+            <li>Were any critical data sources (logs, system snapshots) missing or corrupted?</li>
+            <li>Was there enough documentation and tracking of forensic processes?</li>
+          </ul>
+        </div>
+      ),
     },
     {
       title: 'Step 5: Notification and Stakeholder Involvement',
@@ -112,6 +164,15 @@ export default function TabletopGuide({ scenario, addAction }) {
           <li>Ensure legal and compliance teams are actively involved in notification processes.</li>
         </ul>
       ),
+      discussionPrompts: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+          <ul className="list-disc pl-6">
+            <li>How well did communication flow during the notification process?</li>
+            <li>Were any key stakeholders unaware of the incident until later stages?</li>
+          </ul>
+        </div>
+      ),
     },
     {
       title: 'Step 6: Mitigation and Eradication',
@@ -119,7 +180,7 @@ export default function TabletopGuide({ scenario, addAction }) {
       content: (
         <div>
           <ul className="list-disc pl-6">
-            <li>What mitigation steps were taken (e.g., patching, reconfiguration, removing malware)?</li>
+                    <li>What mitigation steps were taken (e.g., patching, reconfiguration, removing malware)?</li>
             <li>Was a fix tested in a non-production environment before deployment?</li>
             <li>Were any bypasses attempted or successful against the mitigation?</li>
             <li>How was the success of the mitigation verified?</li>
@@ -131,7 +192,18 @@ export default function TabletopGuide({ scenario, addAction }) {
         <ul className="list-disc pl-6">
           <li>Regularly review mitigation techniques and test them in simulated environments.</li>
           <li>Ensure backup strategies are resilient to malware attacks and tested regularly.</li>
+          <li>Perform post-mitigation testing to confirm all vulnerabilities have been closed.</li>
         </ul>
+      ),
+      discussionPrompts: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+          <ul className="list-disc pl-6">
+            <li>Were any mitigation bypass attempts discovered? How were they handled?</li>
+            <li>Did the mitigation create any further vulnerabilities or issues?</li>
+            <li>Were the mitigation steps sufficient to prevent further exploitation?</li>
+          </ul>
+        </div>
       ),
     },
     {
@@ -154,6 +226,16 @@ export default function TabletopGuide({ scenario, addAction }) {
           <li>Strengthen disaster recovery and business continuity plans (BCP) to minimize business disruption.</li>
         </ul>
       ),
+      discussionPrompts: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+          <ul className="list-disc pl-6">
+            <li>What obstacles were faced during recovery?</li>
+            <li>Were there any delays in restoring systems due to untested backups?</li>
+            <li>Were recovery efforts prioritized based on business impact?</li>
+          </ul>
+        </div>
+      ),
     },
     {
       title: 'Step 8: Post-Incident Review',
@@ -175,6 +257,16 @@ export default function TabletopGuide({ scenario, addAction }) {
           <li>Document lessons learned and update the incident response plan accordingly.</li>
           <li>Incorporate feedback from the team to improve future incident responses.</li>
         </ul>
+      ),
+      discussionPrompts: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Discussion Prompts and Key Questions:</h4>
+          <ul className="list-disc pl-6">
+            <li>What lessons were learned from this incident?</li>
+            <li>What gaps were identified in the incident response playbook?</li>
+            <li>How can the response process be improved for future incidents?</li>
+          </ul>
+        </div>
       ),
     }
   ];
@@ -264,6 +356,8 @@ export default function TabletopGuide({ scenario, addAction }) {
         {steps[currentStep].content}
         <h4 className="mt-4 font-semibold">Recommendations:</h4>
         {steps[currentStep].recommendations}
+        <h4 className="mt-4 font-semibold">Discussion Prompts:</h4>
+        {steps[currentStep].discussionPrompts}
       </div>
 
       {/* Navigation Buttons */}
