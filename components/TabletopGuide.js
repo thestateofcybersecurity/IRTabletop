@@ -55,9 +55,12 @@ export default function TabletopGuide({ scenario, addAction }) {
         <h3 className="text-xl font-semibold mb-2">Scenario: {scenario.title}</h3>
         <p className="mb-4">{scenario.description}</p>
 
-        {renderSection('Tactic', scenario.tactic?.name)}
-        {renderSection('Technique', scenario.technique?.name)}
-        {renderSection('Mitigation', scenario.mitigation?.name)}
+    <div>
+      {/* Example usage of roles */}
+      <button onClick={() => handleActionComplete('Action completed', roles['Incident Commander'])}>
+        Mark Incident Commander Action
+      </button>
+    </div>
 
       {currentInject && (
         <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
