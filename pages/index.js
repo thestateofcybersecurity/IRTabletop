@@ -120,7 +120,8 @@ export default function Home() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      setUser(JSON.parse(localStorage.getItem('user')));
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      setUser(storedUser);
       setCurrentStep('generateScenario');
     }
   }, []);
@@ -210,45 +211,80 @@ export default function Home() {
     }
   };
 
+  const renderLoggedInContent = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Generate Scenario</h2>
+        <ScenarioGenerator onGenerate={setScenario} />
+      </div>
+
+      {scenario && (
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Current Scenario</h2>
+          <p><strong>Title:</strong> {scenario.title}</p>
+          <p><strong>Description:</strong> {scenario.description}</p>
+        </div>
+      )}
+
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Metrics Tracking</h2>
+        <MetricsTracker />
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Assigned Roles</h2>
+        <RoleAssignment scenario={scenario} />
+      </div>
+    </div>
+  );
+
+  const renderLoggedOutContent = () => (
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4">
+        {isLogin ? "Login" : "Register"}
+      </h2>
+      {isLogin ? (
+        <LoginForm onLogin={handleLogin} />
+      ) : (
+        <RegistrationForm onRegister={handleRegistration} />
+      )}
+      <p className="mt-4">
+        {isLogin ? "Don't have an account? " : "Already have an account? "}
+        <button
+          onClick={() => setIsLogin(!isLogin)}
+          className="text-blue-500 hover:text-blue-700"
+        >
+          {isLogin ? "Register here" : "Login here"}
+        </button>
+      </p>
+    </div>
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Head>
+        <title>IR Tabletop Scenario Generator</title>
+        <meta name="description" content="Generate and run IR tabletop exercises" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">IR Tabletop Scenario Generator</h1>
-        <div>
-          Welcome, {user.name}
-          <button onClick={handleLogout} className="ml-4 bg-red-500 text-white px-4 py-2 rounded">Log Out</button>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Generate Scenario</h2>
-          <ScenarioGenerator onGenerate={setScenario} />
-        </div>
-
-        {scenario && (
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4">Current Scenario</h2>
-            <p><strong>Title:</strong> {scenario.title}</p>
-            <p><strong>Description:</strong> {scenario.description}</p>
+        {user && (
+          <div>
+            Welcome, {user.name}
+            <button onClick={handleLogout} className="ml-4 bg-red-500 text-white px-4 py-2 rounded">
+              Log Out
+            </button>
           </div>
         )}
+      </header>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Metrics Tracking</h2>
-          <MetricsTracker />
-        </div>
+      <main>
+        {user ? renderLoggedInContent() : renderLoggedOutContent()}
+      </main>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Assigned Roles</h2>
-          <RoleAssignment scenario={scenario} />
-        </div>
-      </div>
-
-      <footer className="mt-8 text-center text-gray-500">
-        © 2024 IR Tabletop Generator. All rights reserved.
-      </footer>
+      <Footer />
     </div>
   );
 }
