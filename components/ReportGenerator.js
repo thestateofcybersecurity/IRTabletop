@@ -25,17 +25,22 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
     addText('Incident Response Tabletop Exercise Report', 20, true);
     
     // Scenario Summary
-    addText('Scenario Summary', 16, true);
-    addText(`Title: ${scenario.title}`);
-    addText(`Description: ${scenario.description}`);
+    if (scenario) {
+      addText('Scenario Summary', 16, true);
+      addText(`Title: ${scenario.title}`);
+      addText(`Description: ${scenario.description}`);
+    }
     
     // Assigned Roles
-    addText('Assigned Roles', 16, true);
-    roles.forEach(role => {
-      addText(`${role.title}: ${role.assignee}`);
-    });
+    if (roles && roles.length > 0) {
+      addText('Assigned Roles', 16, true);
+      roles.forEach(role => {
+        addText(`${role.title}: ${role.assignee}`);
+      });
+    }
     
     // Scenario Steps
+  if (scenario && scenario.steps && scenario.steps.length > 0) {
     addText('Scenario Steps', 16, true);
     scenario.steps.forEach((step, index) => {
       addText(`Step ${index + 1}: ${step.title}`, 14, true);
@@ -59,17 +64,24 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         addText(notes[`step${index + 1}`]);
       }
     });
+  }
     
     // Action Timeline
-    addText('Action Timeline', 16, true);
-    actions.forEach(action => {
-      addText(`${action.timestamp}: ${action.description}`);
-    });
+    if (actions && actions.length > 0) {
+      addText('Action Timeline', 16, true);
+      actions.forEach(action => {
+        addText(`${action.timestamp}: ${action.description}`);
+      });
+    }
 
     // Save the PDF
     doc.save('Incident_Response_Exercise_Report.pdf');
   };
 
+  if (!scenario) {
+    return <div>No scenario data available. Please generate a scenario first.</div>;
+  }
+  
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Exercise Report</h2>
