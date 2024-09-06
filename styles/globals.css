@@ -128,6 +128,52 @@ form input, form select, form textarea {
   margin-bottom: 1rem;
 }
 
+/* --- Form Layout --- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+input, select {
+  padding: 10px;
+  font-size: 16px;
+}
+
+/* --- Buttons --- */
+.button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
 /* --- Navigation Bar --- */
 .navbar {
   background-color: #fff;
@@ -177,79 +223,6 @@ img:hover {
   transition: all 0.3s ease;
 }
 
-/* General Layout */
-.tabletop-guide {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Progress Indicator */
-.progress-indicator {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-/* Buttons */
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-/* Step Content */
-.step-content {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h3 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #343a40;
-}
-
-.list-disc {
-  margin-left: 1.5rem;
-  font-size: 1rem;
-}
-
-/* Navigation Buttons */
-.navigation-buttons {
-  display: flex;
-  justify-content: space-between;
-}
-
-.navigation-buttons button {
-  margin: 10px;
-}
-
 /* Dark Mode */
 body.dark-mode {
   background-color: #1a1a1a;
@@ -267,23 +240,4 @@ body.dark-mode .btn-primary {
 
 body.dark-mode .btn-secondary {
   background-color: #6c757d;
-}
-
-@media (max-width: 768px) {
-  .tabletop-guide {
-    padding: 10px;
-  }
-
-  .step-content {
-    padding: 15px;
-  }
-
-  .navigation-buttons {
-    flex-direction: column;
-  }
-
-  .navigation-buttons button {
-    width: 100%;
-    margin: 5px 0;
-  }
 }
