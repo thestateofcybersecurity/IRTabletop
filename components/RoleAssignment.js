@@ -40,9 +40,8 @@ export default function RoleAssignment({ scenario, onAssign }) {
   };
 
   const assignAutomatedRoles = () => {
-    setError('');
     if (!scenario) {
-      setError('Scenario details are missing. Please generate a scenario first.');
+      console.error('Scenario details are missing. Please generate a scenario first.');
       return;
     }
 
@@ -78,15 +77,6 @@ export default function RoleAssignment({ scenario, onAssign }) {
 
   const handleAssignRole = (role, person) => {
     setAssignedRoles({ ...assignedRoles, [role]: person });
-  };
-
-  const validateRoles = () => {
-    if (Object.keys(assignedRoles).length < availableRoles.length) {
-      setError('All roles must be assigned before proceeding.');
-      return false;
-    }
-    setError('');
-    return true;
   };
 
   return (
