@@ -351,11 +351,13 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text(`Incident Response Tabletop Exercise Report`, 10, 10);
-    steps.forEach((step, index) => {
-      doc.text(`${index + 1}. ${step.title}`, 10, 20 + index * 10);
-      doc.text(`Initial Question: ${step.initialQuestion}`, 10, 30 + index * 20);
-      doc.text(`Recommendations:`, 10, 40 + index * 20);
-      step.recommendations.props.children.forEach((recommendation, idx) => {
+      scenario.steps.forEach((step, index) => {
+        doc.text(`${index + 1}. ${step.title}`, 10, 30 + index * 10);
+        doc.text(`User Notes: ${notes[`step${index + 1}`] || 'No notes added'}`, 10, 40 + index * 10);
+        doc.text(`Initial Question: ${step.initialQuestion}`, 10, 30 + index * 20);
+        doc.text(`Recommendations:`, 10, 40 + index * 20);
+        doc.text(`Scenario: ${scenario.title}`, 10, 20);
+        step.recommendations.props.children.forEach((recommendation, idx) => {
         doc.text(`${idx + 1}. ${recommendation.props.children}`, 15, 50 + index * 20 + idx * 10);
       });
     });
