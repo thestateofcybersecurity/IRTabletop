@@ -52,27 +52,59 @@ export default function Home() {
   };
 
   const handleRegistration = (userData) => {
+    // After successful registration, automatically log the user in
     handleLogin(userData);
   };
   
   return (
     <div className="container mx-auto px-4">
+      <Head>
+        <title>IR Tabletop Generator</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
       <Header user={user} onLogout={handleLogout} />
     
       <main className="my-8">
+        <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
         {user ? (
           <>
             <ScenarioGenerator setScenario={setScenario} />
             {scenario && <TabletopGuide scenario={scenario} />}
           </>
-        ) :
+        ) : (
+          <div>
             {isLogin ? (
-              <LoginForm onLogin={handleLogin} />
+              <>
+                <LoginForm onLogin={handleLogin} />
+                <p className="mt-4">
+                  Don't have an account?{' '}
+                  <button
+                    onClick={() => setIsLogin(false)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    Register here
+                  </button>
+                </p>
+              </>
             ) : (
-              <RegistrationForm onRegister={handleRegistration} />
+              <>
+                <RegistrationForm onRegister={handleRegistration} />
+                <p className="mt-4">
+                  Already have an account?{' '}
+                  <button
+                    onClick={() => setIsLogin(true)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    Login here
+                  </button>
+                </p>
+              </>
             )}
-        <DataLoadTrigger />
+          </div>
+        )}
+        {/* Only show DataLoadTrigger if user is logged in and has admin rights */}
+        {user && user.isAdmin && <DataLoadTrigger />}
       </main>
 
       <Footer />
