@@ -57,6 +57,10 @@ export default function Home() {
   
   return (
     <div className="container mx-auto px-4">
+      <Head>
+        <title>IR Tabletop Generator</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
       <Header user={user} onLogout={handleLogout} />
     
@@ -68,29 +72,9 @@ export default function Home() {
             {scenario && <TabletopGuide scenario={scenario} />}
           </>
         ) : (
-          <div>
-            <div className="flex justify-center mb-4">
-              <button
-                onClick={() => setIsLogin(true)}
-                className={`px-4 py-2 mr-2 ${isLogin ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              >
-                Login
-              </button>
-              <button
-                onClick={() => setIsLogin(false)}
-                className={`px-4 py-2 ${!isLogin ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-              >
-                Register
-              </button>
-            </div>
-            {isLogin ? (
-              <LoginForm onLogin={handleLogin} />
-            ) : (
-              <RegistrationForm onRegister={handleRegistration} />
-            )}
-              <DataLoadTrigger />
-          </div>
+          <LoginForm onLogin={handleLogin} />
         )}
+        <DataLoadTrigger />
       </main>
 
       <Footer />
