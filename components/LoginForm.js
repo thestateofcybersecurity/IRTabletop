@@ -1,22 +1,36 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext';
 import api from '../utils/api';
+import { useRouter } from 'next/router';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { dispatch } = useAppContext();
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      const response = await api.post('/login', { email, password });
-      localStorage.setItem('token', response.data.token);
-      dispatch({ type: 'SET_USER', payload: response.data.user });
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      router.push('/dashboard'); // Redirect to dashboard or home page
     } catch (error) {
-      setError('Invalid email or password');
+      setError(error.message || 'Invalid email or password');
     }
   };
 
@@ -26,15 +40,15 @@ export default function LoginForm() {
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        required
         placeholder="Email"
+        required
       />
       <input
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        required
         placeholder="Password"
+        required
       />
       {error && <p className="error">{error}</p>}
       <button type="submit">Login</button>
