@@ -251,19 +251,6 @@ export default function TabletopGuide({ scenario, addAction }) {
   };
 
   return (          
-    <div>
-      {/* Example usage of roles */}
-      <button onClick={() => handleActionComplete('Action completed', roles['Incident Commander'])}>
-        Mark Incident Commander Action
-      </button>
-    </div>
-
-      {currentInject && (
-        <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
-          <strong>Random Inject:</strong> {currentInject.description}
-        </div>
-      )}
-
     <div className="tabletop-guide mt-8">
       {/* Progress Indicator */}
       <div className="progress-indicator mb-4">
