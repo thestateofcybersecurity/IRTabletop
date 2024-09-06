@@ -47,13 +47,13 @@ export default async function handler(req, res) {
     const [tactic] = await db.collection('tactics').aggregate([{ $sample: { size: 1 } }]).toArray();
     const [technique] = await db.collection('techniques').aggregate([{ $sample: { size: 1 } }]).toArray();
     const [mitigation] = await db.collection('mitigations').aggregate([{ $sample: { size: 1 } }]).toArray();
-    const [groups] = await db.collection('groups').aggregate([{ $sample: { size: 1 } }]).toArray();
+    const [group] = await db.collection('groups').aggregate([{ $sample: { size: 1 } }]).toArray();
     const [software] = await db.collection('software').aggregate([{ $sample: { size: 1 } }]).toArray();
-    const [relationships] = await db.collection('relationships').aggregate([{ $sample: { size: 1 } }]).toArray();
+    const [relationship] = await db.collection('relationships').aggregate([{ $sample: { size: 1 } }]).toArray();
 
     console.log('Fetched random tactic, technique, groups, software, relationships, and mitigation'); // Log successful data fetch
 
-    if (!tactic || !technique || !mitigation || !groups || !software || !relationships) {
+    if (!tactic || !technique || !mitigation || !group || !software || !relationship) {
       throw new Error('Failed to fetch required data from database');
     }
 
@@ -67,6 +67,7 @@ export default async function handler(req, res) {
       tactic,  // Tactic describing the attack phase
       technique,  // Technique used to carry out the attack
       software,  // Malware or tool involved in the attack
+      relationship,
       mitigation,  // Mitigation measure to counter the attack
       irExperience,
       securityMaturity,
