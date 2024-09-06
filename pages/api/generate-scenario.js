@@ -24,17 +24,13 @@ export default async function handler(req, res) {
       irExperience, 
       securityMaturity, 
       industrySector, 
-      incidentType, 
-      incidentSeverity,
-      teamSize,
-      attackTarget, 
       complianceRequirements, 
       stakeholderInvolvement 
     } = req.body;
 
     console.log('Received request body:', req.body); // Log the received request body
 
-    if (!irExperience || !securityMaturity || !incidentType || !incidentSeverity) {
+    if (!irExperience || !securityMaturity) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -69,12 +65,34 @@ export default async function handler(req, res) {
       irExperience,
       securityMaturity,
       industrySector,
-      incidentType,
-      incidentSeverity,
-      teamSize: parseInt(teamSize),
-      attackTarget,
       complianceRequirements,
       stakeholderInvolvement
+      steps: [
+        {
+          title: 'Detection',
+          question: `How would your team detect this ${incidentType} incident using your current tools and processes?`
+        },
+        {
+          title: 'Analysis',
+          question: `What steps would your team take to analyze the extent of the ${technique.name} technique used in this incident?`
+        },
+        {
+          title: 'Containment',
+          question: `How would your team contain the spread of this incident, considering the ${tactic.name} tactic employed?`
+        },
+        {
+          title: 'Eradication',
+          question: `What steps would your team take to eradicate the threat, considering the ${mitigation.name} mitigation strategy?`
+        },
+        {
+          title: 'Recovery',
+          question: 'How would your team ensure that systems are securely restored and normal operations resumed?'
+        },
+        {
+          title: 'Lessons Learned',
+          question: 'What key lessons can be drawn from this incident to improve your organization\'s security posture?'
+        }
+      ]
     };
     
     console.log('Generated scenario:', scenario); // Log the generated scenario
