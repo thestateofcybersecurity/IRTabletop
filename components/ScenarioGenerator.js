@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 export default function ScenarioGenerator({ onGenerate }) {
+  console.log('Rendering ScenarioGenerator');
   const [formData, setFormData] = useState({
     irExperience: '',
     securityMaturity: '',
@@ -20,6 +21,7 @@ export default function ScenarioGenerator({ onGenerate }) {
   };
 
   const handleSubmit = async (e) => {
+    console.log('handleSubmit called');
     e.preventDefault();
     setIsLoading(true);
     setError('');
