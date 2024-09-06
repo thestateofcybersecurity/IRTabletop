@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import ScenarioGenerator from '../components/ScenarioGenerator';
 import TabletopGuide from '../components/TabletopGuide';
 import LoginForm from '../components/LoginForm';
 import RegistrationForm from '../components/RegistrationForm';
