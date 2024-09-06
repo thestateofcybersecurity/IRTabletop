@@ -10,6 +10,7 @@ export default function ScenarioGenerator({ setScenario }) {
   const [stakeholderInvolvement, setStakeholderInvolvement] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [companySize, setCompanySize] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +29,7 @@ export default function ScenarioGenerator({ setScenario }) {
           complianceRequirements,
           attackTarget,
           stakeholderInvolvement,
+          companySize
         }),
       });
 
@@ -71,6 +73,22 @@ export default function ScenarioGenerator({ setScenario }) {
       <div className="mb-4">
         <label htmlFor="industrySector" className="block mb-2">Industry Sector:</label>
         <input id="industrySector" type="text" value={industrySector} onChange={(e) => setIndustrySector(e.target.value)} required />
+      </div>
+
+        <div className="mb-4">
+        <label htmlFor="companySize" className="block mb-2">Company Size:</label>
+        <select
+          id="companySize"
+          value={companySize}
+          onChange={(e) => setCompanySize(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        >
+          <option value="">Select company size</option>
+          <option value="small">Small (1-50 employees)</option>
+          <option value="medium">Medium (51-500 employees)</option>
+          <option value="large">Large (501+ employees)</option>
+        </select>
       </div>
 
       <div className="mb-4">
