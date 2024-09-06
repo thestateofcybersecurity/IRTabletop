@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getRandomInject } from './Injects';
 
 export default function TabletopGuide({ scenario, addAction }) {
