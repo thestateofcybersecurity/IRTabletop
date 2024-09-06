@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
+import { promisify } from 'util';
 
-export function authenticateUser(req, res, next) {
+const verifyAsync = promisify(jwt.verify);
+
+export async function authenticateUser(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1];
 
   if (!token) {
@@ -8,10 +11,13 @@ export function authenticateUser(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = await verifyAsync(token, process.env.JWT_SECRET);
     req.userId = decoded.userId;
     next();
   } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: 'Token expired' });
+    }
     return res.status(401).json({ error: 'Unauthorized' });
   }
 }
