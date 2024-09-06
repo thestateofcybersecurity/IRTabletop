@@ -101,7 +101,7 @@ export default function Home() {
                 </ul>
               </div>
             )}
-            <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />
+            {metrics && <ReportingTemplate scenario={scenario} actions={actions} metrics={metrics} />}
           </>
         ) : (
           <div>Error: Scenario or roles not properly set. Please go back and complete previous steps.</div>
