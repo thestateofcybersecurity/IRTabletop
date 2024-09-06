@@ -22,10 +22,6 @@ export default function TabletopGuide({ scenario, addAction }) {
     return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
   }
 
-  const handleActionComplete = (description, actor) => {
-    addAction({ description, actor, timestamp: new Date().toLocaleTimeString() });
-  };
-  
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Tabletop Exercise Guide</h2>
