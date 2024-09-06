@@ -89,13 +89,6 @@ export default function RoleAssignment({ scenario, onAssign }) {
     return true;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateRoles()) {
-      assignRoles(assignedRoles);
-    }
-  };
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Assign Roles</h2>
