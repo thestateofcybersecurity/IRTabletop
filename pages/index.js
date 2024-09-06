@@ -29,7 +29,8 @@ export default function Home() {
   }, []);
 
   const handleLogin = (userData) => {
-    setUser(userData);
+    console.log('handleLogin called with:', userData); // Debugging log
+    setUser(userData.user);
     localStorage.setItem('token', userData.token);
     localStorage.setItem('user', JSON.stringify(userData.user));
     setCurrentStep('generateScenario');
@@ -114,9 +115,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4">
-
       <Header user={user} onLogout={handleLogout} />
-    
       <main className="my-8">
         <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
         {renderCurrentStep()}
