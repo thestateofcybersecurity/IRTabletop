@@ -345,18 +345,10 @@ export default function TabletopGuide({ scenario, addAction }) {
     doc.save('tabletop-exercise.pdf');
   };
 
-  return (          
+  return (
     <div className="tabletop-guide" role="region" aria-label="Tabletop Exercise Guide">
       <h2 id="step-title">{steps[currentStep].title}</h2>
       <div className="step-content" aria-labelledby="step-title">
-      {/* Progress Indicator */}
-      <div className="progress-indicator mb-4">
-        <span>Step {currentStep + 1} of {steps.length}</span>
-      </div>
-
-      {/* Step Content */}
-      <div className="step-content bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h3 className="text-xl font-semibold mb-4">{steps[currentStep].title}</h3>
         <p className="mb-4 font-semibold">{steps[currentStep].initialQuestion}</p>
         {steps[currentStep].content}
         <h4 className="mt-4 font-semibold">Recommendations:</h4>
@@ -364,9 +356,7 @@ export default function TabletopGuide({ scenario, addAction }) {
         <h4 className="mt-4 font-semibold">Discussion Prompts:</h4>
         {steps[currentStep].discussionPrompts}
       </div>
-
-      {/* Navigation Buttons */}
-      <div className="navigation-buttons">
+      <div className="navigation-buttons mt-4 flex justify-between">
         {currentStep > 0 && (
           <button 
             onClick={goToPreviousStep}
