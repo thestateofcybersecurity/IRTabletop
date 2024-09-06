@@ -51,6 +51,7 @@ export default function Home() {
 
   const handleScenarioGeneration = (generatedScenario) => {
     setScenario(generatedScenario);
+    setInject(getRandomInject());
     setCurrentStep('assignRoles');
   };
 
@@ -61,11 +62,6 @@ export default function Home() {
   const handleRoleAssignment = (assignedRoles) => {
     setRoles(assignedRoles);
     setCurrentStep('runExercise');
-  };
-
-  const handleScenarioGeneration = (scenarioData) => {
-    setScenario(scenarioData);
-    setInject(getRandomInject());
   };
 
   const updateMetrics = (newMetrics) => {
