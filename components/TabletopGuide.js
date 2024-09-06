@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../contexts/AppContext';
-import { getRandomInject } from '../injects';
+import { getRandomInject } from '../Injects';
 
 export default function TabletopGuide() {
   const { state, dispatch } = useAppContext();
