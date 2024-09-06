@@ -7,7 +7,7 @@ const initialState = {
   scenario: null,
   roles: {},
   actions: [],
-  metrics: null,
+  notes: null,
 };
 
 function appReducer(state, action) {
@@ -20,8 +20,8 @@ function appReducer(state, action) {
       return { ...state, roles: action.payload };
     case 'ADD_ACTION':
       return { ...state, actions: [...state.actions, action.payload] };
-    case 'SET_METRICS':
-      return { ...state, metrics: action.payload };
+    case 'SET_NOTES':
+      return { ...state, notes: action.payload };
     default:
       return state;
   }
