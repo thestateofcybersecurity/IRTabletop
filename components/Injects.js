@@ -22,25 +22,3 @@ export function getRandomInject() {
   const randomIndex = Math.floor(Math.random() * injects.length);
   return injects[randomIndex];
 }
-
-// Example usage in the TabletopGuide.js
-import { getRandomInject } from './Injects';
-
-export default function TabletopGuide({ scenario, addAction }) {
-  const inject = getRandomInject(); // Get a random inject when rendering the guide
-
-  return (
-    <div className="mt-8">
-      <h2 className="text-2xl font-bold mb-4">Tabletop Exercise Guide</h2>
-
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h3 className="text-xl font-semibold mb-2">Random Inject: {inject.description}</h3>
-
-        {/* Continue with the scenario walkthrough steps */}
-        <ol className="mb-4 list-decimal pl-6">
-          {/* Same steps as before, with random injects integrated */}
-        </ol>
-      </div>
-    </div>
-  );
-}
