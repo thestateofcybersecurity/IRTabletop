@@ -1,4 +1,8 @@
 export default function ReportingTemplate({ scenario, actions }) {
+  if (!scenario) {
+    return <p>No scenario to report on yet. Complete a scenario to generate the report.</p>;
+  }
+
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Incident Response Report</h2>
@@ -28,10 +32,10 @@ export default function ReportingTemplate({ scenario, actions }) {
         </ul>
 
         <h4 className="text-lg font-semibold mt-4 mb-2">Forensic Evidence Collected</h4>
-        <p>{scenario.forensics}</p>
+        <p>Key evidence collected during this scenario includes {scenario.forensics}.</p>
 
         <h4 className="text-lg font-semibold mt-4 mb-2">Lessons Learned</h4>
-        <p>{scenario.lessonsLearned}</p>
+        <p>The lessons learned from this tabletop include {scenario.lessonsLearned}.</p>
 
         <h4 className="text-lg font-semibold mt-4 mb-2">Post-Incident Recommendations</h4>
         <ul className="list-disc pl-6">
