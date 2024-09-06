@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Define available roles with descriptions
 const availableRoles = [
@@ -15,18 +15,13 @@ const availableRoles = [
   { role: "Business Continuity Officer", description: "Maintains business operations with minimal disruption." }
 ];
 
-// Role Assignment based on incident severity, type, and team size
-export default function RoleAssignment({ assignRoles, incidentSeverity, incidentType, teamSize }) {
+export default function RoleAssignment({ assignRoles, scenario }) {
   const [assignedRoles, setAssignedRoles] = useState({});
+  const [error, setError] = useState('');
 
   const roleCriteria = {
-    // For critical incidents, assign all roles
     critical: ["Incident Commander", "Security Analyst", "Forensic Investigator", "Legal Advisor", "Public Relations Lead", "Network Engineer", "Threat Intelligence Analyst", "Recovery Manager", "Compliance Officer"],
-    
-    // For major incidents, reduce roles based on team size and complexity
     major: ["Incident Commander", "Security Analyst", "Forensic Investigator", "Legal Advisor", "Network Engineer", "Threat Intelligence Analyst", "Recovery Manager"],
-
-    // For minor incidents, fewer roles required
     minor: ["Incident Commander", "Security Analyst", "Forensic Investigator", "Network Engineer"]
   };
 
@@ -38,55 +33,65 @@ export default function RoleAssignment({ assignRoles, incidentSeverity, incident
   };
 
   const assignAutomatedRoles = () => {
-    let rolesToAssign = [];
-    
-    // Determine roles based on severity
-    if (incidentSeverity === "critical") {
-      rolesToAssign = roleCriteria.critical;
-    } else if (incidentSeverity === "major") {
-      rolesToAssign = roleCriteria.major;
-    } else if (incidentSeverity === "minor") {
-      rolesToAssign = roleCriteria.minor;
+    setError('');
+    if (!scenario) {
+      setError('Scenario details are missing. Please generate a scenario first.');
+      return;
     }
 
+    const { incidentSeverity, incidentType, teamSize } = scenario;
+    
+    let rolesToAssign = roleCriteria[incidentSeverity] || roleCriteria.minor;
+    
     // Further filter roles based on incident type
     const typeRoles = roleByIncidentType[incidentType] || [];
     rolesToAssign = rolesToAssign.filter(role => typeRoles.includes(role));
 
     // Adjust roles based on available team size
-    if (teamSize < rolesToAssign.length) {
-      rolesToAssign = rolesToAssign.slice(0, teamSize);
+    const availableTeamSize = teamSize || 5; // Default to 5 if not specified
+    if (availableTeamSize < rolesToAssign.length) {
+      rolesToAssign = rolesToAssign.slice(0, availableTeamSize);
     }
 
-    // Auto-assign roles to available team members (for simplicity, we assume generic names)
+    // Auto-assign roles to available team members
     const assigned = rolesToAssign.reduce((acc, role, index) => {
-      acc[role] = `Team Member ${index + 1}`; // Assign "Team Member X" to each role
+      acc[role] = `Team Member ${index + 1}`;
       return acc;
     }, {});
 
     setAssignedRoles(assigned);
-    assignRoles(assigned); // Pass assigned roles to the main app
+    assignRoles(assigned);
   };
+
+  useEffect(() => {
+    if (scenario) {
+      assignAutomatedRoles();
+    }
+  }, [scenario]);
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-bold mb-4">Assign Roles Based on Criteria</h2>
-      <button onClick={assignAutomatedRoles} className="bg-blue-500 text-white px-4 py-2 rounded">
-        Auto Assign Roles
+      <h2 className="text-xl font-bold mb-4">Assigned Roles Based on Scenario</h2>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <button onClick={assignAutomatedRoles} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        Re-Assign Roles
       </button>
 
       <div className="mt-4">
-        {Object.keys(assignedRoles).length > 0 && (
+        {Object.keys(assignedRoles).length > 0 ? (
           <div>
             <h4 className="text-lg font-semibold mb-2">Assigned Roles:</h4>
             <ul className="list-disc pl-6">
               {Object.entries(assignedRoles).map(([role, member], index) => (
                 <li key={index} className="mb-2">
                   <strong>{role}:</strong> {member}
+                  <p className="text-sm text-gray-600">{availableRoles.find(r => r.role === role)?.description}</p>
                 </li>
               ))}
             </ul>
           </div>
+        ) : (
+          <p>No roles assigned yet. Click "Re-Assign Roles" to generate assignments.</p>
         )}
       </div>
     </div>
