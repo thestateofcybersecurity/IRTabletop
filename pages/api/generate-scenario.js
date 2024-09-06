@@ -42,31 +42,27 @@ export default async function handler(req, res) {
       }
     }
 
-    // Fetch random tactic, technique, and mitigation
     const [tactic] = await db.collection('tactics').aggregate([{ $sample: { size: 1 } }]).toArray();
-    console.log('Fetched tactic:', tactic ? tactic.name : 'None');
-
     const [technique] = await db.collection('techniques').aggregate([{ $sample: { size: 1 } }]).toArray();
-    console.log('Fetched technique:', technique ? technique.name : 'None');
-
     const [mitigation] = await db.collection('mitigations').aggregate([{ $sample: { size: 1 } }]).toArray();
-    console.log('Fetched mitigation:', mitigation ? mitigation.name : 'None');
 
     if (!tactic || !technique || !mitigation) {
       throw new Error('Failed to fetch required data from database');
     }
 
-    // Generate scenario
     const scenario = {
-      title: `${industrySector} ${incidentType} Incident`,
+      title: `${incidentSeverity} ${incidentType} Incident`,
       description: `A ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} IR experience faces a ${incidentType} targeting their ${attackTarget}. ${complianceRequirements ? `Compliance with ${complianceRequirements} is required.` : ''} ${stakeholderInvolvement ? `Key stakeholders involved: ${stakeholderInvolvement}.` : ''}`,
-      tactic: tactic,
-      technique: technique,
-      mitigation: mitigation,
+      businessImpact: "High",  // New field for business impact
+      attackVector: "Spearphishing",  // New field for attack vector
+      tactic,  // Randomized tactic
+      technique,  // Randomized technique
+      mitigation,  // Randomized mitigation
       irExperience,
       securityMaturity,
       industrySector,
       incidentType,
+      incidentSeverity,
       attackTarget,
       complianceRequirements,
       stakeholderInvolvement
