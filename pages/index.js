@@ -58,15 +58,10 @@ export default function Home() {
   
   return (
     <div className="container mx-auto px-4">
-      <Head>
-        <title>IR Tabletop Generator</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
 
       <Header user={user} onLogout={handleLogout} />
     
       <main className="my-8">
-        <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
         {user ? (
           <>
             <ScenarioGenerator setScenario={setScenario} />
