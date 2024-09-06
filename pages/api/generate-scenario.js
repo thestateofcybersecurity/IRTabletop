@@ -18,7 +18,15 @@ export default async function handler(req, res) {
     });
 
     const { db } = await connectToDatabase();
-    const { irExperience, securityMaturity } = req.body;
+    const { 
+      irExperience, 
+      securityMaturity, 
+      industrySector, 
+      incidentType, 
+      attackTarget, 
+      complianceRequirements, 
+      stakeholderInvolvement 
+    } = req.body;
 
     if (!irExperience || !securityMaturity) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -50,15 +58,20 @@ export default async function handler(req, res) {
 
     // Generate scenario
     const scenario = {
-      title: `${irExperience} level scenario for ${securityMaturity} maturity`,
-      description: `An attacker is using the ${technique.name} technique, which is part of the ${tactic.name} tactic. Your team needs to respond and implement the ${mitigation.name} mitigation.`,
+      title: `${industrySector} ${incidentType} Incident`,
+      description: `A ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} IR experience faces a ${incidentType} targeting their ${attackTarget}. ${complianceRequirements ? `Compliance with ${complianceRequirements} is required.` : ''} ${stakeholderInvolvement ? `Key stakeholders involved: ${stakeholderInvolvement}.` : ''}`,
       tactic: tactic,
       technique: technique,
       mitigation: mitigation,
-      irExperience: irExperience,
-      securityMaturity: securityMaturity
+      irExperience,
+      securityMaturity,
+      industrySector,
+      incidentType,
+      attackTarget,
+      complianceRequirements,
+      stakeholderInvolvement
     };
-
+    
     res.status(200).json(scenario);
   } catch (error) {
     console.error('Error generating scenario:', error);
