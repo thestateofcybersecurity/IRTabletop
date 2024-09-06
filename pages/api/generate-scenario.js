@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       securityMaturity,
       industrySector,
       complianceRequirements,
-      stakeholderInvolvement
+      stakeholderInvolvement,
       steps: [
         {
           title: 'Detection',
