@@ -1,3 +1,5 @@
+// Update file: components/ScenarioGenerator.js
+
 import { useState } from 'react';
 
 export default function ScenarioGenerator({ setScenario }) {
@@ -5,9 +7,8 @@ export default function ScenarioGenerator({ setScenario }) {
   const [securityMaturity, setSecurityMaturity] = useState('');
   const [industrySector, setIndustrySector] = useState('');
   const [incidentType, setIncidentType] = useState('');
-  const [attackTarget, setAttackTarget] = useState('');
-  const [complianceRequirements, setComplianceRequirements] = useState('');
-  const [stakeholderInvolvement, setStakeholderInvolvement] = useState('');
+  const [incidentSeverity, setIncidentSeverity] = useState('');
+  const [teamSize, setTeamSize] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -17,29 +18,21 @@ export default function ScenarioGenerator({ setScenario }) {
     setError('');
 
     try {
-      const response = await fetch('/api/generate-scenario', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          irExperience,
-          securityMaturity,
-          industrySector,
-          incidentType,
-          attackTarget,
-          complianceRequirements,
-          stakeholderInvolvement
-        }),
-      });
+      // Here you would typically make an API call to generate the scenario
+      // For now, we'll create a scenario object based on the form inputs
+      const generatedScenario = {
+        irExperience,
+        securityMaturity,
+        industrySector,
+        incidentType,
+        incidentSeverity,
+        teamSize: parseInt(teamSize),
+        // Add any other fields that your scenario might need
+        title: `${incidentSeverity} ${incidentType} Incident in ${industrySector} Sector`,
+        description: `A ${incidentSeverity} ${incidentType} incident has occurred in a ${industrySector} organization with ${irExperience} IR experience and ${securityMaturity} security maturity.`
+      };
 
-      if (!response.ok) {
-        throw new Error('Failed to generate scenario');
-      }
-
-      const data = await response.json();
-      setScenario(data);
+      setScenario(generatedScenario);
     } catch (error) {
       console.error('Error generating scenario:', error);
       setError('An error occurred while generating the scenario. Please try again.');
@@ -94,48 +87,47 @@ export default function ScenarioGenerator({ setScenario }) {
       </div>
       <div className="mb-4">
         <label htmlFor="incidentType" className="block mb-2">Incident Type:</label>
-        <input
-          type="text"
+        <select
           id="incidentType"
           value={incidentType}
           onChange={(e) => setIncidentType(e.target.value)}
           className="w-full p-2 border rounded"
           required
-          placeholder="e.g., Data Breach, Ransomware, DDoS"
-        />
+        >
+          <option value="">Select incident type</option>
+          <option value="phishing">Phishing</option>
+          <option value="ransomware">Ransomware</option>
+          <option value="insiderThreat">Insider Threat</option>
+          <option value="supplyChain">Supply Chain Attack</option>
+        </select>
       </div>
       <div className="mb-4">
-        <label htmlFor="attackTarget" className="block mb-2">Attack Target:</label>
-        <input
-          type="text"
-          id="attackTarget"
-          value={attackTarget}
-          onChange={(e) => setAttackTarget(e.target.value)}
+        <label htmlFor="incidentSeverity" className="block mb-2">Incident Severity:</label>
+        <select
+          id="incidentSeverity"
+          value={incidentSeverity}
+          onChange={(e) => setIncidentSeverity(e.target.value)}
           className="w-full p-2 border rounded"
           required
-          placeholder="e.g., Customer Database, Web Server, Email System"
-        />
+        >
+          <option value="">Select severity</option>
+          <option value="minor">Minor</option>
+          <option value="major">Major</option>
+          <option value="critical">Critical</option>
+        </select>
       </div>
       <div className="mb-4">
-        <label htmlFor="complianceRequirements" className="block mb-2">Compliance Requirements:</label>
+        <label htmlFor="teamSize" className="block mb-2">Team Size:</label>
         <input
-          type="text"
-          id="complianceRequirements"
-          value={complianceRequirements}
-          onChange={(e) => setComplianceRequirements(e.target.value)}
+          type="number"
+          id="teamSize"
+          value={teamSize}
+          onChange={(e) => setTeamSize(e.target.value)}
           className="w-full p-2 border rounded"
-          placeholder="e.g., GDPR, HIPAA, PCI DSS (optional)"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="stakeholderInvolvement" className="block mb-2">Stakeholder Involvement:</label>
-        <input
-          type="text"
-          id="stakeholderInvolvement"
-          value={stakeholderInvolvement}
-          onChange={(e) => setStakeholderInvolvement(e.target.value)}
-          className="w-full p-2 border rounded"
-          placeholder="e.g., C-Suite, Legal, PR (optional)"
+          required
+          min="1"
+          max="20"
+          placeholder="Enter team size (1-20)"
         />
       </div>
       {error && <p className="text-red-500 mb-4">{error}</p>}
