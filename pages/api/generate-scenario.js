@@ -1,5 +1,6 @@
 import { connectToDatabase } from '../../lib/mongodb';
 import { authenticateUser } from '../../middleware/auth';
+import ReactDOMServer from 'react-dom/server';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -78,7 +79,7 @@ export default async function handler(req, res) {
         {
           title: 'Step 1: Detection',
           initialQuestion: 'How was the attack detected?',
-          content: (
+          content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>What monitoring systems provided the first alert? (e.g., SIEM, EDR, IDS/IPS)</li>
@@ -89,7 +90,7 @@ export default async function handler(req, res) {
               </ul>
             </div>
           ),
-          recommendations: (
+          recommendations: ReactDOMServer.renderToString(
             <ul className="list-disc pl-6">
               <li>Enhance monitoring and detection tools to reduce detection time.</li>
               <li>Increase network visibility by deploying IDS/IPS or anomaly detection systems.</li>
@@ -97,7 +98,7 @@ export default async function handler(req, res) {
               <li>Deploy endpoint detection and response (EDR) across critical systems to capture suspicious activities.</li>
             </ul>
           ),
-          discussionPrompts: (
+          discussionPrompts: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li className="mb-2">What were the initial indicators of compromise (IoCs)? 
@@ -123,7 +124,7 @@ export default async function handler(req, res) {
         {
           title: 'Step 2: Initial Evaluation',
           initialQuestion: 'What was the initial response after detection?',
-          content: (
+          content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>Who was notified first (e.g., Incident Commander, SOC Team)?</li>
@@ -133,14 +134,14 @@ export default async function handler(req, res) {
               </ul>
             </div>
           ),
-          recommendations: (
+          recommendations: ReactDOMServer.renderToString(
             <ul className="list-disc pl-6">
               <li>Review and enhance the incident classification process.</li>
               <li>Ensure clear ownership and responsibility for decision-making during the initial evaluation phase.</li>
               <li>Ensure prompt communication with key stakeholders to expedite the evaluation process.</li>
             </ul>
           ),
-          discussionPrompts: (
+          discussionPrompts: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>How well did the communication flow during the incident? Were any stakeholders left out?</li>
@@ -154,7 +155,7 @@ export default async function handler(req, res) {
         {
           title: 'Step 3: Containment',
           initialQuestion: 'What actions were taken to contain the incident?',
-          content: (
+          content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>Which systems were isolated to prevent the spread of the attack?</li>
@@ -165,7 +166,7 @@ export default async function handler(req, res) {
               </ul>
             </div>
           ),
-          recommendations: (
+          recommendations: ReactDOMServer.renderToString(
             <ul className="list-disc pl-6">
               <li>Test and improve containment procedures regularly through tabletop exercises.</li>
               <li>Ensure that communication protocols between teams are optimized for efficiency.</li>
@@ -173,7 +174,7 @@ export default async function handler(req, res) {
               <li>Develop and maintain an up-to-date asset inventory to facilitate rapid containment decisions.</li>
             </ul>
           ),
-          discussionPrompts: (
+          discussionPrompts: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>Were the containment measures effective in preventing further spread?</li>
@@ -188,7 +189,7 @@ export default async function handler(req, res) {
         {
           title: 'Step 4: Forensics and Evidence Gathering',
           initialQuestion: 'What data and logs were collected for forensic analysis?',
-          content: (
+          content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>Were memory snapshots, disk images, or log files collected?</li>
@@ -199,7 +200,7 @@ export default async function handler(req, res) {
               </ul>
             </div>
           ),
-          recommendations: (
+          recommendations: ReactDOMServer.renderToString(
             <ul className="list-disc pl-6">
               <li>Conduct additional training on forensics tools and evidence collection.</li>
               <li>Ensure all team members know how to maintain the chain of custody for evidence.</li>
@@ -208,7 +209,7 @@ export default async function handler(req, res) {
               <li>Develop relationships with external forensic experts for complex cases.</li>
             </ul>
           ),
-          discussionPrompts: (
+          discussionPrompts: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>What challenges did the team face during forensics?</li>
@@ -223,7 +224,7 @@ export default async function handler(req, res) {
         {
           title: 'Step 5: Notification and Stakeholder Involvement',
           initialQuestion: 'Who was notified about the incident, and when?',
-          content: (
+          content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>Which internal and external stakeholders were notified (e.g., Legal, PR, C-Suite)?</li>
@@ -234,7 +235,7 @@ export default async function handler(req, res) {
               </ul>
             </div>
           ),
-          recommendations: (
+          recommendations: ReactDOMServer.renderToString(
             <ul className="list-disc pl-6">
               <li>Strengthen communication channels for better coordination between internal teams and external stakeholders.</li>
               <li>Ensure legal and compliance teams are actively involved in notification processes.</li>
@@ -243,7 +244,7 @@ export default async function handler(req, res) {
               <li>Establish clear escalation paths and decision-making authority for notifications.</li>
             </ul>
           ),
-          discussionPrompts: (
+          discussionPrompts: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>How well did communication flow during the notification process?</li>
@@ -258,7 +259,7 @@ export default async function handler(req, res) {
         {
           title: 'Step 6: Mitigation and Eradication',
           initialQuestion: 'How was the attack vector mitigated?',
-          content: (
+          content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>What mitigation steps were taken (e.g., patching, reconfiguration, removing malware)?</li>
@@ -269,7 +270,7 @@ export default async function handler(req, res) {
               </ul>
             </div>
           ),
-          recommendations: (
+          recommendations: ReactDOMServer.renderToString(
             <ul className="list-disc pl-6">
               <li>Regularly review mitigation techniques and test them in simulated environments.</li>
               <li>Ensure backup strategies are resilient to malware attacks and tested regularly.</li>
@@ -278,7 +279,7 @@ export default async function handler(req, res) {
               <li>Implement automated vulnerability scanning and patch management processes.</li>
             </ul>
           ),
-          discussionPrompts: (
+          discussionPrompts: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>Were any mitigation bypass attempts discovered? How were they handled?</li>
@@ -293,7 +294,7 @@ export default async function handler(req, res) {
         {
           title: 'Step 7: Recovery',
           initialQuestion: 'What steps were taken to recover systems and restore business operations?',
-          content: (
+          content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>Were systems restored from backups, or were new systems built?</li>
@@ -304,7 +305,7 @@ export default async function handler(req, res) {
               </ul>
             </div>
           ),
-          recommendations: (
+          recommendations: ReactDOMServer.renderToString(
             <ul className="list-disc pl-6">
               <li>Review recovery workflows to ensure minimal downtime and test regularly.</li>
               <li>Ensure that backups are regularly tested for integrity and ease of use in real incidents.</li>
@@ -313,7 +314,7 @@ export default async function handler(req, res) {
               <li>Develop and maintain detailed system configuration documentation to aid in recovery.</li>
             </ul>
           ),
-          discussionPrompts: (
+          discussionPrompts: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>What obstacles were faced during recovery?</li>
@@ -328,7 +329,7 @@ export default async function handler(req, res) {
         {
           title: 'Step 8: Post-Incident Review',
           initialQuestion: 'Conduct a blameless post-incident review (retrospective).',
-          content: (
+          content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>What worked well during the response?</li>
@@ -340,7 +341,7 @@ export default async function handler(req, res) {
               </ul>
             </div>
           ),
-          recommendations: (
+          recommendations: ReactDOMServer.renderToString(
             <ul className="list-disc pl-6">
               <li>Ensure post-incident reviews focus on process improvement, not blame.</li>
               <li>Document lessons learned and update the incident response plan accordingly.</li>
@@ -349,7 +350,7 @@ export default async function handler(req, res) {
               <li>Share sanitized learnings across the organization to improve overall security posture.</li>
             </ul>
           ),
-      discussionPrompts: (
+      discussionPrompts: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
                 <li>What lessons were learned from this incident?</li>
