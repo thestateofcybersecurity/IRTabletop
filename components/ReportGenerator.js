@@ -11,7 +11,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
 
   const parseHtmlContent = (html) => {
     const stripped = stripHtml(html);
-    return stripped.split('\n').filter(line => line.trim() !== '');
+    return stripped.split('\n').map(line => line.trim()).filter(line => line !== '');
   };
 
   const generateReport = () => {
@@ -27,20 +27,33 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       yPos += 15;
     };
 
-    const addWrappedText = (text, fontSize = 12, isBold = false) => {
+    const addWrappedText = (text, fontSize = 12, isBold = false, indent = 0) => {
       doc.setFontSize(fontSize);
       doc.setFont(undefined, isBold ? 'bold' : 'normal');
       
-      const splitText = doc.splitTextToSize(text, 180);
-      splitText.forEach((line) => {
+      const splitText = doc.splitTextToSize(text, 180 - indent);
+      splitText.forEach((line, index) => {
         if (yPos > 280) {
           doc.addPage();
           yPos = 10;
         }
-        doc.text(line, 15, yPos);
+        doc.text(line, 15 + indent, yPos);
         yPos += fontSize * 0.5;
+        if (index === splitText.length - 1) yPos += 2; // Add a small gap after each bullet point
       });
-      yPos += 5;
+    };
+
+    const addBulletPoints = (points, fontSize = 10) => {
+      points.forEach(point => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 10;
+        }
+        doc.setFontSize(fontSize);
+        doc.text('•', 15, yPos);
+        addWrappedText(point, fontSize, false, 5);
+      });
+      yPos += 5; // Add extra space after the list
     };
 
     const addPageBreak = () => {
@@ -84,11 +97,11 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
 
         addWrappedText('Recommendations:', 12, true);
         const recommendations = parseHtmlContent(step.recommendations);
-        recommendations.forEach(rec => addWrappedText(`• ${rec}`, 10));
+        addBulletPoints(recommendations);
 
         addWrappedText('Discussion Prompts:', 12, true);
         const prompts = parseHtmlContent(step.discussionPrompts);
-        prompts.forEach(prompt => addWrappedText(`• ${prompt}`, 10));
+        addBulletPoints(prompts);
 
         addPageBreak();
       });
