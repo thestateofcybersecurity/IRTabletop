@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getRandomInject } from '/components/Injects';
+import { jsPDF } from 'jspdf';
 
 export default function TabletopGuide({ scenario, roles, onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [actions, setActions] = useState([]);
-  const [notes, setNotes] = useState({}); // Store user notes for each step
+  const [notes, setNotes] = useState({});
   
   useEffect(() => {
     const injectInterval = setInterval(() => {
@@ -17,21 +18,13 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
 
     return () => clearInterval(injectInterval);
   }, []);
-  const generateUniqueInject = () => {
-    let inject;
-    do {
-      inject = getRandomInject();
-    } while (previousInjects.current.includes(inject.description));
-    previousInjects.current.push(inject.description);
-    return inject;
-  };
 
   const handleCompleteStep = () => {
     setActions(prevActions => [...prevActions, {
-      description: `Completed: ${steps[currentStep].title}`,
+      description: `Completed: ${scenario.steps[currentStep].title}`,
       timestamp: new Date().toLocaleTimeString()
     }]);
-    if (currentStep < steps.length - 1) {
+    if (currentStep < scenario.steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       onComplete(actions, notes);
@@ -45,48 +38,35 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     }));
   };
 
-  const goToPreviousStep = () => {
-    setCurrentStep(currentStep - 1);
-  };
-
   if (!scenario) {
     return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
   }
 
-  // Define handleActionComplete to track when an action is completed
   const handleActionComplete = (description, role) => {
     const assignedRole = roles?.[role] || 'Unassigned';
-    addAction({
+    setActions(prevActions => [...prevActions, {
       description,
       actor: assignedRole,
       timestamp: new Date().toLocaleTimeString(),
-    });
+    }]);
   };
 
-  if (!scenario) {
-    return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
-  }
-
-  const renderSection = (title, content) => (
-    <>
-      <h4 className="text-lg font-semibold mb-2">{title}:</h4>
-      <p className="mb-4">{content || 'Not specified'}</p>
-    </>
-  );
-
-  // PDF Export Function
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text(`Incident Response Tabletop Exercise Report`, 10, 10);
-      scenario.steps.forEach((step, index) => {
-        doc.text(`${index + 1}. ${step.title}`, 10, 30 + index * 10);
-        doc.text(`User Notes: ${notes[`step${index + 1}`] || 'No notes added'}`, 10, 40 + index * 10);
-        doc.text(`Initial Question: ${step.initialQuestion}`, 10, 30 + index * 20);
-        doc.text(`Recommendations:`, 10, 40 + index * 20);
-        doc.text(`Scenario: ${scenario.title}`, 10, 20);
+    doc.text(`Scenario: ${scenario.title}`, 10, 20);
+    scenario.steps.forEach((step, index) => {
+      doc.text(`${index + 1}. ${step.title}`, 10, 30 + index * 30);
+      doc.text(`Initial Question: ${step.initialQuestion}`, 10, 40 + index * 30);
+      doc.text(`User Notes: ${notes[`step${index + 1}`] || 'No notes added'}`, 10, 50 + index * 30);
+      doc.text(`Recommendations:`, 10, 60 + index * 30);
+      if (step.recommendations && step.recommendations.props && step.recommendations.props.children) {
         step.recommendations.props.children.forEach((recommendation, idx) => {
-        doc.text(`${idx + 1}. ${recommendation.props.children}`, 15, 50 + index * 20 + idx * 10);
-      });
+          if (recommendation && recommendation.props) {
+            doc.text(`${idx + 1}. ${recommendation.props.children}`, 15, 70 + index * 30 + idx * 10);
+          }
+        });
+      }
     });
     doc.save('tabletop-exercise.pdf');
   };
@@ -101,17 +81,17 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
 
       <h2 className="text-2xl font-bold mb-4">{scenario.steps[currentStep].title}</h2>
       <div className="mb-4">
-        <p className="font-semibold">{scenario.steps[currentStep].question}</p>
+        <p className="font-semibold">{scenario.steps[currentStep].initialQuestion}</p>
       </div>
     
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Recommendations:</h3>
-        {steps[currentStep].recommendations}
+        {scenario.steps[currentStep].recommendations}
       </div>
         
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
-        {steps[currentStep].discussionPrompts}
+        {scenario.steps[currentStep].discussionPrompts}
       </div>
 
       <div className="mb-4">
@@ -136,9 +116,16 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
           onClick={handleCompleteStep}
           className="bg-blue-500 text-white p-2 rounded"
         >
-          {currentStep === steps.length - 1 ? 'Complete Exercise' : 'Next Step'}
+          {currentStep === scenario.steps.length - 1 ? 'Complete Exercise' : 'Next Step'}
         </button>
       </div>
+
+      <button 
+        onClick={exportToPDF}
+        className="mt-4 bg-green-500 text-white p-2 rounded"
+      >
+        Export to PDF
+      </button>
     </div>
   );
 }
