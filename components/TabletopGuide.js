@@ -20,58 +20,6 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     return () => clearInterval(injectInterval);
   }, []);
 
-  const handleCompleteStep = () => {
-    setActions(prevActions => [...prevActions, {
-      description: `Completed: ${scenario.steps[currentStep].title}`,
-      timestamp: new Date().toLocaleTimeString()
-    }]);
-    if (currentStep < scenario.steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      onComplete(actions, notes);
-    }
-  };
-
-  const handleNoteChange = (e) => {
-    setNotes(prevNotes => ({
-      ...prevNotes,
-      [`step${currentStep + 1}`]: e.target.value
-    }));
-  };
-
-  if (!scenario) {
-    return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
-  }
-
-  const handleActionComplete = (description, role) => {
-    const assignedRole = roles?.[role] || 'Unassigned';
-    setActions(prevActions => [...prevActions, {
-      description,
-      actor: assignedRole,
-      timestamp: new Date().toLocaleTimeString(),
-    }]);
-  };
-
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text(`Incident Response Tabletop Exercise Report`, 10, 10);
-    doc.text(`Scenario: ${scenario.title}`, 10, 20);
-    scenario.steps.forEach((step, index) => {
-      doc.text(`${index + 1}. ${step.title}`, 10, 30 + index * 30);
-      doc.text(`Initial Question: ${step.initialQuestion}`, 10, 40 + index * 30);
-      doc.text(`User Notes: ${notes[`step${index + 1}`] || 'No notes added'}`, 10, 50 + index * 30);
-      doc.text(`Recommendations:`, 10, 60 + index * 30);
-      if (step.recommendations && step.recommendations.props && step.recommendations.props.children) {
-        step.recommendations.props.children.forEach((recommendation, idx) => {
-          if (recommendation && recommendation.props) {
-            doc.text(`${idx + 1}. ${recommendation.props.children}`, 15, 70 + index * 30 + idx * 10);
-          }
-        });
-      }
-    });
-    doc.save('tabletop-exercise.pdf');
-  };
-
   const parseHtml = (htmlString) => {
     try {
       return parse(htmlString);
