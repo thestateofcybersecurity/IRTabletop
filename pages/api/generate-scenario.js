@@ -130,7 +130,7 @@ export default async function handler(req, res) {
       content: 'What worked well during the response? What areas need improvement? Were there any major communication breakdowns? Did the tools and processes in place meet the team\'s needs? What gaps were identified in detection, response, or recovery?',
       recommendations: 'Ensure post-incident reviews focus on process improvement, not blame. Document lessons learned and update the incident response plan accordingly. Incorporate feedback from the team to improve future incident responses.',
       discussionPrompts: 'What lessons were learned from this incident? What gaps were identified in the incident response playbook? How can the response process be improved for future incidents?'
-    };
+    }
   ]
-};
+  }
 }
