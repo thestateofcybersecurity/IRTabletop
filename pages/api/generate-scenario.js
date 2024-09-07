@@ -132,6 +132,4 @@ export default async function handler(req, res) {
       discussionPrompts: 'What lessons were learned from this incident? What gaps were identified in the incident response playbook? How can the response process be improved for future incidents?'
     }
   ]
-}
-    console.log('Generated scenario:', scenario); // Log the generated scenario
-    res.status(200).json(scenario);
+};
