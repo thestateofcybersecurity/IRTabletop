@@ -23,14 +23,17 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   const handleCompleteStep = () => {
     if (!scenario || !scenario.steps) return;
 
-    setActions(prevActions => [...prevActions, {
+    const newActions = [...actions, {
       description: `Completed: ${scenario.steps[currentStepIndex].title}`,
       timestamp: new Date().toLocaleTimeString()
-    }]);
+    }];
+
     if (currentStepIndex < scenario.steps.length - 1) {
       setCurrentStepIndex(currentStepIndex + 1);
+      setActions(newActions);
     } else {
-      onComplete(actions, notes);
+      // This is the final step
+      onComplete(newActions, notes);
     }
   };
 
