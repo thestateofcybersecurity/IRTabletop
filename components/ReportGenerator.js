@@ -1,9 +1,9 @@
 import React from 'react';
 import { jsPDF } from "jspdf";
-import html2canvas from 'html2canvas';
+import 'jspdf-autotable';
 
 export default function ReportGenerator({ scenario, roles, actions, notes }) {
-  const generateReport = async () => {
+  const generateReport = () => {
     const doc = new jsPDF();
     let yPos = 10;
 
@@ -16,92 +16,90 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       yPos += 15;
     };
 
-    const addText = (text, fontSize = 12, isBold = false) => {
+    const addWrappedText = (text, fontSize = 12, isBold = false) => {
       doc.setFontSize(fontSize);
       doc.setFont(undefined, isBold ? 'bold' : 'normal');
       
       const splitText = doc.splitTextToSize(text, 180);
-      doc.text(splitText, 15, yPos);
-      yPos += (splitText.length * fontSize * 0.35) + 5;
-
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
+      splitText.forEach((line) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 10;
+        }
+        doc.text(line, 15, yPos);
+        yPos += fontSize * 0.5;
+      });
+      yPos += 5;
     };
 
-    const addHtmlContent = async (elementId) => {
-      const element = document.getElementById(elementId);
-      const canvas = await html2canvas(element);
-      const imgData = canvas.toDataURL('image/png');
-      const imgWidth = 190;
-      const pageHeight = 295;
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      let heightLeft = imgHeight;
-      let position = yPos;
-
-      doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        doc.addPage();
-        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      yPos += imgHeight + 10;
+    const addPageBreak = () => {
+      doc.addPage();
+      yPos = 10;
     };
 
     // Title
     addSectionTitle('Incident Response Tabletop Exercise Report', 20);
+    yPos += 10;
 
     // Scenario Summary
     if (scenario) {
       addSectionTitle('Scenario Summary', 16);
-      addText(`Title: ${scenario.title}`, 12, true);
-      addText(`Description: ${scenario.description}`, 12);
+      addWrappedText(`Title: ${scenario.title}`, 12, true);
+      addWrappedText(`Description: ${scenario.description}`, 12);
     }
+
+    addPageBreak();
 
     // Assigned Roles
     if (roles && roles.length > 0) {
       addSectionTitle('Assigned Roles', 16);
       roles.forEach((role) => {
-        addText(`${role.title}: ${role.assignee}`, 12);
+        addWrappedText(`${role.title}: ${role.assignee}`, 12);
       });
     }
+
+    addPageBreak();
 
     // Scenario Steps
     if (scenario.steps && scenario.steps.length > 0) {
-      addSectionTitle('Scenario Steps', 16);
-      for (let index = 0; index < scenario.steps.length; index++) {
-        const step = scenario.steps[index];
-        addText(`Step ${index + 1}: ${step.title}`, 14, true);
-        addText(`Initial Question: ${step.initialQuestion || 'Not Available'}`, 12);
+      scenario.steps.forEach((step, index) => {
+        addSectionTitle(`Step ${index + 1}: ${step.title}`, 14);
+        addWrappedText(`Initial Question: ${step.initialQuestion || 'Not Available'}`, 12);
 
         if (notes && notes[`step${index + 1}`]) {
-          addText('User Notes:', 12, true);
-          addText(notes[`step${index + 1}`], 12);
+          addWrappedText('User Notes:', 12, true);
+          addWrappedText(notes[`step${index + 1}`], 12);
         }
 
-        // Add HTML content for recommendations and discussion prompts
-        await addHtmlContent(`recommendations-${index}`);
-        await addHtmlContent(`discussion-prompts-${index}`);
+        addWrappedText('Recommendations:', 12, true);
+        doc.autoTable({
+          startY: yPos,
+          head: [['Recommendations']],
+          body: [[step.recommendations]],
+          styles: { overflow: 'linebreak', cellPadding: 2 },
+          columnStyles: { 0: { cellWidth: 180 } }
+        });
+        yPos = doc.lastAutoTable.finalY + 10;
 
-        if (index < scenario.steps.length - 1) {
-          doc.addPage();
-          yPos = 10;
-        }
-      }
+        addWrappedText('Discussion Prompts:', 12, true);
+        doc.autoTable({
+          startY: yPos,
+          head: [['Discussion Prompts']],
+          body: [[step.discussionPrompts]],
+          styles: { overflow: 'linebreak', cellPadding: 2 },
+          columnStyles: { 0: { cellWidth: 180 } }
+        });
+        yPos = doc.lastAutoTable.finalY + 10;
+
+        addPageBreak();
+      });
     }
 
     // Action Timeline
-    if (actions && actions.length > 0) {
-      addSectionTitle('Action Timeline', 16);
-      actions.forEach(action => {
-        addText(`${action.timestamp}: ${action.description}`, 12);
-      });
-    }
+    addSectionTitle('Action Timeline', 16);
+    actions.forEach(action => {
+      addWrappedText(`${action.timestamp}: ${action.description}`, 12);
+    });
 
     // Save the PDF
     doc.save('Incident_Response_Exercise_Report.pdf');
@@ -135,25 +133,25 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         <div className="mb-4">
           <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Scenario Steps</h3>
           {scenario.steps.map((step, index) => (
-            <div key={index} className="mb-4">
+            <div key={index} className="mb-4 p-4 border rounded">
               <h4 className="text-lg font-semibold">{step.title}</h4>
               <p><strong>Initial Question:</strong> {step.initialQuestion || 'Not Available'}</p>
               
               {notes && notes[`step${index + 1}`] && (
-                <div>
+                <div className="mt-2">
                   <strong>User Notes:</strong>
                   <p>{notes[`step${index + 1}`]}</p>
                 </div>
               )}
 
-              <div id={`recommendations-${index}`}>
-                <strong>Recommendations:</strong>
-                <div dangerouslySetInnerHTML={{ __html: step.recommendations }} />
-              </div>
-              
-              <div id={`discussion-prompts-${index}`}>
+              <div className="mt-2">
                 <strong>Discussion Prompts:</strong>
                 <div dangerouslySetInnerHTML={{ __html: step.discussionPrompts }} />
+              </div>
+
+              <div className="mt-2">
+                <strong>Recommendations:</strong>
+                <div dangerouslySetInnerHTML={{ __html: step.recommendations }} />
               </div>
             </div>
           ))}
