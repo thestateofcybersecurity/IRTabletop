@@ -29,6 +29,18 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       }
     };
 
+    const addBullets = (textArray) => {
+      textArray.forEach((text, index) => {
+        const splitText = doc.splitTextToSize(text, 170);
+        doc.text(`• ${splitText[0]}`, 20, yPos + (index * 7)); // Bullet point with indentation
+        if (splitText.length > 1) {
+          doc.text(splitText.slice(1).join(' '), 30, yPos + ((index + 1) * 7));
+        }
+        yPos += (splitText.length * 7);
+      });
+      yPos += 10;
+    };
+
     const addPageBreak = () => {
       if (yPos > 250) {
         doc.addPage();
@@ -46,7 +58,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       addText(`Description: ${scenario.description}`, 12);
     }
 
-    // Assigned Roles (separated into its own section)
+    // Assigned Roles
     if (roles && roles.length > 0) {
       addSectionTitle('Assigned Roles', 16);
       roles.forEach((role) => {
@@ -55,7 +67,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       addPageBreak(); // Ensure page break if roles overflow the page
     }
 
-    // Scenario Steps (roles not repeated within steps)
+    // Scenario Steps
     if (scenario.steps && scenario.steps.length > 0) {
       addSectionTitle('Scenario Steps', 16);
       scenario.steps.forEach((step, index) => {
@@ -68,15 +80,23 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
           addText(notes[`step${index + 1}`], 12);
         }
 
-        // Adding recommendations and discussion prompts
+        // Convert HTML to Bullet Points (Recommendations and Prompts)
         if (step.recommendations) {
           addText('Recommendations:', 12, true);
-          addText(step.recommendations, 12);
+          const recommendations = step.recommendations
+            .replace(/<\/li><li>/g, '\n')
+            .replace(/<\/?[^>]+(>|$)/g, '') // Remove HTML tags
+            .split('\n');
+          addBullets(recommendations);
         }
 
         if (step.discussionPrompts) {
           addText('Discussion Prompts:', 12, true);
-          addText(step.discussionPrompts, 12);
+          const prompts = step.discussionPrompts
+            .replace(/<\/li><li>/g, '\n')
+            .replace(/<\/?[^>]+(>|$)/g, '') // Remove HTML tags
+            .split('\n');
+          addBullets(prompts);
         }
 
         addPageBreak(); // Ensure page break after each step if needed
