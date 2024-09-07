@@ -1,63 +1,77 @@
 import React from 'react';
-import { jsPDF } from 'jspdf';
+import { jsPDF } from "jspdf";
 
 export default function ReportGenerator({ scenario, roles, actions, notes }) {
   const generateReport = () => {
     const doc = new jsPDF();
     let yPos = 10;
 
+    const addSectionTitle = (title, fontSize = 16) => {
+      doc.setFontSize(fontSize);
+      doc.setFont(undefined, 'bold');
+      doc.setFillColor(230, 230, 250); // Light lavender background
+      doc.rect(10, yPos, 190, 10, 'F'); // Background for the section title
+      doc.text(title, 15, yPos + 7);
+      yPos += 15;
+    };
+
     const addText = (text, fontSize = 12, isBold = false) => {
       doc.setFontSize(fontSize);
-      if (isBold) doc.setFont(undefined, 'bold');
-      else doc.setFont(undefined, 'normal');
+      doc.setFont(undefined, isBold ? 'bold' : 'normal');
       
       const splitText = doc.splitTextToSize(text, 180);
       doc.text(splitText, 15, yPos);
       yPos += (splitText.length * fontSize * 0.35) + 5;
-      
+
       if (yPos > 280) {
         doc.addPage();
         yPos = 10;
       }
     };
 
-    // Title
-    addText('Incident Response Tabletop Exercise Report', 20, true);
-    
-    // Scenario Summary
+    // Title with Design Enhancements
+    addSectionTitle('Incident Response Tabletop Exercise Report', 20);
+
+    // Scenario Summary Section
     if (scenario) {
-      addText('Scenario Summary', 16, true);
-      addText(`Title: ${scenario.title}`);
-      addText(`Description: ${scenario.description}`);
+      addSectionTitle('Scenario Summary', 16);
+      addText(`Title: ${scenario.title}`, 12, true);
+      addText(`Description: ${scenario.description}`, 12);
     }
-    
-    // Assigned Roles
+
+    // Assigned Roles mixed with scenario
     if (roles && roles.length > 0) {
-      addText('Assigned Roles', 16, true);
-      roles.forEach(role => {
-        addText(`${role.title}: ${role.assignee}`);
+      addSectionTitle('Assigned Roles', 16);
+      roles.forEach((role) => {
+        addText(`${role.title}: ${role.assignee}`, 12);
       });
     }
-    
-    // Scenario Steps
-    if (scenario && scenario.steps && scenario.steps.length > 0) {
-      addText('Scenario Steps', 16, true);
+
+    // Scenario Steps with Assigned Roles and User Notes
+    if (scenario.steps && scenario.steps.length > 0) {
+      addSectionTitle('Scenario Steps', 16);
       scenario.steps.forEach((step, index) => {
         addText(`Step ${index + 1}: ${step.title}`, 14, true);
-        addText(`Initial Question: ${step.initialQuestion}`);
-        
+        addText(`Initial Question: ${step.question}`, 12);
+
+        // Role associated with this step
+        if (roles[index]) {
+          addText(`Assigned Role: ${roles[index].assignee}`, 12, true);
+        }
+
+        // User notes for each step
         if (notes && notes[`step${index + 1}`]) {
           addText('User Notes:', 12, true);
-          addText(notes[`step${index + 1}`]);
+          addText(notes[`step${index + 1}`], 12);
         }
       });
     }
-    
-    // Action Timeline
+
+    // Action Timeline Section
     if (actions && actions.length > 0) {
-      addText('Action Timeline', 16, true);
+      addSectionTitle('Action Timeline', 16);
       actions.forEach(action => {
-        addText(`${action.timestamp}: ${action.description}`);
+        addText(`${action.timestamp}: ${action.description}`, 12);
       });
     }
 
@@ -65,24 +79,22 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
     doc.save('Incident_Response_Exercise_Report.pdf');
   };
 
-  if (!scenario) {
-    return <div>No scenario data available. Please generate a scenario first.</div>;
-  }
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Exercise Report</h2>
       
+      {/* Scenario Summary Section */}
       <div className="mb-4">
-        <h3 className="text-xl font-semibold">Scenario Summary</h3>
+        <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Scenario Summary</h3>
         <p><strong>Title:</strong> {scenario.title}</p>
         <p><strong>Description:</strong> {scenario.description}</p>
       </div>
 
+      {/* Assigned Roles Section */}
       {roles && roles.length > 0 && (
         <div className="mb-4">
-          <h3 className="text-xl font-semibold">Assigned Roles</h3>
-          <ul>
+          <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Assigned Roles</h3>
+          <ul className="list-disc pl-6">
             {roles.map((role, index) => (
               <li key={index}>{role.title}: {role.assignee}</li>
             ))}
@@ -90,13 +102,19 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         </div>
       )}
 
+      {/* Scenario Steps Section */}
       {scenario.steps && scenario.steps.length > 0 && (
         <div className="mb-4">
-          <h3 className="text-xl font-semibold">Scenario Steps</h3>
+          <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Scenario Steps</h3>
           {scenario.steps.map((step, index) => (
             <div key={index} className="mb-4">
               <h4 className="text-lg font-semibold">{step.title}</h4>
-              <p><strong>Initial Question:</strong> {step.initialQuestion}</p>
+              <p><strong>Initial Question:</strong> {step.question}</p>
+              
+              {/* Show role assigned to the step */}
+              {roles[index] && <p><strong>Assigned Role:</strong> {roles[index].assignee}</p>}
+              
+              {/* User notes for each step */}
               {notes && notes[`step${index + 1}`] && (
                 <div>
                   <strong>User Notes:</strong>
@@ -108,10 +126,11 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         </div>
       )}
 
+      {/* Action Timeline Section */}
       {actions && actions.length > 0 && (
         <div className="mb-4">
-          <h3 className="text-xl font-semibold">Action Timeline</h3>
-          <ul>
+          <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Action Timeline</h3>
+          <ul className="list-disc pl-6">
             {actions.map((action, index) => (
               <li key={index}>{action.timestamp}: {action.description}</li>
             ))}
