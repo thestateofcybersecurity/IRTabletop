@@ -41,15 +41,6 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     }));
   };
 
-  const handleActionComplete = (description, role) => {
-    const assignedRole = roles?.[role] || 'Unassigned';
-    setActions(prevActions => [...prevActions, {
-      description,
-      actor: assignedRole,
-      timestamp: new Date().toLocaleTimeString(),
-    }]);
-  };
-
   const parseHtml = (htmlString) => {
     if (typeof htmlString !== 'string') return null;
     try {
@@ -65,7 +56,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   }
 
   const currentStep = scenario.steps[currentStepIndex];
-  
+
   return (
     <div className="tabletop-guide">
       <div className="scenario-summary mb-6 p-4 bg-gray-100 rounded">
@@ -92,7 +83,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Notes:</h3>
         <textarea
-          value={notes[`step${currentStep + 1}`] || ''}
+          value={notes[`step${currentStepIndex + 1}`] || ''}
           onChange={handleNoteChange}
           className="w-full p-2 border rounded"
           rows="4"
