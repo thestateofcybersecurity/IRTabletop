@@ -59,7 +59,7 @@ export default async function handler(req, res) {
 
     const scenario = {
       title: `${group.name} Attack Using ${tactic.name} and ${technique.name}`,
-      description: `An adversary group known as ${group.name} (aliases: ${group.aliases.join(', ')}) has launched an attack against a ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} incident response experience. The group is known for targeting industries such as ${group.description}. In this scenario, the attackers have employed the ${tactic.name} tactic to achieve ${tactic.description}. The specific technique being used is ${technique.name}, which involves ${technique.description}. ${software.name} malware is being used in this attack. Mitigation efforts will require the organization to apply ${mitigation.name}, which involves ${mitigation.description}. The attack may impact key business operations and require urgent attention to contain and remediate.`,
+      description: `An adversary group known as ${group.name} has launched an attack against a ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} incident response experience. The group is known for ${group.description}. In this scenario, the attackers have employed the ${tactic.name} tactic to ${tactic.description}. The specific technique being used is ${technique.name}, which involves ${technique.description}. ${software.name} is being used in this attack. Mitigation efforts will require the organization to apply ${mitigation.name}, which involves ${mitigation.description}. The attack may impact key business operations and require urgent attention to contain and remediate.`,
       //businessImpact: "High",  // New field for business impact
       //attackVector: "Spearphishing",  // New field for attack vector
       // MITRE-related data: Key elements for scenario realism
@@ -338,15 +338,7 @@ export default async function handler(req, res) {
         </div>
       )
     }
-  ],
-    
+  ]
+}; 
     console.log('Generated scenario:', scenario); // Log the generated scenario
     res.status(200).json(scenario);
-  } catch (error) {
-    console.error('Error generating scenario:', error);
-    if (error.message === 'Unauthorized') {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-    res.status(500).json({ error: 'Error generating scenario', details: error.message });
-  }
-}
