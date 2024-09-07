@@ -33,7 +33,17 @@ export default function ScenarioGenerator({ onGenerate }) {
       }
 
       const generatedScenario = await response.json();
-      onGenerate(generatedScenario); // Pass generated scenario to the guide component
+      // Process the scenario data to ensure JSX elements are handled correctly
+      const processedScenario = {
+        ...generatedScenario,
+        steps: generatedScenario.steps.map(step => ({
+          ...step,
+          recommendations: processJSX(step.recommendations),
+          discussionPrompts: processJSX(step.discussionPrompts),
+        })),
+      };
+
+      onGenerate(processedScenario); // Pass processed scenario to the guide component
     } catch (error) {
       console.error('Error generating scenario:', error);
       alert('An error occurred while generating the scenario. Please try again.');
@@ -42,6 +52,20 @@ export default function ScenarioGenerator({ onGenerate }) {
     }
   };
 
+  // Helper function to process JSX content
+  const processJSX = (content) => {
+    if (typeof content === 'string') {
+      return <p>{content}</p>;
+    }
+    if (React.isValidElement(content)) {
+      return content;
+    }
+    if (Array.isArray(content)) {
+      return <>{content.map((item, index) => <React.Fragment key={index}>{processJSX(item)}</React.Fragment>)}</>;
+    }
+    return null;
+  };
+  
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mb-8">
       <h2 className="text-2xl font-bold mb-4">Generate Scenario</h2>
