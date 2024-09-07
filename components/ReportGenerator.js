@@ -29,17 +29,17 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       }
     };
 
-    // Title with Design Enhancements
+    // Title
     addSectionTitle('Incident Response Tabletop Exercise Report', 20);
 
-    // Scenario Summary Section
+    // Scenario Summary
     if (scenario) {
       addSectionTitle('Scenario Summary', 16);
       addText(`Title: ${scenario.title}`, 12, true);
       addText(`Description: ${scenario.description}`, 12);
     }
 
-    // Assigned Roles mixed with scenario
+    // Assigned Roles (separated into its own section)
     if (roles && roles.length > 0) {
       addSectionTitle('Assigned Roles', 16);
       roles.forEach((role) => {
@@ -47,17 +47,12 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       });
     }
 
-    // Scenario Steps with Assigned Roles and User Notes
+    // Scenario Steps (roles not repeated within steps)
     if (scenario.steps && scenario.steps.length > 0) {
       addSectionTitle('Scenario Steps', 16);
       scenario.steps.forEach((step, index) => {
         addText(`Step ${index + 1}: ${step.title}`, 14, true);
-        addText(`Initial Question: ${step.question}`, 12);
-
-        // Role associated with this step
-        if (roles[index]) {
-          addText(`Assigned Role: ${roles[index].assignee}`, 12, true);
-        }
+        addText(`Initial Question: ${step.question || 'Not Available'}`, 12);
 
         // User notes for each step
         if (notes && notes[`step${index + 1}`]) {
@@ -67,7 +62,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       });
     }
 
-    // Action Timeline Section
+    // Action Timeline
     if (actions && actions.length > 0) {
       addSectionTitle('Action Timeline', 16);
       actions.forEach(action => {
@@ -83,14 +78,14 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Exercise Report</h2>
       
-      {/* Scenario Summary Section */}
+      {/* Scenario Summary */}
       <div className="mb-4">
         <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Scenario Summary</h3>
         <p><strong>Title:</strong> {scenario.title}</p>
         <p><strong>Description:</strong> {scenario.description}</p>
       </div>
 
-      {/* Assigned Roles Section */}
+      {/* Assigned Roles */}
       {roles && roles.length > 0 && (
         <div className="mb-4">
           <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Assigned Roles</h3>
@@ -102,17 +97,14 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         </div>
       )}
 
-      {/* Scenario Steps Section */}
+      {/* Scenario Steps */}
       {scenario.steps && scenario.steps.length > 0 && (
         <div className="mb-4">
           <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Scenario Steps</h3>
           {scenario.steps.map((step, index) => (
             <div key={index} className="mb-4">
               <h4 className="text-lg font-semibold">{step.title}</h4>
-              <p><strong>Initial Question:</strong> {step.question}</p>
-              
-              {/* Show role assigned to the step */}
-              {roles[index] && <p><strong>Assigned Role:</strong> {roles[index].assignee}</p>}
+              <p><strong>Initial Question:</strong> {step.question || 'Not Available'}</p>
               
               {/* User notes for each step */}
               {notes && notes[`step${index + 1}`] && (
@@ -126,7 +118,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         </div>
       )}
 
-      {/* Action Timeline Section */}
+      {/* Action Timeline */}
       {actions && actions.length > 0 && (
         <div className="mb-4">
           <h3 className="text-xl font-semibold bg-gray-200 p-2 rounded">Action Timeline</h3>
