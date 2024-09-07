@@ -3,6 +3,17 @@ import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 
 export default function ReportGenerator({ scenario, roles, actions, notes }) {
+  const stripHtml = (html) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
+  const parseHtmlContent = (html) => {
+    const stripped = stripHtml(html);
+    return stripped.split('\n').filter(line => line.trim() !== '');
+  };
+
   const generateReport = () => {
     const doc = new jsPDF();
     let yPos = 10;
@@ -72,24 +83,12 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         }
 
         addWrappedText('Recommendations:', 12, true);
-        doc.autoTable({
-          startY: yPos,
-          head: [['Recommendations']],
-          body: [[step.recommendations]],
-          styles: { overflow: 'linebreak', cellPadding: 2 },
-          columnStyles: { 0: { cellWidth: 180 } }
-        });
-        yPos = doc.lastAutoTable.finalY + 10;
+        const recommendations = parseHtmlContent(step.recommendations);
+        recommendations.forEach(rec => addWrappedText(`• ${rec}`, 10));
 
         addWrappedText('Discussion Prompts:', 12, true);
-        doc.autoTable({
-          startY: yPos,
-          head: [['Discussion Prompts']],
-          body: [[step.discussionPrompts]],
-          styles: { overflow: 'linebreak', cellPadding: 2 },
-          columnStyles: { 0: { cellWidth: 180 } }
-        });
-        yPos = doc.lastAutoTable.finalY + 10;
+        const prompts = parseHtmlContent(step.discussionPrompts);
+        prompts.forEach(prompt => addWrappedText(`• ${prompt}`, 10));
 
         addPageBreak();
       });
@@ -145,13 +144,13 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
               )}
 
               <div className="mt-2">
-                <strong>Discussion Prompts:</strong>
-                <div dangerouslySetInnerHTML={{ __html: step.discussionPrompts }} />
-              </div>
-
-              <div className="mt-2">
                 <strong>Recommendations:</strong>
                 <div dangerouslySetInnerHTML={{ __html: step.recommendations }} />
+              </div>
+              
+              <div className="mt-2">
+                <strong>Discussion Prompts:</strong>
+                <div dangerouslySetInnerHTML={{ __html: step.discussionPrompts }} />
               </div>
             </div>
           ))}
