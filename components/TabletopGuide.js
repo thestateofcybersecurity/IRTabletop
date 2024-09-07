@@ -69,15 +69,15 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       <div className="mb-4">
         <p className="font-semibold">{currentStep.initialQuestion}</p>
       </div>
+
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
+        {parseHtml(currentStep.discussionPrompts)}
+      </div>
     
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Recommendations:</h3>
         {parseHtml(currentStep.recommendations)}
-      </div>
-        
-      <div className="mb-4">
-        <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
-        {parseHtml(currentStep.discussionPrompts)}
       </div>
 
       <div className="mb-4">
