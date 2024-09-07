@@ -29,6 +29,13 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       }
     };
 
+    const addPageBreak = () => {
+      if (yPos > 250) {
+        doc.addPage();
+        yPos = 10;
+      }
+    };
+
     // Title
     addSectionTitle('Incident Response Tabletop Exercise Report', 20);
 
@@ -45,6 +52,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       roles.forEach((role) => {
         addText(`${role.title}: ${role.assignee}`, 12);
       });
+      addPageBreak(); // Ensure page break if roles overflow the page
     }
 
     // Scenario Steps (roles not repeated within steps)
@@ -59,6 +67,19 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
           addText('User Notes:', 12, true);
           addText(notes[`step${index + 1}`], 12);
         }
+
+        // Adding recommendations and discussion prompts
+        if (step.recommendations) {
+          addText('Recommendations:', 12, true);
+          addText(step.recommendations, 12);
+        }
+
+        if (step.discussionPrompts) {
+          addText('Discussion Prompts:', 12, true);
+          addText(step.discussionPrompts, 12);
+        }
+
+        addPageBreak(); // Ensure page break after each step if needed
       });
     }
 
@@ -111,6 +132,20 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
                 <div>
                   <strong>User Notes:</strong>
                   <p>{notes[`step${index + 1}`]}</p>
+                </div>
+              )}
+
+              {/* Recommendations and discussion prompts */}
+              {step.recommendations && (
+                <div>
+                  <strong>Recommendations:</strong>
+                  <p>{step.recommendations}</p>
+                </div>
+              )}
+              {step.discussionPrompts && (
+                <div>
+                  <strong>Discussion Prompts:</strong>
+                  <p>{step.discussionPrompts}</p>
                 </div>
               )}
             </div>
