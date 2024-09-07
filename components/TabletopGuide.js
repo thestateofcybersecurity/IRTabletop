@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getRandomInject } from '/components/Injects';
 import { jsPDF } from 'jspdf';
+import parse from 'html-react-parser';
 
 export default function TabletopGuide({ scenario, roles, onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -71,6 +72,21 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     doc.save('tabletop-exercise.pdf');
   };
 
+  const parseHtml = (htmlString) => {
+    try {
+      return parse(htmlString);
+    } catch (error) {
+      console.error('Error parsing HTML:', error);
+      return <p>Error rendering content</p>;
+    }
+  };
+
+  if (!scenario || !scenario.steps || scenario.steps.length === 0) {
+    return <p>No valid scenario available. Please generate a scenario first.</p>;
+  }
+
+  const currentStep = scenario.steps[currentStep];
+  
   return (
     <div className="tabletop-guide">
       <div className="scenario-summary mb-6 p-4 bg-gray-100 rounded">
@@ -79,19 +95,19 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
         <p><strong>Description:</strong> {scenario.description}</p>
       </div>
 
-      <h2 className="text-2xl font-bold mb-4">{scenario.steps[currentStep].title}</h2>
+      <h2 className="text-2xl font-bold mb-4">{currentStep.title}</h2>
       <div className="mb-4">
-        <p className="font-semibold">{scenario.steps[currentStep].initialQuestion}</p>
+        <p className="font-semibold">{currentStep.initialQuestion}</p>
       </div>
     
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Recommendations:</h3>
-        {scenario.steps[currentStep].recommendations}
+        {parseHtml(currentStep.recommendations)}
       </div>
         
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
-        {scenario.steps[currentStep].discussionPrompts}
+        {parseHtml(currentStep.discussionPrompts)}
       </div>
 
       <div className="mb-4">
