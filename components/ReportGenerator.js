@@ -1,16 +1,17 @@
 import React from 'react';
 import { jsPDF } from "jspdf";
+import html2canvas from 'html2canvas';
 
 export default function ReportGenerator({ scenario, roles, actions, notes }) {
-  const generateReport = () => {
+  const generateReport = async () => {
     const doc = new jsPDF();
     let yPos = 10;
 
     const addSectionTitle = (title, fontSize = 16) => {
       doc.setFontSize(fontSize);
       doc.setFont(undefined, 'bold');
-      doc.setFillColor(230, 230, 250); // Light lavender background
-      doc.rect(10, yPos, 190, 10, 'F'); // Background for the section title
+      doc.setFillColor(230, 230, 250);
+      doc.rect(10, yPos, 190, 10, 'F');
       doc.text(title, 15, yPos + 7);
       yPos += 15;
     };
@@ -29,23 +30,27 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       }
     };
 
-    const addBullets = (bulletPoints) => {
-      bulletPoints.forEach((bullet, index) => {
-        const splitText = doc.splitTextToSize(bullet, 170);
-        doc.text(`• ${splitText[0]}`, 20, yPos + (index * 7)); // Bullet point with indentation
-        if (splitText.length > 1) {
-          doc.text(splitText.slice(1).join(' '), 30, yPos + ((index + 1) * 7));
-        }
-        yPos += (splitText.length * 7);
-      });
-      yPos += 10;
-    };
+    const addHtmlContent = async (elementId) => {
+      const element = document.getElementById(elementId);
+      const canvas = await html2canvas(element);
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 190;
+      const pageHeight = 295;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      let heightLeft = imgHeight;
+      let position = yPos;
 
-    const addPageBreak = () => {
-      if (yPos > 250) {
+      doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
         doc.addPage();
-        yPos = 10;
+        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
       }
+
+      yPos += imgHeight + 10;
     };
 
     // Title
@@ -64,43 +69,30 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       roles.forEach((role) => {
         addText(`${role.title}: ${role.assignee}`, 12);
       });
-      addPageBreak(); // Ensure page break if roles overflow the page
     }
 
     // Scenario Steps
     if (scenario.steps && scenario.steps.length > 0) {
       addSectionTitle('Scenario Steps', 16);
-      scenario.steps.forEach((step, index) => {
+      for (let index = 0; index < scenario.steps.length; index++) {
+        const step = scenario.steps[index];
         addText(`Step ${index + 1}: ${step.title}`, 14, true);
-        addText(`Initial Question: ${step.question || 'Not Available'}`, 12);
+        addText(`Initial Question: ${step.initialQuestion || 'Not Available'}`, 12);
 
-        // User notes for each step
         if (notes && notes[`step${index + 1}`]) {
           addText('User Notes:', 12, true);
           addText(notes[`step${index + 1}`], 12);
         }
 
-        // Convert HTML to Bullet Points (Recommendations and Prompts)
-        if (step.recommendations) {
-          addText('Recommendations:', 12, true);
-          const recommendations = step.recommendations
-            .replace(/<\/li><li>/g, '\n')
-            .replace(/<\/?[^>]+(>|$)/g, '') // Remove HTML tags
-            .split('\n');
-          addBullets(recommendations);
-        }
+        // Add HTML content for recommendations and discussion prompts
+        await addHtmlContent(`recommendations-${index}`);
+        await addHtmlContent(`discussion-prompts-${index}`);
 
-        if (step.discussionPrompts) {
-          addText('Discussion Prompts:', 12, true);
-          const prompts = step.discussionPrompts
-            .replace(/<\/li><li>/g, '\n')
-            .replace(/<\/?[^>]+(>|$)/g, '') // Remove HTML tags
-            .split('\n');
-          addBullets(prompts);
+        if (index < scenario.steps.length - 1) {
+          doc.addPage();
+          yPos = 10;
         }
-
-        addPageBreak(); // Ensure page break after each step if needed
-      });
+      }
     }
 
     // Action Timeline
@@ -145,9 +137,8 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
           {scenario.steps.map((step, index) => (
             <div key={index} className="mb-4">
               <h4 className="text-lg font-semibold">{step.title}</h4>
-              <p><strong>Initial Question:</strong> {step.question || 'Not Available'}</p>
+              <p><strong>Initial Question:</strong> {step.initialQuestion || 'Not Available'}</p>
               
-              {/* User notes for each step */}
               {notes && notes[`step${index + 1}`] && (
                 <div>
                   <strong>User Notes:</strong>
@@ -155,19 +146,15 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
                 </div>
               )}
 
-              {/* Recommendations and discussion prompts */}
-              {step.recommendations && (
-                <div>
-                  <strong>Recommendations:</strong>
-                  <p>{step.recommendations}</p>
-                </div>
-              )}
-              {step.discussionPrompts && (
-                <div>
-                  <strong>Discussion Prompts:</strong>
-                  <p>{step.discussionPrompts}</p>
-                </div>
-              )}
+              <div id={`recommendations-${index}`}>
+                <strong>Recommendations:</strong>
+                <div dangerouslySetInnerHTML={{ __html: step.recommendations }} />
+              </div>
+              
+              <div id={`discussion-prompts-${index}`}>
+                <strong>Discussion Prompts:</strong>
+                <div dangerouslySetInnerHTML={{ __html: step.discussionPrompts }} />
+              </div>
             </div>
           ))}
         </div>
