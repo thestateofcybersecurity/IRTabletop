@@ -131,7 +131,7 @@ export default async function handler(req, res) {
       recommendations: 'Ensure post-incident reviews focus on process improvement, not blame. Document lessons learned and update the incident response plan accordingly. Incorporate feedback from the team to improve future incident responses.',
       discussionPrompts: 'What lessons were learned from this incident? What gaps were identified in the incident response playbook? How can the response process be improved for future incidents?'
     }
-  ]
+  ];
 }
 }
 }  
