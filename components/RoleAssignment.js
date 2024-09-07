@@ -2,17 +2,18 @@ import { useState, useEffect } from 'react';
 
 export default function RoleAssignment({ scenario, onAssign }) {
   const [roles, setRoles] = useState([
-    { title: "Incident Commander", description: "Overall lead of the incident response team.", assignee: "" },
-    { title: "Security Analyst", description: "Monitors and analyzes suspicious activities.", assignee: "" },
-    { title: "Forensic Investigator", description: "Responsible for collecting and analyzing forensic evidence.", assignee: "" },
-    { title: "Legal Advisor", description: "Ensures regulatory compliance during the incident.", assignee: "" },
-    { title: "Public Relations Lead", description: "Manages external communications and public relations.", assignee: "" },
-    { title: "Network Engineer", description: "Handles network configurations and containment.", assignee: "" },
-    { title: "Threat Intelligence Analyst", description: "Gathers intelligence about the threat actor and tactics.", assignee: "" },
-    { title: "Recovery Manager", description: "Oversees system restoration and business continuity.", assignee: "" },
-    { title: "Compliance Officer", description: "Ensures compliance with industry-specific regulations.", assignee: "" },
-    { title: "Communications Lead", description: "Coordinates internal and external communications.", assignee: "" },
-    { title: "Business Continuity Officer", description: "Maintains business operations with minimal disruption.", assignee: "" },
+    { title: "Incident Commander: Overall lead of the incident response team.", assignee: "" },
+    { title: "Security Analyst: Monitors and analyzes suspicious activities.", assignee: "" },
+    { title: "Forensic Investigator: Responsible for collecting and analyzing forensic evidence.", assignee: "" },
+    { title: "Legal Advisor: Ensures regulatory compliance during the incident.", assignee: "" },
+    { title: "Public Relations Lead: Manages external communications and public relations.", assignee: "" },
+    { title: "Network Engineer: Handles network configurations and containment.", assignee: "" },
+    { title: "Threat Intelligence Analyst: Gathers intelligence about the threat actor and tactics.", assignee: "" },
+    { title: "Recovery Manager: Oversees system restoration and business continuity.", assignee: "" },
+    { title: "Compliance Officer: Ensures compliance with industry-specific regulations.", assignee: "" },
+    { title: "Communications Lead: Coordinates internal and external communications.", assignee: "" },
+    { title: "Business Continuity Officer: Maintains business operations with minimal disruption.", assignee: "" },
+    { title: "Additional Participants: List any other attendees and their roles.", assignee: "" },
  ]);
 
   const handleAssigneeChange = (index, value) => {
