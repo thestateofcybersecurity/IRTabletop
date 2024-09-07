@@ -44,7 +44,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       addText('Scenario Steps', 16, true);
       scenario.steps.forEach((step, index) => {
         addText(`Step ${index + 1}: ${step.title}`, 14, true);
-        addText(`Initial Question: ${step.question}`);
+        addText(`Initial Question: ${step.initialQuestion}`);
         
         if (notes && notes[`step${index + 1}`]) {
           addText('User Notes:', 12, true);
@@ -96,7 +96,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
           {scenario.steps.map((step, index) => (
             <div key={index} className="mb-4">
               <h4 className="text-lg font-semibold">{step.title}</h4>
-              <p><strong>Initial Question:</strong> {step.question}</p>
+              <p><strong>Initial Question:</strong> {step.initialQuestion}</p>
               {notes && notes[`step${index + 1}`] && (
                 <div>
                   <strong>User Notes:</strong>
