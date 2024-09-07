@@ -338,7 +338,7 @@ export default async function handler(req, res) {
         </div>
       )
     }
-  ]
+  ],
     
     console.log('Generated scenario:', scenario); // Log the generated scenario
     res.status(200).json(scenario);
