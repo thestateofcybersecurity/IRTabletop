@@ -29,9 +29,9 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
       }
     };
 
-    const addBullets = (textArray) => {
-      textArray.forEach((text, index) => {
-        const splitText = doc.splitTextToSize(text, 170);
+    const addBullets = (bulletPoints) => {
+      bulletPoints.forEach((bullet, index) => {
+        const splitText = doc.splitTextToSize(bullet, 170);
         doc.text(`• ${splitText[0]}`, 20, yPos + (index * 7)); // Bullet point with indentation
         if (splitText.length > 1) {
           doc.text(splitText.slice(1).join(' '), 30, yPos + ((index + 1) * 7));
