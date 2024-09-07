@@ -4,7 +4,7 @@ import { jsPDF } from 'jspdf';
 import parse from 'html-react-parser';
 
 export default function TabletopGuide({ scenario, roles, onComplete }) {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [setCurrentStep] = useState(0);
   const [actions, setActions] = useState([]);
   const [notes, setNotes] = useState({});
   
@@ -19,6 +19,34 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
 
     return () => clearInterval(injectInterval);
   }, []);
+
+  const handleCompleteStep = () => {
+    setActions(prevActions => [...prevActions, {
+      description: `Completed: ${scenario.steps[currentStep].title}`,
+      timestamp: new Date().toLocaleTimeString()
+    }]);
+    if (currentStep < scenario.steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      onComplete(actions, notes);
+    }
+  };
+
+  const handleNoteChange = (e) => {
+    setNotes(prevNotes => ({
+      ...prevNotes,
+      [`step${currentStep + 1}`]: e.target.value
+    }));
+  };
+
+  const handleActionComplete = (description, role) => {
+    const assignedRole = roles?.[role] || 'Unassigned';
+    setActions(prevActions => [...prevActions, {
+      description,
+      actor: assignedRole,
+      timestamp: new Date().toLocaleTimeString(),
+    }]);
+  };
 
   const parseHtml = (htmlString) => {
     try {
