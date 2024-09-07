@@ -33,17 +33,9 @@ export default function ScenarioGenerator({ onGenerate }) {
       }
 
       const generatedScenario = await response.json();
-      // Process the scenario data to ensure JSX elements are handled correctly
-      const processedScenario = {
-        ...generatedScenario,
-        steps: generatedScenario.steps.map(step => ({
-          ...step,
-          recommendations: processJSX(step.recommendations),
-          discussionPrompts: processJSX(step.discussionPrompts),
-        })),
-      };
+      console.log('Generated scenario:', generatedScenario);  // Add this line for debugging
 
-      onGenerate(processedScenario); // Pass processed scenario to the guide component
+      onGenerate(generatedScenario); // Pass the scenario directly to the guide component
     } catch (error) {
       console.error('Error generating scenario:', error);
       alert('An error occurred while generating the scenario. Please try again.');
