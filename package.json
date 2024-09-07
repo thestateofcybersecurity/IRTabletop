@@ -18,7 +18,8 @@
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
     "html2canvas": "^1.4.1",
-    "lucide-react": "^0.439.0"
+    "lucide-react": "^0.439.0",
+    "html-react-parser": "^5.1.15"
   },
   "devDependencies": {
     "eslint": "8.22.0",
