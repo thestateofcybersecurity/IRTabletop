@@ -4,7 +4,7 @@ import { jsPDF } from 'jspdf';
 import parse from 'html-react-parser';
 
 export default function TabletopGuide({ scenario, roles, onComplete }) {
-  const [setCurrentStep] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [actions, setActions] = useState([]);
   const [notes, setNotes] = useState({});
   
@@ -21,12 +21,14 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   }, []);
 
   const handleCompleteStep = () => {
+    if (!scenario || !scenario.steps) return;
+
     setActions(prevActions => [...prevActions, {
-      description: `Completed: ${scenario.steps[currentStep].title}`,
+      description: `Completed: ${scenario.steps[currentStepIndex].title}`,
       timestamp: new Date().toLocaleTimeString()
     }]);
-    if (currentStep < scenario.steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+    if (currentStepIndex < scenario.steps.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1);
     } else {
       onComplete(actions, notes);
     }
@@ -35,7 +37,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   const handleNoteChange = (e) => {
     setNotes(prevNotes => ({
       ...prevNotes,
-      [`step${currentStep + 1}`]: e.target.value
+      [`step${currentStepIndex + 1}`]: e.target.value
     }));
   };
 
@@ -49,6 +51,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   };
 
   const parseHtml = (htmlString) => {
+    if (typeof htmlString !== 'string') return null;
     try {
       return parse(htmlString);
     } catch (error) {
@@ -61,7 +64,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     return <p>No valid scenario available. Please generate a scenario first.</p>;
   }
 
-  const currentStep = scenario.steps[currentStep];
+  const currentStep = scenario.steps[currentStepIndex];
   
   return (
     <div className="tabletop-guide">
@@ -98,9 +101,9 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
         
       <div className="flex justify-between">
         <button 
-          onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+          onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
           className="bg-gray-500 text-white p-2 rounded"
-          disabled={currentStep === 0}
+          disabled={currentStepIndex === 0}
         >
           Previous
         </button>
@@ -108,16 +111,9 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
           onClick={handleCompleteStep}
           className="bg-blue-500 text-white p-2 rounded"
         >
-          {currentStep === scenario.steps.length - 1 ? 'Complete Exercise' : 'Next Step'}
+          {currentStepIndex === scenario.steps.length - 1 ? 'Complete Exercise' : 'Next Step'}
         </button>
       </div>
-
-      <button 
-        onClick={exportToPDF}
-        className="mt-4 bg-green-500 text-white p-2 rounded"
-      >
-        Export to PDF
-      </button>
     </div>
   );
 }
