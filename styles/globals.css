@@ -17,7 +17,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', sans-serif; /* Award-winning websites often use modern, clean sans-serif fonts */
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
   color: #333;
   background-color: #f7f7f7;
@@ -25,7 +25,51 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- Typography Hierarchy --- */
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1a1a1a;
+    color: #eaeaea;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff;
+  }
+
+  a {
+    color: #66b2ff;
+  }
+
+  a:hover {
+    color: #4d94ff;
+  }
+
+  .card {
+    background-color: #333;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+  }
+
+  input, select, textarea {
+    background-color: #2d2d2d;
+    border-color: #444;
+    color: #eaeaea;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #66b2ff;
+  }
+
+  button {
+    background-color: #007bff;
+    color: white;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+}
+
+/* Typography */
 h1, h2, h3, h4, h5, h6 {
   color: #222;
   margin-bottom: 1rem;
@@ -60,7 +104,7 @@ a:hover {
   color: #004999;
 }
 
-/* --- Responsive Grid Layout --- */
+/* Other Utility Styles */
 .container {
   width: 100%;
   max-width: 1200px;
