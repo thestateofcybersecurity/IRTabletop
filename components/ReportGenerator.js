@@ -11,9 +11,11 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
 
   const parseHtmlContent = (html) => {
     const stripped = stripHtml(html);
-    return stripped.split(/(?<=[.?])\s+/)
+    return stripped
+      .split(/(?<=\.|\?|\!)\s*/)
+      .flatMap(sentence => sentence.split(/(?<=:)\s*/))
       .map(line => line.trim())
-      .filter(line => line !== '' && (line.endsWith('.') || line.endsWith('?')));
+      .filter(line => line !== '');
   };
 
   const generateReport = () => {
@@ -54,6 +56,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         doc.setFontSize(fontSize);
         doc.text('•', 15, yPos);
         addWrappedText(point, fontSize, false, 5);
+        yPos += 2; // Add a small gap between bullet points
       });
       yPos += 5;
     };
