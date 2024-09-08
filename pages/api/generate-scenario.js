@@ -60,11 +60,11 @@ export default async function handler(req, res) {
     
   const scenario = {
     title: `${group.name} has attacked Using ${tactic.name} and ${technique.name}`,
-    description: 
-      `An adversary group known as ${group.name} has launched an attack against a ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} incident response experience. The group, ${group.description}. In this scenario, the attackers have employed the ${tactic.name} tactic, ${tactic.description}\n\n` +
-      `The specific technique being used is ${technique.name}, ${technique.description}. ${software.name} is being used in this attack.\n\n` +
-      `Mitigation efforts will require the organization to apply ${mitigation.name}, ${mitigation.description}. The attack may impact key business operations and require urgent attention to contain and remediate.`,
-     //businessImpact: "High",  // New field for business impact
+    description: [
+      `An adversary group known as ${group.name} has launched an attack against a ${securityMaturity} security maturity ${industrySector} organization with ${irExperience} incident response experience. The group, ${group.description}. In this scenario, the attackers have employed the ${tactic.name} tactic, ${tactic.description}`,
+      `The specific technique being used is ${technique.name}, ${technique.description}. ${software.name} is being used in this attack.`,
+      `Mitigation efforts will require the organization to apply ${mitigation.name}, ${mitigation.description}. The attack may impact key business operations and require urgent attention to contain and remediate.`
+    ], //businessImpact: "High",  // New field for business impact
       //attackVector: "Spearphishing",  // New field for attack vector
       // MITRE-related data: Key elements for scenario realism
       group,  // Attack group responsible
