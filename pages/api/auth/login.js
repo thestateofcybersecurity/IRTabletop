@@ -12,6 +12,11 @@ export default async function handler(req, res) {
     const { db } = await connectToDatabase();
     const { email, password } = req.body;
 
+    // Validate email format
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
     // Find the user using a secure query
     const user = await db.collection('users').findOne({ email: email });
     if (!user) {
