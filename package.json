@@ -14,11 +14,9 @@
     "mongodb": "^4.8.1",
     "next": "latest",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
     "html2canvas": "^1.4.1",
-    "lucide-react": "^0.439.0",
     "html-react-parser": "^5.1.15",
     "html2canvas": "^1.4.1",
     "jspdf-autotable": "^3.8.3"
