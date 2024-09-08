@@ -10,14 +10,20 @@ module.exports = {
         primary: '#007bff',
         secondary: '#6c757d',
         background: '#f7f7f7',
+        darkBackground: '#1a1a1a', // New background for dark mode
         text: {
           DEFAULT: '#333',
           light: '#555',
+          dark: '#eaeaea', // Text color for dark mode
         },
-        heading: '#222',
+        heading: {
+          DEFAULT: '#222',
+          dark: '#ffffff', // Heading color for dark mode
+        },
         link: {
           DEFAULT: '#0066cc',
           hover: '#004999',
+          dark: '#66b2ff', // Link color for dark mode
         },
       },
       fontFamily: {
@@ -43,6 +49,6 @@ module.exports = {
       },
     },
   },
+  darkMode: 'class', // Enables dark mode with the 'dark' class
   plugins: [],
-  darkMode: 'class', // This enables dark mode with the 'dark' class
 }
