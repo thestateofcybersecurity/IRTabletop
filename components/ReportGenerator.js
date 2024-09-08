@@ -11,7 +11,9 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
 
   const parseHtmlContent = (html) => {
     const stripped = stripHtml(html);
-    return stripped.split('\n').map(line => line.trim()).filter(line => line !== '');
+    return stripped.split(/(?<=[.?])\s+/)
+      .map(line => line.trim())
+      .filter(line => line !== '' && (line.endsWith('.') || line.endsWith('?')));
   };
 
   const generateReport = () => {
@@ -39,7 +41,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         }
         doc.text(line, 15 + indent, yPos);
         yPos += fontSize * 0.5;
-        if (index === splitText.length - 1) yPos += 2; // Add a small gap after each bullet point
+        if (index === splitText.length - 1) yPos += 2;
       });
     };
 
@@ -53,7 +55,7 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         doc.text('•', 15, yPos);
         addWrappedText(point, fontSize, false, 5);
       });
-      yPos += 5; // Add extra space after the list
+      yPos += 5;
     };
 
     const addPageBreak = () => {
