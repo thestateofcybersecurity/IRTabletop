@@ -1,41 +1,117 @@
-export default function TabletopGuide({ scenario }) {
-  if (!scenario) {
-    return <p>No scenario generated yet. Please use the form above to generate a scenario.</p>;
+import React, { useState, useEffect } from 'react';
+import { getRandomInject } from '/components/Injects';
+import { jsPDF } from 'jspdf';
+import parse from 'html-react-parser';
+
+export default function TabletopGuide({ scenario, roles, onComplete }) {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [actions, setActions] = useState([]);
+  const [notes, setNotes] = useState({});
+  
+  useEffect(() => {
+    const injectInterval = setInterval(() => {
+      const newInject = getRandomInject();
+      setActions(prevActions => [...prevActions, {
+        description: `New inject: ${newInject.description}`,
+        timestamp: new Date().toLocaleTimeString()
+      }]);
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(injectInterval);
+  }, []);
+
+  const handleCompleteStep = () => {
+    if (!scenario || !scenario.steps) return;
+
+    const newActions = [...actions, {
+      description: `Completed: ${scenario.steps[currentStepIndex].title}`,
+      timestamp: new Date().toLocaleTimeString()
+    }];
+
+    if (currentStepIndex < scenario.steps.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1);
+      setActions(newActions);
+    } else {
+      // This is the final step
+      onComplete(newActions, notes);
+    }
+  };
+
+  const handleNoteChange = (e) => {
+    setNotes(prevNotes => ({
+      ...prevNotes,
+      [`step${currentStepIndex + 1}`]: e.target.value
+    }));
+  };
+
+  const parseHtml = (htmlString) => {
+    if (typeof htmlString !== 'string') return null;
+    try {
+      return parse(htmlString);
+    } catch (error) {
+      console.error('Error parsing HTML:', error);
+      return <p>Error rendering content</p>;
+    }
+  };
+
+  if (!scenario || !scenario.steps || scenario.steps.length === 0) {
+    return <p>No valid scenario available. Please generate a scenario first.</p>;
   }
 
+  const currentStep = scenario.steps[currentStepIndex];
+
   return (
-    <div className="mt-8">
-      <h2 className="text-2xl font-bold mb-4">Tabletop Exercise Guide</h2>
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h3 className="text-xl font-semibold mb-2">Scenario: {scenario.title}</h3>
-        <p className="mb-4">{scenario.description}</p>
+    <div className="tabletop-guide">
+      <div className="scenario-summary mb-6 p-4 bg-gray-100 rounded">
+        <h2 className="text-xl font-bold mb-2">Scenario Summary</h2>
+        <p><strong>Title:</strong> {scenario.title}</p>
+        <div className="mt-2">
+          <strong>Description:</strong>
+          {scenario.description.map((paragraph, index) => (
+            <p key={index} className="mt-2">{paragraph}</p>
+          ))}
+        </div>
+      </div>
+
+      <h2 className="text-2xl font-bold mb-4">{currentStep.title}</h2>
+      <div className="mb-4">
+        <p className="font-semibold">{currentStep.initialQuestion}</p>
+      </div>
+
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
+        {parseHtml(currentStep.discussionPrompts)}
+      </div>
+    
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Recommendations:</h3>
+        {parseHtml(currentStep.recommendations)}
+      </div>
+
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Notes:</h3>
+        <textarea
+          value={notes[`step${currentStepIndex + 1}`] || ''}
+          onChange={handleNoteChange}
+          className="w-full p-2 border rounded"
+          rows="4"
+        />
+      </div>
         
-        {scenario.tactic && (
-          <>
-            <h4 className="text-lg font-semibold mb-2">Tactic:</h4>
-            <p className="mb-4">{scenario.tactic.name}</p>
-          </>
-        )}
-        
-        {scenario.technique && (
-          <>
-            <h4 className="text-lg font-semibold mb-2">Technique:</h4>
-            <p className="mb-4">{scenario.technique.name}</p>
-          </>
-        )}
-        
-        {scenario.mitigation && (
-          <>
-            <h4 className="text-lg font-semibold mb-2">Mitigation:</h4>
-            <p className="mb-4">{scenario.mitigation.name}</p>
-          </>
-        )}
-        
-        <h4 className="text-lg font-semibold mb-2">IR Experience Level:</h4>
-        <p className="mb-4">{scenario.irExperience}</p>
-        
-        <h4 className="text-lg font-semibold mb-2">Security Maturity:</h4>
-        <p className="mb-4">{scenario.securityMaturity}</p>
+      <div className="flex justify-between">
+        <button 
+          onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
+          className="bg-gray-500 text-white p-2 rounded"
+          disabled={currentStepIndex === 0}
+        >
+          Previous
+        </button>
+        <button 
+          onClick={handleCompleteStep}
+          className="bg-blue-500 text-white p-2 rounded"
+        >
+          {currentStepIndex === scenario.steps.length - 1 ? 'Complete Exercise' : 'Next Step'}
+        </button>
       </div>
     </div>
   );

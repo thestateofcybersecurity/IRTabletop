@@ -1,105 +1,123 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ScenarioGenerator from '../components/ScenarioGenerator';
+import RoleAssignment from '../components/RoleAssignment';
 import TabletopGuide from '../components/TabletopGuide';
+import ReportGenerator from '../components/ReportGenerator';
 import LoginForm from '../components/LoginForm';
 import RegistrationForm from '../components/RegistrationForm';
-import DataLoadTrigger from '../components/DataLoadTrigger';
 
 export default function Home() {
-  const [scenario, setScenario] = useState(null);
   const [user, setUser] = useState(null);
-  const [tactics, setTactics] = useState([]);
-  const [techniques, setTechniques] = useState([]);
-  const [mitigations, setMitigations] = useState([]);
   const [isLogin, setIsLogin] = useState(true);
+  const [currentStep, setCurrentStep] = useState('login');
+  const [scenario, setScenario] = useState(null);
+  const [roles, setRoles] = useState({});
+  const [actions, setActions] = useState([]);
+  const [notes, setNotes] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      const user = JSON.parse(localStorage.getItem('user'));
-      setUser(user);
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      setUser(storedUser);
+      setCurrentStep('generateScenario');
     }
-
-    async function fetchData() {
-      try {
-        const tacticRes = await fetch('/api/tactics');
-        const techniqueRes = await fetch('/api/techniques');
-        const mitigationRes = await fetch('/api/mitigations');
-
-        setTactics(await tacticRes.json());
-        setTechniques(await techniqueRes.json());
-        setMitigations(await mitigationRes.json());
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-    fetchData();
   }, []);
 
-  const handleLogin = (userData) => {
-    setUser(userData);
-    localStorage.setItem('token', userData.token);
-    localStorage.setItem('user', JSON.stringify(userData.user));
+  const handleLogin = (data) => {
+    setUser(data.user);
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    setCurrentStep('generateScenario');
   };
 
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    setScenario(null);
+    setRoles({});
+    setActions([]);
+    setCurrentStep('login');
   };
 
-  const handleRegistration = (userData) => {
-    // After successful registration, automatically log the user in
-    handleLogin(userData);
+  const handleScenarioGeneration = (generatedScenario) => {
+    setScenario(generatedScenario);
+    setCurrentStep('assignRoles');
   };
-  
+
+  const handleRoleAssignment = (assignedRoles) => {
+    setRoles(assignedRoles);
+    setCurrentStep('runExercise');
+  };
+
+  const handleExerciseComplete = (completedActions, completedNotes) => {
+    setActions(completedActions);
+    setNotes(completedNotes);
+    setCurrentStep('generateReport');
+  };
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 'login':
+        return isLogin ? (
+          <LoginForm onLogin={handleLogin} />
+        ) : (
+          <RegistrationForm onRegister={handleLogin} />
+        );
+      case 'generateScenario':
+        return <ScenarioGenerator onGenerate={handleScenarioGeneration} />;
+      case 'assignRoles':
+        return <RoleAssignment scenario={scenario} onAssign={handleRoleAssignment} />;
+      case 'runExercise':
+        return (
+          <TabletopGuide
+            scenario={scenario}
+            roles={roles}
+            onComplete={handleExerciseComplete}
+          />
+        );
+      case 'generateReport':
+        return (
+          <ReportGenerator
+            scenario={scenario}
+            roles={roles}
+            actions={actions}
+            notes={notes}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 py-8">
+      <Head>
+        <title>IR Tabletop Scenario Generator</title>
+        <meta name="description" content="Generate and run IR tabletop exercises" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
       <Header user={user} onLogout={handleLogout} />
-    
+
       <main className="my-8">
-        {user ? (
-          <>
-            <ScenarioGenerator setScenario={setScenario} />
-            {scenario && <TabletopGuide scenario={scenario} />}
-          </>
-        ) : (
-          <div>
-            {isLogin ? (
-              <>
-                <LoginForm onLogin={handleLogin} />
-                <p className="mt-4">
-                  Don't have an account?{' '}
-                  <button
-                    onClick={() => setIsLogin(false)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Register here
-                  </button>
-                </p>
-              </>
-            ) : (
-              <>
-                <RegistrationForm onRegister={handleRegistration} />
-                <p className="mt-4">
-                  Already have an account?{' '}
-                  <button
-                    onClick={() => setIsLogin(true)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Login here
-                  </button>
-                </p>
-              </>
-            )}
-          </div>
+        <h1 className="text-4xl font-bold mb-4">IR Tabletop Scenario Generator</h1>
+        {renderCurrentStep()}
+        {!user && (
+          <p className="mt-4">
+            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-blue-500 hover:text-blue-700"
+            >
+              {isLogin ? "Register here" : "Login here"}
+            </button>
+          </p>
         )}
-        {/* Only show DataLoadTrigger if user is logged in and has admin rights */}
-        {user && user.isAdmin && <DataLoadTrigger />}
       </main>
 
       <Footer />

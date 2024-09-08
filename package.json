@@ -15,7 +15,13 @@
     "next": "latest",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "jspdf": "^2.5.1",
+    "html2canvas": "^1.4.1",
+    "lucide-react": "^0.439.0",
+    "html-react-parser": "^5.1.15",
+    "html2canvas": "^1.4.1",
+    "jspdf-autotable": "^3.8.3"
   },
   "devDependencies": {
     "eslint": "8.22.0",
@@ -23,8 +29,5 @@
     "autoprefixer": "^10.4.8",
     "postcss": "^8.4.16",
     "tailwindcss": "^3.1.8"
-  },
-  "scripts": {
-    "import-mitre": "node -r esm scripts/fetchMitreData.js"
   }
 }
