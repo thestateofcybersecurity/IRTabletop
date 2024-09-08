@@ -80,7 +80,7 @@ export default async function handler(req, res) {
       stakeholderInvolvement,
       steps: [
         {
-          title: 'Step 1: Detection',
+          title: 'Detection',
           initialQuestion: 'How was the attack detected?',
           content: ReactDOMServer.renderToString(
             <div>
@@ -125,7 +125,7 @@ export default async function handler(req, res) {
           )
         },
         {
-          title: 'Step 2: Initial Evaluation',
+          title: 'Initial Evaluation',
           initialQuestion: 'What was the initial response after detection?',
           content: ReactDOMServer.renderToString(
             <div>
@@ -156,7 +156,7 @@ export default async function handler(req, res) {
           )
         },
         {
-          title: 'Step 3: Containment',
+          title: 'Containment',
           initialQuestion: 'What actions were taken to contain the incident?',
           content: ReactDOMServer.renderToString(
             <div>
@@ -190,7 +190,7 @@ export default async function handler(req, res) {
           )
         },
         {
-          title: 'Step 4: Forensics and Evidence Gathering',
+          title: 'Forensics and Evidence Gathering',
           initialQuestion: 'What data and logs were collected for forensic analysis?',
           content: ReactDOMServer.renderToString(
             <div>
@@ -225,7 +225,7 @@ export default async function handler(req, res) {
           )
         },
         {
-          title: 'Step 5: Notification and Stakeholder Involvement',
+          title: 'Notification and Stakeholder Involvement',
           initialQuestion: 'Who was notified about the incident, and when?',
           content: ReactDOMServer.renderToString(
             <div>
@@ -260,7 +260,7 @@ export default async function handler(req, res) {
           )
         },
         {
-          title: 'Step 6: Mitigation and Eradication',
+          title: 'Mitigation and Eradication',
           initialQuestion: 'How was the attack vector mitigated?',
           content: ReactDOMServer.renderToString(
             <div>
@@ -295,7 +295,7 @@ export default async function handler(req, res) {
           )
         },
         {
-          title: 'Step 7: Recovery',
+          title: 'Recovery',
           initialQuestion: 'What steps were taken to recover systems and restore business operations?',
           content: ReactDOMServer.renderToString(
             <div>
@@ -330,7 +330,7 @@ export default async function handler(req, res) {
           )
         },
         {
-          title: 'Step 8: Post-Incident Review',
+          title: 'Post-Incident Review',
           initialQuestion: 'Conduct a blameless post-incident review (retrospective).',
           content: ReactDOMServer.renderToString(
             <div>
