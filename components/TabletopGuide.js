@@ -65,7 +65,12 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       <div className="scenario-summary mb-6 p-4 bg-gray-100 rounded">
         <h2 className="text-xl font-bold mb-2">Scenario Summary</h2>
         <p><strong>Title:</strong> {scenario.title}</p>
-        <p><strong>Description:</strong> {scenario.description}</p>
+        <div className="mt-2">
+          <strong>Description:</strong>
+          {scenario.description.map((paragraph, index) => (
+            <p key={index} className="mt-2">{paragraph}</p>
+          ))}
+        </div>
       </div>
 
       <h2 className="text-2xl font-bold mb-4">{currentStep.title}</h2>
