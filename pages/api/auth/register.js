@@ -12,6 +12,11 @@ export default async function handler(req, res) {
     const { db } = await connectToDatabase();
     const { username, email, password } = req.body;
 
+    // Validate email format
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+    
     // Basic validation
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'Missing required fields' });
