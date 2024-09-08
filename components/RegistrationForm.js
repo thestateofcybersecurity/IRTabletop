@@ -26,7 +26,7 @@ export default function RegistrationForm() {
 
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      router.push('/dashboard'); // Redirect to dashboard or home page
+      router.push('/index'); // Redirect to dashboard or home page
     } catch (error) {
       setError(error.message || 'Error during registration');
     }
