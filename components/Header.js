@@ -1,3 +1,5 @@
+import { connectToDatabase } from '../lib/mongodb';
+
 export default function Header({ user, onLogout }) {
   return (
     <header className="bg-blue-500 text-white p-4">
