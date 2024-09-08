@@ -19,7 +19,8 @@
     "html2canvas": "^1.4.1",
     "html-react-parser": "^5.1.15",
     "html2canvas": "^1.4.1",
-    "jspdf-autotable": "^3.8.3"
+    "jspdf-autotable": "^3.8.3",
+    "validator": "^1.0.1"
   },
   "devDependencies": {
     "eslint": "8.22.0",
