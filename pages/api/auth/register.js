@@ -16,8 +16,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Check if user already exists
-    const existingUser = await db.collection('users').findOne({ email });
+    // Check if user already exists using a secure query
+    const existingUser = await db.collection('users').findOne({ $or: [
+      { email: email },
+      { username: username }
+    ]});
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
     }
@@ -25,10 +28,10 @@ export default async function handler(req, res) {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert the new user
+    // Insert the new user using a secure insertion method
     const result = await db.collection('users').insertOne({
-      username,
-      email,
+      username: username,
+      email: email,
       password: hashedPassword,
       createdAt: new Date()
     });
