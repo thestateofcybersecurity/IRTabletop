@@ -85,8 +85,8 @@ export default async function handler(req, res) {
           content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
-                <li>What monitoring systems provided the first alert? (e.g., SIEM, EDR, IDS/IPS)</li>
-                <li>Was the detection internal or external (e.g., customer or partner reported the issue)?</li>
+                <li>What monitoring systems provided the first alert? (SIEM, EDR, IDS/IPS)</li>
+                <li>Was the detection internal or external (customer or partner reported the issue)?</li>
                 <li>How long after the compromise was the attack detected?</li>
                 <li>What indicators of compromise (IoCs) were observed?</li>
                 <li>Could earlier detection have prevented the breach?</li>
@@ -107,9 +107,9 @@ export default async function handler(req, res) {
                 <li className="mb-2">What were the initial indicators of compromise (IoCs)? 
                   <ul className="list-disc pl-6">
                     <li>Which systems or logs first showed signs of abnormal behavior?</li>
-                    <li>Were there any patterns in the IoCs (e.g., malware signatures, unusual network traffic)?</li>
+                    <li>Were there any patterns in the IoCs (malware signatures, unusual network traffic)?</li>
                     <li>Were any user-reported incidents part of the initial detection?</li>
-                    <li>What tools or technologies identified these IoCs (e.g., SIEM, EDR)?</li>
+                    <li>What tools or technologies identified these IoCs (SIEM, EDR)?</li>
                   </ul>
                 </li>
                 <li className="mb-2">How did the team determine the severity of the incident? 
@@ -196,9 +196,9 @@ export default async function handler(req, res) {
             <div>
               <ul className="list-disc pl-6">
                 <li>Were memory snapshots, disk images, or log files collected?</li>
-                <li>What forensic tools were used (e.g., FTK, EnCase, open-source tools)?</li>
+                <li>What forensic tools were used (FTK, EnCase, open-source tools)?</li>
                 <li>Was evidence collected in a forensically sound manner to preserve integrity (chain of custody)?</li>
-                <li>What artifacts were prioritized for collection (network traffic, file changes, etc.)?</li>
+                <li>What artifacts were prioritized for collection (network traffic, file changes, etc)?</li>
                 <li>How was the timeline of the attack reconstructed?</li>
               </ul>
             </div>
@@ -230,9 +230,9 @@ export default async function handler(req, res) {
           content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
-                <li>Which internal and external stakeholders were notified (e.g., Legal, PR, C-Suite)?</li>
+                <li>Which internal and external stakeholders were notified (Legal, PR, C-Suite)?</li>
                 <li>Were customers or partners impacted, and were they notified?</li>
-                <li>Was there a regulatory requirement to disclose the breach (GDPR, HIPAA, etc.)?</li>
+                <li>Was there a regulatory requirement to disclose the breach (GDPR, HIPAA, etc)?</li>
                 <li>Were law enforcement agencies involved in the response?</li>
                 <li>How was the communication strategy developed and executed?</li>
               </ul>
@@ -265,7 +265,7 @@ export default async function handler(req, res) {
           content: ReactDOMServer.renderToString(
             <div>
               <ul className="list-disc pl-6">
-                <li>What mitigation steps were taken (e.g., patching, reconfiguration, removing malware)?</li>
+                <li>What mitigation steps were taken (patching, reconfiguration, removing malware)?</li>
                 <li>Was a fix tested in a non-production environment before deployment?</li>
                 <li>Were any bypasses attempted or successful against the mitigation?</li>
                 <li>How was the success of the mitigation verified?</li>
@@ -302,7 +302,7 @@ export default async function handler(req, res) {
               <ul className="list-disc pl-6">
                 <li>Were systems restored from backups, or were new systems built?</li>
                 <li>What was the time required for full recovery?</li>
-                <li>Were there challenges in restoring services (e.g., data corruption, configuration issues)?</li>
+                <li>Were there challenges in restoring services (data corruption, configuration issues)?</li>
                 <li>Was there any communication with customers about the recovery process?</li>
                 <li>How was the integrity of restored data and systems verified?</li>
               </ul>
@@ -362,7 +362,7 @@ export default async function handler(req, res) {
                 <li>Were there any 'near misses' or lucky breaks that prevented the incident from being worse?</li>
                 <li>How can the organization better support the incident response team in future events?</li>
                 <li>What additional training or resources would have been helpful during the incident?</li>
-                <li>How effective was the coordination between different teams (IT, security, legal, PR, etc.)?</li>
+                <li>How effective was the coordination between different teams (IT, security, legal, PR, etc)?</li>
                 <li>Were there any unexpected costs or impacts associated with the incident?</li>
                 <li>How can the organization improve its overall security posture to prevent similar incidents?</li>
               </ul>
