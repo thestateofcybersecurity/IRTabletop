@@ -1,7 +1,7 @@
 import { connectToDatabase } from '../../../lib/mongodb';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import validator from 'validator';
+import { isEmail } from 'validator';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     const { username, email, password } = req.body;
 
     // Validate email format
-    if (!validator.isEmail(email)) {
+    if (!isEmail(email)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
     
