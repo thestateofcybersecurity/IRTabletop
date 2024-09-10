@@ -1,4 +1,9 @@
 {
+     "functions": {
+       "api/generate-chatgpt-scenario.js": {
+         "maxDuration": 30
+       }
+     }
   "crons": [{
     "path": "/api/cron/sync",
     "schedule": "0 0 * * *"
