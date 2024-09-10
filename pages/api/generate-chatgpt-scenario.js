@@ -37,7 +37,7 @@ export default async function handler(req) {
        - Recommendations
        - Discussion prompts
 
-    Format the response as a valid JSON object.`;
+    Format the response as a valid JSON object, ensuring all string values are properly escaped.`;
 
     const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
@@ -48,27 +48,22 @@ export default async function handler(req) {
     let fullResponse = '';
 
     const stream = OpenAIStream(response, {
-      onToken: async (token) => {
+      onToken: (token) => {
         fullResponse += token;
       },
-      onCompletion: async (completion) => {
+      onCompletion: (completion) => {
         try {
-          const jsonResponse = JSON.parse(fullResponse);
-          // You can process the full JSON response here if needed
+          JSON.parse(fullResponse);
         } catch (error) {
           console.error('Error parsing JSON:', error);
+          console.log('Raw response:', fullResponse);
         }
       },
     });
 
     return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
+      headers: { 'Content-Type': 'text/event-stream' },
     });
-
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
