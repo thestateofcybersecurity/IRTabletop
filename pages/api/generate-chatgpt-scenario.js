@@ -1,26 +1,35 @@
 import fetch from 'node-fetch';
 
 const fetchChatGPTResponse = async (prompt) => {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: "gpt-4o", // or "gpt-4" if you have access
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 5000, // Adjust token limit based on response length
-      temperature: 0.7 // Adjust creativity level
-    })
-  });
+  try {
+    console.log('Attempting to connect to OpenAI API...');
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 5000,
+        temperature: 0.7
+      })
+    });
 
-  if (!response.ok) {
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(`OpenAI API responded with status ${response.status}: ${errorBody}`);
+      throw new Error(`OpenAI API responded with status ${response.status}`);
+    }
+
+    console.log('Successfully connected to OpenAI API');
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('Error in fetchChatGPTResponse:', error);
     throw new Error('Failed to connect to OpenAI API');
   }
-  
-  const data = await response.json();
-  return data.choices[0].message.content;
 };
 
 export default async function handler(req, res) {
@@ -29,6 +38,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Received request body:', req.body);
     const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = req.body;
 
     const prompt = `Generate a unique incident response scenario for a tabletop exercise with the following details:
@@ -172,9 +182,19 @@ export default async function handler(req, res) {
 
     Format the response as a JSON object.`;
 
+    console.log('Sending prompt to OpenAI API');
     const generatedScenarioString = await fetchChatGPTResponse(prompt);
-    const generatedScenario = JSON.parse(generatedScenarioString);
-    res.status(200).json(generatedScenario);
+    console.log('Received response from OpenAI API');
+
+    try {
+      const generatedScenario = JSON.parse(generatedScenarioString);
+      console.log('Successfully parsed JSON response');
+      res.status(200).json(generatedScenario);
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      console.log('Raw response:', generatedScenarioString);
+      res.status(500).json({ error: 'Error parsing scenario', details: parseError.message, rawResponse: generatedScenarioString });
+    }
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     res.status(500).json({ error: 'Error generating scenario', details: error.message });
