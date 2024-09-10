@@ -21,7 +21,8 @@
     "html2canvas": "^1.4.1",
     "jspdf-autotable": "^3.8.3",
     "validator": "^13.7.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "openai-edge": "^3.3.0"
   },
   "devDependencies": {
     "eslint": "8.22.0",
