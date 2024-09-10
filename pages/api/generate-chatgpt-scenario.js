@@ -42,11 +42,11 @@ export default async function handler(req) {
 
     console.log('Sending request to OpenAI API');
     const response = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4',
       messages: [{ role: 'user', content: prompt }],
+      max_tokens: 5000, // Increase the token limit if necessary
       stream: true,
     });
-
     console.log('Received response from OpenAI API, creating stream');
     let fullResponse = '';
     const stream = OpenAIStream(response, {
