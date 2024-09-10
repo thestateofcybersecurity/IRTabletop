@@ -16,6 +16,7 @@ export default async function handler(req) {
   }
 
   try {
+    console.log('Received request to generate ChatGPT scenario');
     const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
 
     const prompt = `Generate a unique incident response scenario for a tabletop exercise with the following details:
@@ -39,14 +40,26 @@ export default async function handler(req) {
 
     Format the response as a valid JSON object, ensuring all string values are properly escaped.`;
 
+    console.log('Sending request to OpenAI API');
     const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
       stream: true,
     });
 
-    const stream = OpenAIStream(response);
+    console.log('Received response from OpenAI API, creating stream');
+    let fullResponse = '';
+    const stream = OpenAIStream(response, {
+      onToken: (token) => {
+        fullResponse += token;
+        console.log('Received token:', token);
+      },
+      onCompletion: (completion) => {
+        console.log('Stream completed. Full response:', fullResponse);
+      },
+    });
 
+    console.log('Returning stream response');
     return new Response(stream, {
       headers: { 'Content-Type': 'text/event-stream' },
     });
