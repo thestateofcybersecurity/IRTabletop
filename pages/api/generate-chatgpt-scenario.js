@@ -1,4 +1,4 @@
-import { OpenAIStream, StreamingTextResponse } from 'nextjs-openai';
+import { OpenAI } from 'nextjs-openai';
 
 // IMPORTANT! Set the runtime to edge
 export const config = {
@@ -16,41 +16,50 @@ export default async function handler(req) {
   try {
     const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
 
-    const stream = await OpenAIStream({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'user',
-          content: `Generate a unique incident response scenario for a tabletop exercise with the following details:
-          - IR Experience Level: ${irExperience}
-          - Security Maturity: ${securityMaturity}
-          - Industry Sector: ${industrySector}
-          - Compliance Requirements: ${complianceRequirements}
-          - Key Stakeholders: ${stakeholderInvolvement}
+    // Define the prompt based on the user input
+    const prompt = `Generate a unique incident response scenario for a tabletop exercise with the following details:
+    - IR Experience Level: ${irExperience}
+    - Security Maturity: ${securityMaturity}
+    - Industry Sector: ${industrySector}
+    - Compliance Requirements: ${complianceRequirements}
+    - Key Stakeholders: ${stakeholderInvolvement}
+    
+    The scenario should include:
+    1. A title
+    2. A detailed description of the incident
+    3. The attack vector used
+    4. Potential business impact
+    
+    Format the response as a valid JSON object with the following structure:
+    {
+      "title": "string",
+      "description": "string",
+      "attackVector": "string",
+      "businessImpact": "string"
+    }`;
 
-          The scenario should include:
-          1. A title
-          2. A detailed description of the incident
-          3. The attack vector used
-          4. Potential business impact
-
-          Format the response as a valid JSON object with the following structure:
-          {
-            "title": "string",
-            "description": "string",
-            "attackVector": "string",
-            "businessImpact": "string"
-          }
-
-          Ensure all string values are properly escaped.`
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 1000,
+    // Use the OpenAI API from nextjs-openai to generate the response
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,  // Ensure this environment variable is set
     });
 
-    // Respond with the stream
-    return new StreamingTextResponse(stream);
+    const response = await openai.completions.create({
+      model: 'gpt-4',
+      prompt,
+      max_tokens: 5000,
+      temperature: 0.7,
+      stream: false,  // Set this to true if you want streaming
+    });
+
+    // Parse the response
+    const generatedScenario = response.data.choices[0].text.trim();
+
+    // Return the result as a JSON response
+    return new Response(generatedScenario, {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     return new Response(JSON.stringify({ error: 'Error generating scenario' }), {
