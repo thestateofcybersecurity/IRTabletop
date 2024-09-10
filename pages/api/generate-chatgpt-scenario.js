@@ -1,9 +1,14 @@
 import { Configuration, OpenAIApi } from 'openai';
 import { predefinedSteps } from '../../utils/predefinedSteps';
 
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error('Missing OPENAI_API_KEY environment variable');
+}
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
 const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
