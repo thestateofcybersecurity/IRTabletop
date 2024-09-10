@@ -38,7 +38,16 @@ export default async function handler(req) {
        - Recommendations
        - Discussion prompts
 
-    Format the response as a valid JSON object, ensuring all string values are properly escaped.`;
+    Format the response as a valid JSON object with the following structure:
+    {
+      "title": "string",
+      "description": "string",
+      "attackVector": "string",
+      "businessImpact": "string",
+      "steps": "string"
+    }
+
+    Ensure all string values are properly escaped.`;
 
     console.log('Sending request to OpenAI API');
     const response = await openai.createChatCompletion({
