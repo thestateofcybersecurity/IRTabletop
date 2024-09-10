@@ -52,7 +52,7 @@ export default async function handler(req) {
             "businessImpact": "string"
           }
 
-          Ensure all string values are properly escaped. Do not include any text before or after the JSON object.`
+          Ensure all string values are properly escaped. Do not include any text, numbers, or characters before or after the JSON object. The response should be a single, valid JSON object and nothing else.`
         }
       ],
       temperature: 0.7,
