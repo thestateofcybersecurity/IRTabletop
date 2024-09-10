@@ -1,52 +1,18 @@
-import fetch from 'node-fetch';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
+import { Configuration, OpenAIApi } from 'openai-edge';
 
-let lastRequestTime = 0;
-const minTimeBetweenRequests = 20000; // 20 seconds
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
-const fetchChatGPTResponse = async (prompt) => {
-  const now = Date.now();
-  if (now - lastRequestTime < minTimeBetweenRequests) {
-    const delay = minTimeBetweenRequests - (now - lastRequestTime);
-    console.log(`Rate limiting: Waiting for ${delay}ms before making the next request`);
-    await new Promise(resolve => setTimeout(resolve, delay));
-  }
-  
-  try {
-    console.log('Attempting to connect to OpenAI API...');
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-2024-08-06",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 5000,
-        temperature: 0.7
-      })
-    });
-
-    lastRequestTime = Date.now();
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(`OpenAI API responded with status ${response.status}: ${errorBody}`);
-      throw new Error(`OpenAI API responded with status ${response.status}`);
-    }
-
-    console.log('Successfully connected to OpenAI API');
-    const data = await response.json();
-    return data.choices[0].message.content;
-  } catch (error) {
-    console.error('Error in fetchChatGPTResponse:', error);
-    throw new Error('Failed to connect to OpenAI API');
-  }
+export const config = {
+  runtime: 'edge',
 };
 
-export default async function handler(req, res) {
+export default async function handler(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return new Response('Method not allowed', { status: 405 });
   }
 
   try {
@@ -194,25 +160,19 @@ export default async function handler(req, res) {
 
     Format the response as a JSON object.`;
 
-    console.log('Sending prompt to OpenAI API');
-    const generatedScenarioString = await fetchChatGPTResponse(prompt);
-    console.log('Received response from OpenAI API');
+    const response = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: prompt }],
+      stream: true,
+    });
 
-    try {
-      const generatedScenario = JSON.parse(generatedScenarioString);
-      console.log('Successfully parsed JSON response');
-      res.status(200).json(generatedScenario);
-    } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
-      console.log('Raw response:', generatedScenarioString);
-      res.status(500).json({ error: 'Error parsing scenario', details: parseError.message, rawResponse: generatedScenarioString });
-    }
+    const stream = OpenAIStream(response);
+    return new StreamingTextResponse(stream);
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
-    if (error.message === 'Rate limit exceeded. Please try again later.') {
-      res.status(429).json({ error: 'Rate limit exceeded', message: 'Please try again later' });
-    } else {
-      res.status(500).json({ error: 'Error generating scenario', details: error.message });
-    }
+    return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
