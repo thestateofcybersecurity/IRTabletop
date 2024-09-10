@@ -22,7 +22,8 @@
     "jspdf-autotable": "^3.8.3",
     "validator": "^13.7.0",
     "node-fetch": "^3.3.2",
-    "openai-edge": "^1.2.2"
+    "openai-edge": "^1.2.2",
+    "ai": "^3.3.30"
   },
   "devDependencies": {
     "eslint": "8.22.0",
