@@ -86,6 +86,11 @@ export const generateChatGPTScenario = async (params) => {
 
     console.log('Processed JSON string:', jsonString);
 
+    // Verify if JSON string is complete and valid
+    if (!jsonString.endsWith('}')) {
+      throw new Error('Incomplete JSON response');
+    }
+
     // Parse the final JSON string
     const parsedData = JSON.parse(jsonString);
     console.log('Successfully parsed JSON:', parsedData);
