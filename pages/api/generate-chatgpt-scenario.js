@@ -65,21 +65,6 @@ export default async function handler(req) {
       },
       onCompletion: (completion) => {
         console.log('Stream completed. Full response:', fullResponse);
-        try {
-          const parsedResponse = JSON.parse(fullResponse);
-          const finalResponse = {
-            ...parsedResponse,
-            steps: predefinedSteps,
-            irExperience,
-            securityMaturity,
-            industrySector,
-            complianceRequirements,
-            stakeholderInvolvement
-          };
-          console.log('Final response:', JSON.stringify(finalResponse));
-        } catch (error) {
-          console.error('Error parsing JSON:', error);
-        }
       },
     });
 
