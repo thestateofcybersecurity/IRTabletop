@@ -44,51 +44,18 @@ export const generateScenario = async (params) => {
 
 export const generateChatGPTScenario = async (params) => {
   try {
-    const response = await fetch('/api/generate-chatgpt-scenario', {
-      method: 'POST',
+    const response = await axios.post('/api/generate-chatgpt-scenario', params, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify(params),
+      }
     });
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let result = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      result += decoder.decode(value, { stream: true });
-    }
-
-    // Clean up the result string
-    result = result.replace(/^\d+:/gm, '');  // Remove number prefixes
-    result = result.replace(/\\n/g, ' ');    // Replace escaped newlines with spaces
-    result = result.replace(/\\/g, '');      // Remove remaining backslashes
-    result = result.replace(/^"|"$/g, '');   // Remove starting and ending quotes
-    result = result.replace(/"\s+"/g, '" "');  // Remove extra spaces between quotes
-    result = result.replace(/\s+/g, ' ');    // Replace multiple spaces with single space
-    
-    // Ensure the string starts with { and ends with }
-    result = result.trim().replace(/^[^{]*/, '').replace(/[^}]*$/, '');
-
-    console.log('Cleaned response:', result); // Log the cleaned response for debugging
-
-    // Parse the JSON response
-    let generatedScenario;
-    try {
-      generatedScenario = JSON.parse(result);
-    } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
-      console.error('Problematic JSON string:', result);
-      throw new Error('Failed to parse scenario data');
-    }
+    const generatedScenario = response.data;
 
     // Combine the generated scenario with predefined steps and input parameters
     const fullScenario = {
