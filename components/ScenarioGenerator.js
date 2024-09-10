@@ -6,7 +6,8 @@ export default function ScenarioGenerator({ onGenerate }) {
     securityMaturity: '',
     industrySector: '',
     complianceRequirements: '',
-    stakeholderInvolvement: ''
+    stakeholderInvolvement: '',
+    generationType: 'mitre' // Default to MITRE ATT&CK
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,7 +20,11 @@ export default function ScenarioGenerator({ onGenerate }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/generate-scenario', {
+      const endpoint = formData.generationType === 'chatgpt' 
+        ? '/api/generate-chatgpt-scenario' 
+        : '/api/generate-scenario';
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,9 +38,8 @@ export default function ScenarioGenerator({ onGenerate }) {
       }
 
       const generatedScenario = await response.json();
-      console.log('Generated scenario:', generatedScenario);  // Add this line for debugging
-
-      onGenerate(generatedScenario); // Pass the scenario directly to the guide component
+      console.log('Generated scenario:', generatedScenario);
+      onGenerate(generatedScenario);
     } catch (error) {
       console.error('Error generating scenario:', error);
       alert('An error occurred while generating the scenario. Please try again.');
@@ -142,6 +146,14 @@ export default function ScenarioGenerator({ onGenerate }) {
           <p className="text-sm text-gray-600 mt-1">
             Identify the stakeholders that should be involved during the incident response. Examples: <strong>CEO</strong>, <strong>Legal Team</strong>, <strong>PR Department</strong>.
           </p>
+        </div>
+
+        <div>
+          <label htmlFor="generationType" className="block mb-1 font-medium">Generation Type:</label>
+          <select id="generationType" value={formData.generationType} onChange={handleChange} className="w-full p-2 border rounded" required>
+            <option value="mitre">MITRE ATT&CK</option>
+            <option value="chatgpt">ChatGPT</option>
+          </select>
         </div>
 
         <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-blue-300" disabled={isLoading}>
