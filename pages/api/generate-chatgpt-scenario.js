@@ -1,4 +1,5 @@
-import { OpenAI } from 'nextjs-openai';
+// Use fetch directly instead of relying on OpenAI class from nextjs-openai
+import { Configuration, OpenAIApi } from 'openai';  // Import from standard openai package
 
 // IMPORTANT! Set the runtime to edge
 export const config = {
@@ -38,31 +39,33 @@ export default async function handler(req) {
       "businessImpact": "string"
     }`;
 
-    // Use the OpenAI API from nextjs-openai to generate the response
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,  // Ensure this environment variable is set
+    // Use the OpenAI package for making requests
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,  // Ensure the API key is correctly set
     });
 
-    const response = await openai.completions.create({
+    const openai = new OpenAIApi(configuration);
+
+    // Call the OpenAI API
+    const response = await openai.createChatCompletion({
       model: 'gpt-4',
       prompt,
       max_tokens: 5000,
       temperature: 0.7,
-      stream: false,  // Set this to true if you want streaming
     });
 
-    // Parse the response
+    // Extract the generated text from the API response
     const generatedScenario = response.data.choices[0].text.trim();
 
     // Return the result as a JSON response
-    return new Response(generatedScenario, {
+    return new Response(JSON.stringify(generatedScenario), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
     
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
-    return new Response(JSON.stringify({ error: 'Error generating scenario' }), {
+    return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
