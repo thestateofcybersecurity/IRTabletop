@@ -32,20 +32,13 @@ export default async function handler(req) {
     2. A detailed description of the incident
     3. The attack vector used
     4. Potential business impact
-    5. A list of 8 steps (Detection, Initial Evaluation, Containment, Forensics and Evidence Gathering, Notification and Stakeholder Involvement, Mitigation and Eradication, Recovery, and Post-Incident Review) for the tabletop exercise, each with:
-       - A title
-       - An initial question
-       - Content (as bullet points)
-       - Recommendations
-       - Discussion prompts
 
     Format the response as a valid JSON object with the following structure:
     {
       "title": "string",
       "description": "string",
       "attackVector": "string",
-      "businessImpact": "string",
-      "steps": "string"
+      "businessImpact": "string"
     }
 
     Ensure all string values are properly escaped.`;
