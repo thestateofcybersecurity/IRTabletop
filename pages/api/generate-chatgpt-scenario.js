@@ -44,6 +44,26 @@ export default async function handler(req) {
       stream: true,
     });
 
+    const stream = OpenAIStream(response, {
+      onStart: async () => {
+        // You can add any initialization logic here
+      },
+      onToken: async (token) => {
+        // You can process each token here if needed
+      },
+      onCompletion: async (completion) => {
+        // You can process the full completion here if needed
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
+
     const stream = OpenAIStream(response);
     return new StreamingTextResponse(stream);
   } catch (error) {
