@@ -1,7 +1,6 @@
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { Configuration, OpenAIApi } from 'openai-edge';
 
-// IMPORTANT! Set the runtime to edge
 export const config = {
   runtime: 'edge',
 };
@@ -53,7 +52,7 @@ export default async function handler(req) {
             "businessImpact": "string"
           }
 
-          Ensure all string values are properly escaped.`
+          Ensure all string values are properly escaped. Do not include any text before or after the JSON object.`
         }
       ],
       temperature: 0.7,
