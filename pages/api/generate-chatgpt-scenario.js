@@ -10,7 +10,7 @@ const fetchChatGPTResponse = async (prompt) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-2024-08-06",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 5000,
         temperature: 0.7
