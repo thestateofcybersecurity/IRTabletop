@@ -43,31 +43,60 @@ export const generateScenario = async (params) => {
 };
 
 export const generateChatGPTScenario = async (params) => {
-  try {
-    const response = await axios.post('/api/generate-chatgpt-scenario', params, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+  const maxRetries = 3;
+  let retries = 0;
+
+  while (retries < maxRetries) {
+    try {
+      const response = await fetch('/api/generate-chatgpt-scenario', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    });
 
-    if (response.status !== 200) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = JSON.parse(line.slice(5));
+            if (data.status === 'processing') {
+              console.log('Scenario generation in progress...');
+            } else {
+              // Combine the generated scenario with predefined steps and input parameters
+              const fullScenario = {
+                ...data,
+                steps: predefinedSteps,
+                ...params
+              };
+              return fullScenario;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Error generating ChatGPT scenario (attempt ${retries + 1}):`, error);
+      retries++;
+      if (retries >= maxRetries) {
+        throw error;
+      }
+      // Wait for 2 seconds before retrying
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
-
-    const generatedScenario = response.data;
-
-    // Combine the generated scenario with predefined steps and input parameters
-    const fullScenario = {
-      ...generatedScenario,
-      steps: predefinedSteps,
-      ...params
-    };
-
-    return fullScenario;
-  } catch (error) {
-    console.error('Error generating ChatGPT scenario:', error);
-    throw error;
   }
 };
 
