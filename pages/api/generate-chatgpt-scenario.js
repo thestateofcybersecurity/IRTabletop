@@ -1,15 +1,11 @@
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 import { predefinedSteps } from '../../utils/predefinedSteps';
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing OPENAI_API_KEY environment variable');
 }
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -54,7 +50,7 @@ export default async function handler(req, res) {
 
     Ensure all string values are properly escaped.`;
 
-    const response = await openai.createChatCompletion({
+    const response = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: [{ role: 'user', content: prompt }],
       max_tokens: 1000,
