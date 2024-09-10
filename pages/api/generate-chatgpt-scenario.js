@@ -1,6 +1,16 @@
 import fetch from 'node-fetch';
 
+let lastRequestTime = 0;
+const minTimeBetweenRequests = 20000; // 20 seconds
+
 const fetchChatGPTResponse = async (prompt) => {
+  const now = Date.now();
+  if (now - lastRequestTime < minTimeBetweenRequests) {
+    const delay = minTimeBetweenRequests - (now - lastRequestTime);
+    console.log(`Rate limiting: Waiting for ${delay}ms before making the next request`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+  
   try {
     console.log('Attempting to connect to OpenAI API...');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -16,6 +26,8 @@ const fetchChatGPTResponse = async (prompt) => {
         temperature: 0.7
       })
     });
+
+    lastRequestTime = Date.now();
 
     if (!response.ok) {
       const errorBody = await response.text();
@@ -197,6 +209,10 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
-    res.status(500).json({ error: 'Error generating scenario', details: error.message });
+    if (error.message === 'Rate limit exceeded. Please try again later.') {
+      res.status(429).json({ error: 'Rate limit exceeded', message: 'Please try again later' });
+    } else {
+      res.status(500).json({ error: 'Error generating scenario', details: error.message });
+    }
   }
 }
