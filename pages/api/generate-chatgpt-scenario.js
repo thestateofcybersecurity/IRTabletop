@@ -1,5 +1,5 @@
 // Use fetch directly instead of relying on OpenAI class from nextjs-openai
-import { Configuration, OpenAIApi } from 'openai';  // Import from standard openai package
+import { Configuration, OpenAIApi } from 'ai';  // Import from standard openai package
 
 // IMPORTANT! Set the runtime to edge
 export const config = {
