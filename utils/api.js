@@ -66,9 +66,20 @@ export const generateChatGPTScenario = async (params) => {
       result += decoder.decode(value, { stream: true });
     }
 
-    // Remove any leading/trailing whitespace and parse the JSON
-    const trimmedResult = result.trim();
-    return JSON.parse(trimmedResult);
+    // Remove any leading/trailing whitespace and attempt to fix common JSON issues
+    result = result.trim();
+    result = result.replace(/\n/g, '\\n'); // Replace newlines with escaped newlines
+    result = result.replace(/\r/g, '\\r'); // Replace carriage returns with escaped carriage returns
+    result = result.replace(/\t/g, '\\t'); // Replace tabs with escaped tabs
+    
+    // Attempt to parse the JSON
+    try {
+      return JSON.parse(result);
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      console.log('Raw response:', result);
+      throw new Error('Failed to parse scenario data');
+    }
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     throw error;
