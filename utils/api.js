@@ -48,7 +48,7 @@ export const generateChatGPTScenario = async (params) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify(params),
     });
@@ -67,42 +67,22 @@ export const generateChatGPTScenario = async (params) => {
       if (done) break;
       result += decoder.decode(value, { stream: true });
     }
-    
-    console.log('Finished reading the stream');
 
-    // Ensure we have a valid response
+    console.log('Finished reading the stream:', result);
+
+    // Ensure the result is complete
     if (!result.trim()) {
       throw new Error('Received empty response from the server');
     }
 
-    // Process the full result to extract the JSON
-    let jsonString = result
-      .split('\n') // Split the response by newlines
-      .filter(line => line.startsWith('data:')) // Only keep the lines starting with "data:"
-      .map(line => line.slice(5).trim()) // Remove the "data:" prefix and trim the line
-      .join(''); // Recombine the JSON fragments into a full string
-
-    console.log('Processed JSON string:', jsonString);
-
-    // Verify if JSON string is complete and valid
-    if (!jsonString.endsWith('}')) {
+    // Check if the result is complete and valid JSON
+    if (!result.endsWith('}')) {
       throw new Error('Incomplete JSON response');
     }
 
-    // Check for empty response
-    if (!result.trim()) {
-      throw new Error('Received empty response from the server');
-    }
-
-    // Parse the JSON once the stream is complete
-    try {
-      const jsonResult = JSON.parse(result.trim());
-      console.log('Successfully parsed JSON:', jsonResult);
-      return jsonResult;
-    } catch (err) {
-      console.error('JSON parsing error:', err);
-      throw new Error('Incomplete JSON response received.');
-    }
+    const jsonResult = JSON.parse(result);
+    console.log('Successfully parsed JSON:', jsonResult);
+    return jsonResult;
 
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
