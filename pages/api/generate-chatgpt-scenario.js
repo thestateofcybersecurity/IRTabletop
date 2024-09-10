@@ -30,6 +30,10 @@ export default async function handler(req) {
       model: 'gpt-4',
       messages: [
         {
+          role: 'system',
+          content: 'You are a JSON generator. Your responses should always be in valid JSON format, with no additional text or formatting.'
+        },
+        {
           role: 'user',
           content: `Generate a unique incident response scenario for a tabletop exercise with the following details:
           - IR Experience Level: ${irExperience}
@@ -52,7 +56,7 @@ export default async function handler(req) {
             "businessImpact": "string"
           }
 
-          Ensure all string values are properly escaped. Do not include any text, numbers, or characters before or after the JSON object. The response should be a single, valid JSON object and nothing else.`
+          Ensure all string values are properly escaped. The response should be a single, valid JSON object and nothing else. Do not include any additional formatting, line breaks, or spaces that would make the JSON invalid.`
         }
       ],
       temperature: 0.7,
