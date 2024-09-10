@@ -1,5 +1,6 @@
 import { OpenAIStream } from 'ai';
 import { Configuration, OpenAIApi } from 'openai-edge';
+import { predefinedSteps } from '../../utils/predefinedSteps';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -61,16 +62,25 @@ export default async function handler(req) {
     const stream = OpenAIStream(response, {
       onToken: (token) => {
         fullResponse += token;
-        console.log('Received token:', token);
       },
-      onCompletion: () => {
+      onCompletion: (completion) => {
         console.log('Stream completed. Full response:', fullResponse);
+        try {
+          const parsedResponse = JSON.parse(fullResponse);
+          const finalResponse = {
+            ...parsedResponse,
+            steps: predefinedSteps,
+            irExperience,
+            securityMaturity,
+            industrySector,
+            complianceRequirements,
+            stakeholderInvolvement
+          };
+          console.log('Final response:', JSON.stringify(finalResponse));
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
       },
-    });
-
-    console.log('Returning stream response');
-    return new Response(stream, {
-      headers: { 'Content-Type': 'text/event-stream' },
     });
 
   } catch (error) {
