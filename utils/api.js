@@ -48,7 +48,7 @@ export const generateChatGPTScenario = async (params) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify(params),
     });
@@ -60,7 +60,7 @@ export const generateChatGPTScenario = async (params) => {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let result = '';
-    
+
     console.log('Starting to read the stream');
     while (true) {
       const { done, value } = await reader.read();
@@ -70,7 +70,10 @@ export const generateChatGPTScenario = async (params) => {
 
     console.log('Finished reading the stream:', result);
 
-    // Ensure the result is complete
+    // Remove any potential unwanted characters like '0:', '//' and rebuild into a valid JSON format
+    result = result.replace(/0:"|\\n|\\/g, '').trim();
+
+    // Ensure we have a valid response
     if (!result.trim()) {
       throw new Error('Received empty response from the server');
     }
