@@ -53,31 +53,8 @@ export const generateChatGPTScenario = async (params) => {
       body: JSON.stringify(params),
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let result = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      result += decoder.decode(value, { stream: true });
-    }
-
-    // Parse the JSON response
-    const generatedScenario = JSON.parse(result);
-
-    // Combine the generated scenario with predefined steps and input parameters
-    const fullScenario = {
-      ...generatedScenario,
-      steps: predefinedSteps,
-      ...params
-    };
-
-    return fullScenario;
+    const result = await response.json();  // Handle as normal JSON if not streaming
+    return result;
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     throw error;
