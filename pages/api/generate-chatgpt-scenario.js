@@ -14,6 +14,7 @@ export default async function handler(req) {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
+
   try {
     const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
 
@@ -44,15 +45,19 @@ export default async function handler(req) {
       stream: true,
     });
 
+    let fullResponse = '';
+
     const stream = OpenAIStream(response, {
-      onStart: async () => {
-        // You can add any initialization logic here
-      },
       onToken: async (token) => {
-        // You can process each token here if needed
+        fullResponse += token;
       },
       onCompletion: async (completion) => {
-        // You can process the full completion here if needed
+        try {
+          const jsonResponse = JSON.parse(fullResponse);
+          // You can process the full JSON response here if needed
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
       },
     });
 
