@@ -1,5 +1,4 @@
-import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { Configuration, OpenAIApi } from 'openai-edge';
+import { Configuration, OpenAIApi } from 'openai';
 import { predefinedSteps } from '../../utils/predefinedSteps';
 
 const configuration = new Configuration({
@@ -7,18 +6,13 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-export const config = {
-  runtime: 'edge',
-};
-
-export default async function handler(req) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    console.log('Received request to generate ChatGPT scenario');
-    const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
+    const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = req.body;
 
     const prompt = `Generate a unique incident response scenario for a tabletop exercise with the following details:
     - IR Experience Level: ${irExperience}
@@ -43,35 +37,27 @@ export default async function handler(req) {
 
     Ensure all string values are properly escaped.`;
 
-    console.log('Sending request to OpenAI API');
     const response = await openai.createChatCompletion({
       model: 'gpt-4',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 5000,
-      stream: true,
+      max_tokens: 1000,
     });
 
-    let fullResponse = '';
-    const stream = OpenAIStream(response, {
-      onToken: (token) => {
-        fullResponse += token;
-      },
-      onCompletion: (completion) => {
-        console.log('Stream completed. Full response:', fullResponse);
-      },
-    });
+    const generatedScenario = JSON.parse(response.data.choices[0].message.content);
 
-    const { readable, writable } = new TransformStream();
-    stream.pipeTo(writable);
+    const fullScenario = {
+      ...generatedScenario,
+      steps: predefinedSteps,
+      irExperience,
+      securityMaturity,
+      industrySector,
+      complianceRequirements,
+      stakeholderInvolvement,
+    };
 
-    return new Response(readable, {
-      headers: { 'Content-Type': 'text/event-stream' },
-    });
+    res.status(200).json(fullScenario);
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
-    return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    res.status(500).json({ error: 'Error generating scenario', details: error.message });
   }
 }
