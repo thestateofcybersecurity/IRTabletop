@@ -66,18 +66,26 @@ export const generateChatGPTScenario = async (params) => {
       result += decoder.decode(value, { stream: true });
     }
 
-    // Remove any leading/trailing whitespace and attempt to fix common JSON issues
-    result = result.trim();
-    result = result.replace(/\n/g, '\\n'); // Replace newlines with escaped newlines
-    result = result.replace(/\r/g, '\\r'); // Replace carriage returns with escaped carriage returns
-    result = result.replace(/\t/g, '\\t'); // Replace tabs with escaped tabs
-    
+    // Process the streaming response
+    const lines = result.split('\n');
+    let jsonString = '';
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const data = line.slice(5);
+        if (data === '[DONE]') break;
+        jsonString += data;
+      }
+    }
+
+    // Remove any non-JSON content at the start and end
+    jsonString = jsonString.replace(/^[^{]*/, '').replace(/[^}]*$/, '');
+
     // Attempt to parse the JSON
     try {
-      return JSON.parse(result);
+      return JSON.parse(jsonString);
     } catch (parseError) {
       console.error('Error parsing JSON:', parseError);
-      console.log('Raw response:', result);
+      console.log('Processed JSON string:', jsonString);
       throw new Error('Failed to parse scenario data');
     }
   } catch (error) {
