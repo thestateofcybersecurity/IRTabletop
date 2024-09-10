@@ -41,6 +41,40 @@ export const generateScenario = async (params) => {
   }
 };
 
+export const generateChatGPTScenario = async (params) => {
+  try {
+    const response = await fetch('/api/generate-chatgpt-scenario', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(params),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let result = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      result += decoder.decode(value, { stream: true });
+    }
+
+    // Remove any leading/trailing whitespace and parse the JSON
+    const trimmedResult = result.trim();
+    return JSON.parse(trimmedResult);
+  } catch (error) {
+    console.error('Error generating ChatGPT scenario:', error);
+    throw error;
+  }
+};
+
 // Add other API calls here...
 
 export default api;
