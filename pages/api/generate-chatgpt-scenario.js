@@ -1,13 +1,9 @@
 import { Configuration, OpenAIApi } from 'openai-edge';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
 
 export const config = {
   runtime: 'edge',
-  maxDuration: 300, // Set to maximum allowed by your hosting platform
 };
-
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('Missing OPENAI_API_KEY environment variable');
-}
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -67,44 +63,14 @@ export default async function handler(req) {
       ],
       temperature: 0.7,
       max_tokens: 1000,
+      stream: true,
     });
 
-    const completion = await response.json();
-    const generatedContent = completion.choices[0].message.content;
+    // Transform the response into a readable stream
+    const stream = OpenAIStream(response);
 
-    // Attempt to parse the generated content as JSON
-    let parsedScenario;
-    try {
-      parsedScenario = JSON.parse(generatedContent);
-    } catch (parseError) {
-      console.error('Error parsing generated content:', parseError);
-      console.error('Generated content:', generatedContent);
-      return new Response(JSON.stringify({ error: 'Failed to generate valid JSON scenario' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Validate the structure of the parsed scenario
-    const requiredKeys = ['title', 'description', 'attackVector', 'businessImpact'];
-    for (const key of requiredKeys) {
-      if (!(key in parsedScenario)) {
-        return new Response(JSON.stringify({ error: `Generated scenario is missing required key: ${key}` }), {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-    }
-
-    // Ensure description is an array
-    if (!Array.isArray(parsedScenario.description)) {
-      parsedScenario.description = [parsedScenario.description];
-    }
-
-    return new Response(JSON.stringify(parsedScenario), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    // Return a StreamingTextResponse, which can be consumed by the client
+    return new StreamingTextResponse(stream);
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
