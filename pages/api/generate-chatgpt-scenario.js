@@ -83,6 +83,11 @@ export default async function handler(req) {
       },
     });
 
+    console.log('Returning stream response');
+    return new Response(stream, {
+      headers: { 'Content-Type': 'text/event-stream' },
+    });
+
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
