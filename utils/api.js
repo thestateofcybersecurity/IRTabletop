@@ -65,11 +65,9 @@ export const generateChatGPTScenario = async (params) => {
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      console.log('Received chunk:', chunk);
-      result += chunk;
+      result += decoder.decode(value, { stream: true });
     }
-
+    
     console.log('Finished reading the stream');
 
     // Ensure we have a valid response
@@ -91,10 +89,20 @@ export const generateChatGPTScenario = async (params) => {
       throw new Error('Incomplete JSON response');
     }
 
-    // Parse the final JSON string
-    const parsedData = JSON.parse(jsonString);
-    console.log('Successfully parsed JSON:', parsedData);
-    return parsedData;
+    // Check for empty response
+    if (!result.trim()) {
+      throw new Error('Received empty response from the server');
+    }
+
+    // Parse the JSON once the stream is complete
+    try {
+      const jsonResult = JSON.parse(result.trim());
+      console.log('Successfully parsed JSON:', jsonResult);
+      return jsonResult;
+    } catch (err) {
+      console.error('JSON parsing error:', err);
+      throw new Error('Incomplete JSON response received.');
+    }
 
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
