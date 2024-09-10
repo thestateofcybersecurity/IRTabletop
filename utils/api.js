@@ -43,60 +43,56 @@ export const generateScenario = async (params) => {
 };
 
 export const generateChatGPTScenario = async (params) => {
-  const maxRetries = 3;
-  let retries = 0;
+  try {
+    const response = await fetch('/api/generate-chatgpt-scenario', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(params),
+    });
 
-  while (retries < maxRetries) {
-    try {
-      const response = await fetch('/api/generate-chatgpt-scenario', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(params),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-        
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = JSON.parse(line.slice(5));
-            if (data.status === 'processing') {
-              console.log('Scenario generation in progress...');
-            } else {
-              // Combine the generated scenario with predefined steps and input parameters
-              const fullScenario = {
-                ...data,
-                steps: predefinedSteps,
-                ...params
-              };
-              return fullScenario;
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error(`Error generating ChatGPT scenario (attempt ${retries + 1}):`, error);
-      retries++;
-      if (retries >= maxRetries) {
-        throw error;
-      }
-      // Wait for 2 seconds before retrying
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let result = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      result += decoder.decode(value, { stream: true });
+    }
+
+    // Parse the JSON response
+    let generatedScenario;
+    try {
+      generatedScenario = JSON.parse(result);
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      console.error('Raw response:', result);
+      throw new Error('Failed to parse scenario data');
+    }
+
+    // Ensure description is an array
+    if (!Array.isArray(generatedScenario.description)) {
+      generatedScenario.description = [generatedScenario.description];
+    }
+
+    // Combine the generated scenario with predefined steps and input parameters
+    const fullScenario = {
+      ...generatedScenario,
+      steps: predefinedSteps,
+      ...params
+    };
+
+    return fullScenario;
+  } catch (error) {
+    console.error('Error generating ChatGPT scenario:', error);
+    throw error;
   }
 };
 
