@@ -23,7 +23,7 @@
     "validator": "^13.7.0",
     "node-fetch": "^3.3.2",
     "ai": "^3.3.30",
-    "nextjs-openai": "^3.0.0",
+    "nextjs-openai": "^7.2.0",
     "openai-edge": "^1.2.2"  
   },
   "devDependencies": {
