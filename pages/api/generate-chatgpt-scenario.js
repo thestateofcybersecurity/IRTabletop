@@ -2,6 +2,7 @@ import { Configuration, OpenAIApi } from 'openai-edge';
 
 export const config = {
   runtime: 'edge',
+  maxDuration: 60, // Set to maximum allowed by your hosting platform
 };
 
 if (!process.env.OPENAI_API_KEY) {
