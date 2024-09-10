@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { generateScenario, generateChatGPTScenario } from '../utils/api';
 
 export default function ScenarioGenerator({ onGenerate }) {
   const [formData, setFormData] = useState({
@@ -20,24 +21,13 @@ export default function ScenarioGenerator({ onGenerate }) {
     setIsLoading(true);
 
     try {
-      const endpoint = formData.generationType === 'chatgpt' 
-        ? '/api/generate-chatgpt-scenario' 
-        : '/api/generate-scenario';
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate scenario');
+      let generatedScenario;
+      if (formData.generationType === 'chatgpt') {
+        generatedScenario = await generateChatGPTScenario(formData);
+      } else {
+        generatedScenario = await generateScenario(formData);
       }
-
-      const generatedScenario = await response.json();
+      
       console.log('Generated scenario:', generatedScenario);
       onGenerate(generatedScenario);
     } catch (error) {
