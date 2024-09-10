@@ -1,4 +1,4 @@
-import { OpenAIStream, StreamingTextResponse } from 'ai';
+import { OpenAIStream } from 'ai';
 import { Configuration, OpenAIApi } from 'openai-edge';
 
 const configuration = new Configuration({
@@ -45,21 +45,7 @@ export default async function handler(req) {
       stream: true,
     });
 
-    let fullResponse = '';
-
-    const stream = OpenAIStream(response, {
-      onToken: (token) => {
-        fullResponse += token;
-      },
-      onCompletion: (completion) => {
-        try {
-          JSON.parse(fullResponse);
-        } catch (error) {
-          console.error('Error parsing JSON:', error);
-          console.log('Raw response:', fullResponse);
-        }
-      },
-    });
+    const stream = OpenAIStream(response);
 
     return new Response(stream, {
       headers: { 'Content-Type': 'text/event-stream' },
