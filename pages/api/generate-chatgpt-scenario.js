@@ -1,4 +1,4 @@
-import { OpenAIStream } from 'ai';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { Configuration, OpenAIApi } from 'openai-edge';
 import { predefinedSteps } from '../../utils/predefinedSteps';
 
