@@ -44,17 +44,17 @@ export default async function handler(req) {
     const response = await openai.createChatCompletion({
       model: 'gpt-4',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 5000, // Increase the token limit if necessary
+      max_tokens: 5000,
       stream: true,
     });
-    console.log('Received response from OpenAI API, creating stream');
+
     let fullResponse = '';
     const stream = OpenAIStream(response, {
       onToken: (token) => {
         fullResponse += token;
         console.log('Received token:', token);
       },
-      onCompletion: (completion) => {
+      onCompletion: () => {
         console.log('Stream completed. Full response:', fullResponse);
       },
     });
@@ -63,6 +63,7 @@ export default async function handler(req) {
     return new Response(stream, {
       headers: { 'Content-Type': 'text/event-stream' },
     });
+
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
