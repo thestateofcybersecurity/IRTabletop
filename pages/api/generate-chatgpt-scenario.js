@@ -172,7 +172,8 @@ export default async function handler(req, res) {
 
     Format the response as a JSON object.`;
 
-    const generatedScenario = JSON.parse(completion.data.choices[0].message.content);
+    const generatedScenarioString = await fetchChatGPTResponse(prompt);
+    const generatedScenario = JSON.parse(generatedScenarioString);
     res.status(200).json(generatedScenario);
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
