@@ -37,16 +37,15 @@ export default async function handler(req) {
        - Content (as bullet points)
        - Recommendations
        - Discussion prompts
-
-    You may use these details as a guide for what the output should look like for each steps:
-      Step 1: Detection
-      Initial Question: How was the attack detected?
-      Recommendations:
+    6. You may use these details as a guide for what the output should look like for each steps:
+      - Step 1: Detection
+      - Initial Question: How was the attack detected?
+      - Recommendations:
       - Enhance monitoring and detection tools to reduce detection time.
       - Increase network visibility by deploying IDS/IPS or anomaly detection systems.
       - Regularly update threat intelligence feeds to ensure new threats are detected quickly.
       - Deploy endpoint detection and response (EDR) across critical systems to capture suspicious activities.
-      Discussion Prompts:
+      - Discussion Prompts:
       - What were the initial indicators of compromise (IoCs)?
       - Which systems or logs first showed signs of abnormal behavior?
       - Were there any patterns in the IoCs (malware signatures, unusual network traffic)?
@@ -57,97 +56,97 @@ export default async function handler(req) {
       - Were factors such as data exposure, system impact, and critical assets considered?
       - How was the potential business impact factored into the severity assessment?
       - Was the severity classification adjusted as more information became available?
-      Step 2: Initial Evaluation
-      Initial Question: What was the initial response after detection?
-      Recommendations:
+      - Step 2: Initial Evaluation
+      - Initial Question: What was the initial response after detection?
+      - Recommendations:
       - Review and enhance the incident classification process.
       - Ensure clear ownership and responsibility for decision-making during the initial evaluation phase.
       - Ensure prompt communication with key stakeholders to expedite the evaluation process.
-      Discussion Prompts:
+      - Discussion Prompts:
       - How well did the communication flow during the incident?
       - Were any stakeholders left out?
       - Did the team follow established processes, or were any processes missed?
       - Were there any challenges in assessing the scope and impact of the incident initially?
       - How quickly was the incident response team mobilized after the initial evaluation?
-      Step 3: Containment
-      Initial Question: What actions were taken to contain the incident?
-      Recommendations:
+      - Step 3: Containment
+      - Initial Question: What actions were taken to contain the incident?
+      - Recommendations:
       - Test and improve containment procedures regularly through tabletop exercises.
       - Ensure that communication protocols between teams are optimized for efficiency.
       - Document all containment actions for forensic and legal purposes.
       - Develop and maintain an up-to-date asset inventory to facilitate rapid containment decisions.
-      Discussion Prompts:
+      - Discussion Prompts:
       - Were the containment measures effective in preventing further spread?
       - Did any communication issues delay or complicate containment?
       - Were additional vulnerabilities discovered during containment?
       - How did the containment actions impact business operations?
       - Were there any unintended consequences of the containment actions?
-      Step 4: Forensics and Evidence Gathering
-      Initial Question: What data and logs were collected for forensic analysis?
-      Recommendations:
+      - Step 4: Forensics and Evidence Gathering
+      - Initial Question: What data and logs were collected for forensic analysis?
+      - Recommendations:
       - Conduct additional training on forensics tools and evidence collection.
       - Ensure all team members know how to maintain the chain of custody for evidence.
       - Simulate forensic analysis during tabletop exercises to enhance team proficiency.
       - Implement automated log collection and centralization to facilitate forensic analysis.
       - Develop relationships with external forensic experts for complex cases.
-      Discussion Prompts:
+      - Discussion Prompts:
       - What challenges did the team face during forensics?
       - Were any critical data sources (logs, system snapshots) missing or corrupted?
       - Was there enough documentation and tracking of forensic processes?
       - How effective were the forensic tools in analyzing the collected data?
       - Were there any legal or privacy considerations that impacted the forensic process?
-      Step 5: Notification and Stakeholder Involvement
-      Initial Question: Who was notified about the incident, and when?
-      Recommendations:
+      - Step 5: Notification and Stakeholder Involvement
+      - Initial Question: Who was notified about the incident, and when?
+      - Recommendations:
       - Strengthen communication channels for better coordination between internal teams and external stakeholders.
       - Ensure legal and compliance teams are actively involved in notification processes.
       - Develop pre-approved communication templates for various incident scenarios.
       - Conduct regular training on crisis communication for key personnel.
       - Establish clear escalation paths and decision-making authority for notifications.
-      Discussion Prompts:
+      - Discussion Prompts:
       - How well did communication flow during the notification process?
       - Were any key stakeholders unaware of the incident until later stages?
       - How effective was the messaging in addressing stakeholder concerns?
       - Were there any reputational impacts from the notification process?
       - How were regulatory and legal requirements balanced with transparency?
-      Step 6: Mitigation and Eradication
-      Initial Question: How was the attack vector mitigated?
-      Recommendations:
+      - Step 6: Mitigation and Eradication
+      - Initial Question: How was the attack vector mitigated?
+      - Recommendations:
       - Regularly review mitigation techniques and test them in simulated environments.
       - Ensure backup strategies are resilient to malware attacks and tested regularly.
       - Perform post-mitigation testing to confirm all vulnerabilities have been closed.
       - Develop a process for tracking and verifying the completion of all mitigation actions.
       - Implement automated vulnerability scanning and patch management processes.
-      Discussion Prompts:
+      - Discussion Prompts:
       - Were any mitigation bypass attempts discovered?
       - How were they handled?
       - Did the mitigation create any further vulnerabilities or issues?
       - Were the mitigation steps sufficient to prevent further exploitation?
       - How was the trade-off between speed of mitigation and thoroughness managed?
       - Were there any challenges in implementing mitigations across different systems or environments?
-      Step 7: Recovery
-      Initial Question: What steps were taken to recover systems and restore business operations?
-      Recommendations:
+      - Step 7: Recovery
+      - Initial Question: What steps were taken to recover systems and restore business operations?
+      - Recommendations:
       - Review recovery workflows to ensure minimal downtime and test regularly.
       - Ensure that backups are regularly tested for integrity and ease of use in real incidents.
       - Strengthen disaster recovery and business continuity plans (BCP) to minimize business disruption.
       - Implement automated recovery processes where possible to reduce human error.
       - Develop and maintain detailed system configuration documentation to aid in recovery.
-      Discussion Prompts:
+      - Discussion Prompts:
       - What obstacles were faced during recovery?
       - Were there any delays in restoring systems due to untested backups?
       - Were recovery efforts prioritized based on business impact?
       - How effective was communication with end-users during the recovery process?
       - Were any opportunities for system or process improvements identified during recovery?
-      Step 8: Post-Incident Review
-      Initial Question: Conduct a blameless post-incident review (retrospective).
-      Recommendations:
+      - Step 8: Post-Incident Review
+      - Initial Question: Conduct a blameless post-incident review (retrospective).
+      - Recommendations:
       - Ensure post-incident reviews focus on process improvement, not blame.
       - Document lessons learned and update the incident response plan accordingly.
       - Incorporate feedback from the team to improve future incident responses.
       - Conduct follow-up reviews to ensure recommended changes are implemented.
       - Share sanitized learnings across the organization to improve overall security posture.
-      Discussion Prompts:
+      - Discussion Prompts:
       - What lessons were learned from this incident?
       - What gaps were identified in the incident response playbook?
       - How can the response process be improved for future incidents?
