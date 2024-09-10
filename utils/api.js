@@ -34,7 +34,7 @@ api.interceptors.response.use(
 
 export const generateScenario = async (params) => {
   try {
-    const response = await api.post('/generate-scenario', params);
+    const response = await api.post('/pages/api/generate-scenario', params);
     return response.data;
   } catch (error) {
     console.error('Error generating scenario:', error);
@@ -44,7 +44,7 @@ export const generateScenario = async (params) => {
 
 export const generateChatGPTScenario = async (params) => {
   try {
-    const response = await axios.post('/api/generate-chatgpt-scenario', params, {
+    const response = await axios.post('/pages/api/generate-chatgpt-scenario', params, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
