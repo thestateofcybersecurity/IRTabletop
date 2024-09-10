@@ -1,76 +1,56 @@
-import OpenAI from 'openai';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
+import { Configuration, OpenAIApi } from 'openai-edge';
 import { predefinedSteps } from '../../utils/predefinedSteps';
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('Missing OPENAI_API_KEY environment variable');
-}
+// Create an OpenAI API client (that's edge friendly!)
+const config = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY
+});
+const openai = new OpenAIApi(config);
 
-const openai = new OpenAI(process.env.OPENAI_API_KEY);
+// IMPORTANT! Set the runtime to edge
+export const runtime = 'edge';
 
-export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+export default async function handler(req) {
+  // Extract the `prompt` from the body of the request
+  const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
 
-  // Handle preflight request
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+  // Ask OpenAI for a streaming chat completion given the prompt
+  const response = await openai.createChatCompletion({
+    model: 'gpt-4',
+    stream: true,
+    messages: [
+      {
+        role: 'user',
+        content: `Generate a unique incident response scenario for a tabletop exercise with the following details:
+        - IR Experience Level: ${irExperience}
+        - Security Maturity: ${securityMaturity}
+        - Industry Sector: ${industrySector}
+        - Compliance Requirements: ${complianceRequirements}
+        - Key Stakeholders: ${stakeholderInvolvement}
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+        The scenario should include:
+        1. A title
+        2. A detailed description of the incident
+        3. The attack vector used
+        4. Potential business impact
 
-  try {
-    const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = req.body;
+        Format the response as a valid JSON object with the following structure:
+        {
+          "title": "string",
+          "description": "string",
+          "attackVector": "string",
+          "businessImpact": "string"
+        }
 
-    const prompt = `Generate a unique incident response scenario for a tabletop exercise with the following details:
-    - IR Experience Level: ${irExperience}
-    - Security Maturity: ${securityMaturity}
-    - Industry Sector: ${industrySector}
-    - Compliance Requirements: ${complianceRequirements}
-    - Key Stakeholders: ${stakeholderInvolvement}
+        Ensure all string values are properly escaped.`
+      }
+    ]
+  });
 
-    The scenario should include:
-    1. A title
-    2. A detailed description of the incident
-    3. The attack vector used
-    4. Potential business impact
+  // Convert the response into a friendly text-stream
+  const stream = OpenAIStream(response);
 
-    Format the response as a valid JSON object with the following structure:
-    {
-      "title": "string",
-      "description": "string",
-      "attackVector": "string",
-      "businessImpact": "string"
-    }
-
-    Ensure all string values are properly escaped.`;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 1000,
-    });
-
-    const generatedScenario = JSON.parse(response.data.choices[0].message.content);
-
-    const fullScenario = {
-      ...generatedScenario,
-      steps: predefinedSteps,
-      irExperience,
-      securityMaturity,
-      industrySector,
-      complianceRequirements,
-      stakeholderInvolvement,
-    };
-
-    res.status(200).json(fullScenario);
-  } catch (error) {
-    console.error('Error generating ChatGPT scenario:', error);
-    res.status(500).json({ error: 'Error generating scenario', details: error.message });
-  }
+  // Respond with the stream
+  return new StreamingTextResponse(stream);
 }
