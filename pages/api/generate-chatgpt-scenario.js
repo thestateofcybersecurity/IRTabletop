@@ -64,8 +64,6 @@ export default async function handler(req) {
       },
     });
 
-    const stream = OpenAIStream(response);
-    return new StreamingTextResponse(stream);
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
