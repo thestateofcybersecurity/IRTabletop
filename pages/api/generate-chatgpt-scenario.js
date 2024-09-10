@@ -1,5 +1,6 @@
-import { OpenAIStream } from 'ai';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { Configuration, OpenAIApi } from 'openai-edge';
+import { authenticateUser } from '../../middleware/auth';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -16,6 +17,9 @@ export default async function handler(req) {
   }
 
   try {
+    // Authenticate the user
+    await authenticateUser(req);
+
     const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
 
     const prompt = `Generate a unique incident response scenario for a tabletop exercise with the following details:
@@ -45,25 +49,8 @@ export default async function handler(req) {
       stream: true,
     });
 
-    const stream = OpenAIStream(response, {
-      onStart: async () => {
-        // You can add any initialization logic here
-      },
-      onToken: async (token) => {
-        // You can process each token here if needed
-      },
-      onCompletion: async (completion) => {
-        // You can process the full completion here if needed
-      },
-    });
-
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
-    });
+    const stream = OpenAIStream(response);
+    return new StreamingTextResponse(stream);
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
