@@ -43,14 +43,14 @@ export default async function handler(req) {
 
           The scenario should include:
           1. A title
-          2. A detailed description of the incident
+          2. A detailed description of the incident (as an array of strings, each string being a paragraph)
           3. The attack vector used
           4. Potential business impact
 
           Format the response as a valid JSON object with the following structure:
           {
             "title": "string",
-            "description": "string",
+            "description": ["string", "string", ...],
             "attackVector": "string",
             "businessImpact": "string"
           }
@@ -87,6 +87,11 @@ export default async function handler(req) {
           headers: { 'Content-Type': 'application/json' },
         });
       }
+    }
+
+    // Ensure description is an array
+    if (!Array.isArray(parsedScenario.description)) {
+      parsedScenario.description = [parsedScenario.description];
     }
 
     return new Response(JSON.stringify(parsedScenario), {
