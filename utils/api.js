@@ -68,12 +68,12 @@ export const generateChatGPTScenario = async (params) => {
     }
 
     // Clean up the result string
-    result = result.trim();
+    result = result.replace(/^\d+:/gm, '');  // Remove number prefixes
+    result = result.replace(/\\n/g, '');     // Remove escaped newlines
+    result = result.replace(/\\/g, '');      // Remove remaining backslashes
+    result = result.replace(/^"|"$/g, '');   // Remove starting and ending quotes
     
-    // Remove any non-JSON content at the start and end
-    result = result.replace(/^[^{]*/, '').replace(/[^}]*$/, '');
-
-    console.log('Raw response:', result); // Log the raw response for debugging
+    console.log('Cleaned response:', result); // Log the cleaned response for debugging
 
     // Parse the JSON response
     let generatedScenario;
