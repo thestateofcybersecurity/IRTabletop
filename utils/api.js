@@ -44,21 +44,18 @@ export const generateScenario = async (params) => {
 
 export const generateChatGPTScenario = async (params) => {
   try {
-    const response = await fetch('/api/generate-chatgpt-scenario', {
-      method: 'POST',
+    const response = await axios.post('/api/generate-chatgpt-scenario', params, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify(params),
+      }
     });
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     throw error;
