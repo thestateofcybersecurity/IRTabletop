@@ -41,7 +41,6 @@ export const generateScenario = async (params) => {
   }
 };
 
-
 export const generateChatGPTScenario = async (params) => {
   try {
     console.log('Sending request to generate ChatGPT scenario');
@@ -61,7 +60,7 @@ export const generateChatGPTScenario = async (params) => {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let result = '';
-
+    
     console.log('Starting to read the stream');
     while (true) {
       const { done, value } = await reader.read();
@@ -70,40 +69,28 @@ export const generateChatGPTScenario = async (params) => {
       console.log('Received chunk:', chunk);
       result += chunk;
     }
+
     console.log('Finished reading the stream');
 
-    console.log('Raw response:', result);
-
+    // Ensure we have a valid response
     if (!result.trim()) {
       throw new Error('Received empty response from the server');
     }
 
-    // Process the streaming response
-    const lines = result.split('\n');
-    let jsonString = '';
-    for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        const data = line.slice(5).trim();
-        if (data === '[DONE]') break;
-        jsonString += data;
-      }
-    }
+    // Process the full result to extract the JSON
+    let jsonString = result
+      .split('\n') // Split the response by newlines
+      .filter(line => line.startsWith('data:')) // Only keep the lines starting with "data:"
+      .map(line => line.slice(5).trim()) // Remove the "data:" prefix and trim the line
+      .join(''); // Recombine the JSON fragments into a full string
 
     console.log('Processed JSON string:', jsonString);
 
-    if (!jsonString.trim()) {
-      throw new Error('No valid JSON data in the response');
-    }
+    // Parse the final JSON string
+    const parsedData = JSON.parse(jsonString);
+    console.log('Successfully parsed JSON:', parsedData);
+    return parsedData;
 
-    // Attempt to parse the JSON
-    try {
-      const parsedData = JSON.parse(jsonString);
-      console.log('Successfully parsed JSON:', parsedData);
-      return parsedData;
-    } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
-      throw new Error('Failed to parse scenario data');
-    }
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     throw error;
