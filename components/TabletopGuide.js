@@ -67,9 +67,12 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
         <p><strong>Title:</strong> {scenario.title}</p>
         <div className="mt-2">
           <strong>Description:</strong>
-          {scenario.description.map((paragraph, index) => (
-            <p key={index} className="mt-2">{paragraph}</p>
-          ))}
+          {Array.isArray(scenario.description) 
+            ? scenario.description.map((paragraph, index) => (
+                <p key={index} className="mt-2">{paragraph}</p>
+              ))
+            : <p className="mt-2">{scenario.description}</p>
+          }
         </div>
       </div>
 
