@@ -1,6 +1,5 @@
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { Configuration, OpenAIApi } from 'openai-edge';
-import { authenticateUser } from '../../middleware/auth';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,10 +14,6 @@ export default async function handler(req) {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
-
-  try {
-    // Authenticate the user
-    await authenticateUser(req);
 
     const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
 
