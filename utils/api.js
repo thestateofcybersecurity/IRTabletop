@@ -41,8 +41,10 @@ export const generateScenario = async (params) => {
   }
 };
 
+
 export const generateChatGPTScenario = async (params) => {
   try {
+    console.log('Sending request to generate ChatGPT scenario');
     const response = await fetch('/api/generate-chatgpt-scenario', {
       method: 'POST',
       headers: {
@@ -60,10 +62,20 @@ export const generateChatGPTScenario = async (params) => {
     const decoder = new TextDecoder();
     let result = '';
 
+    console.log('Starting to read the stream');
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      result += decoder.decode(value, { stream: true });
+      const chunk = decoder.decode(value, { stream: true });
+      console.log('Received chunk:', chunk);
+      result += chunk;
+    }
+    console.log('Finished reading the stream');
+
+    console.log('Raw response:', result);
+
+    if (!result.trim()) {
+      throw new Error('Received empty response from the server');
     }
 
     // Process the streaming response
@@ -71,21 +83,25 @@ export const generateChatGPTScenario = async (params) => {
     let jsonString = '';
     for (const line of lines) {
       if (line.startsWith('data: ')) {
-        const data = line.slice(5);
+        const data = line.slice(5).trim();
         if (data === '[DONE]') break;
         jsonString += data;
       }
     }
 
-    // Remove any non-JSON content at the start and end
-    jsonString = jsonString.replace(/^[^{]*/, '').replace(/[^}]*$/, '');
+    console.log('Processed JSON string:', jsonString);
+
+    if (!jsonString.trim()) {
+      throw new Error('No valid JSON data in the response');
+    }
 
     // Attempt to parse the JSON
     try {
-      return JSON.parse(jsonString);
+      const parsedData = JSON.parse(jsonString);
+      console.log('Successfully parsed JSON:', parsedData);
+      return parsedData;
     } catch (parseError) {
       console.error('Error parsing JSON:', parseError);
-      console.log('Processed JSON string:', jsonString);
       throw new Error('Failed to parse scenario data');
     }
   } catch (error) {
