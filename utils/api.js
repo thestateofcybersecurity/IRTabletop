@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { predefinedSteps } from './predefinedSteps';
 
 const api = axios.create({
   baseURL: '/api',
@@ -56,30 +57,8 @@ export const generateChatGPTScenario = async (params) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let result = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      result += decoder.decode(value, { stream: true });
-    }
-
-    // Remove any non-JSON content at the start and end
-    result = result.replace(/^[^{]*/, '').replace(/[^}]*$/, '');
-
-    try {
-      const parsedData = JSON.parse(result);
-      return {
-        ...parsedData,
-        steps: predefinedSteps,
-        ...params
-      };
-    } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
-      throw new Error('Incomplete JSON response');
-    }
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     throw error;
