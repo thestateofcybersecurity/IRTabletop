@@ -1,4 +1,4 @@
-import { OpenAIStream, StreamingTextResponse } from 'ai';
+import { OpenAIStream } from 'nextjs-openai';
 import { Configuration, OpenAIApi } from 'openai-edge';
 import { predefinedSteps } from '../../utils/predefinedSteps';
 
@@ -6,7 +6,8 @@ import { predefinedSteps } from '../../utils/predefinedSteps';
 const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY
 });
-const openai = new OpenAIApi(config);
+
+const openai = new OpenAIApi(configuration);
 
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge';
@@ -46,10 +47,20 @@ export default async function handler(req) {
         Ensure all string values are properly escaped.`
       }
     ]
-  });
+    
+    const openaiResponse = await openai.createChatCompletion({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: prompt }],
+      stream: true,
+    });
 
-  // Convert the response into a friendly text-stream
-  const stream = OpenAIStream(response);
+    const stream = await OpenAIStream(openaiResponse);
+    return res.send(stream);
+
+  } catch (error) {
+    console.error('Error generating ChatGPT scenario:', error);
+    return res.status(500).json({ error: 'Error generating scenario', details: error.message });
+  }
 
   // Respond with the stream
   return new StreamingTextResponse(stream);
