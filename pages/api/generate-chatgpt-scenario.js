@@ -47,12 +47,7 @@ export default async function handler(req) {
         Ensure all string values are properly escaped.`
       }
     ]
-    
-    const openaiResponse = await openai.createChatCompletion({
-      model: 'gpt-4',
-      messages: [{ role: 'user', content: prompt }],
-      stream: true,
-    });
+  });
 
     const stream = await OpenAIStream(openaiResponse);
     return res.send(stream);
