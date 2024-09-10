@@ -14,7 +14,7 @@ export default async function handler(req) {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
-
+  try {
     const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
 
     const prompt = `Generate a unique incident response scenario for a tabletop exercise with the following details:
