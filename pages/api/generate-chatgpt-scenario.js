@@ -31,7 +31,7 @@ export default async function handler(req) {
         },
         {
           role: 'user',
-          content: `Generate a unique incident response scenario for a tabletop exercise with the following details:
+          content: `Generate a new and unique incident response scenario for an incident response cybersecurity tabletop exercise, with real world data and with the following details:
           - IR Experience Level: ${irExperience}
           - Security Maturity: ${securityMaturity}
           - Industry Sector: ${industrySector}
