@@ -147,33 +147,26 @@ export const getChatGPTResponse = async (scenario, currentStep, prompt) => {
 
 // Helper function to parse and clean the stream response
 function parseStreamResponse(response) {
-  // Split the response into lines
-  const lines = response.split('\n');
+  // Remove number prefixes and split into lines
+  const lines = response.replace(/^\d+:/gm, '').split('\n');
   
-  // Initialize an empty array to store the cleaned words
-  let cleanedWords = [];
+  let cleanedText = '';
   
-  // Process each line
   for (const line of lines) {
-    // Split the line by the colon character
-    const parts = line.split(':');
+    // Remove quotation marks and trim whitespace
+    const cleanedLine = line.replace(/"/g, '').trim();
     
-    // If there are at least two parts (number and word)
-    if (parts.length >= 2) {
-      // Get the word part (everything after the first colon)
-      const word = parts.slice(1).join(':').trim();
-      
-      // If the word is not empty, add it to the cleaned words array
-      if (word) {
-        cleanedWords.push(word);
-      }
+    if (cleanedLine) {
+      // Add a space between words, but not before punctuation
+      cleanedText += cleanedLine.replace(/\s+/g, ' ').replace(/\s+([.,;!?])/g, '$1') + ' ';
     }
   }
   
-  // Join the cleaned words into a single string
-  return cleanedWords.join(' ');
+  // Trim any leading/trailing whitespace and return
+  return cleanedText.trim();
 }
 
 // Add other API calls here...
 
 export default api;
+export { getRandomInject } from '/components/Injects';
