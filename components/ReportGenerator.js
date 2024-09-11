@@ -108,13 +108,6 @@ export default function ReportGenerator({ scenario, roles, actions, notes }) {
         const prompts = parseHtmlContent(step.discussionPrompts);
         addBulletPoints(prompts);
 
-        // Include ChatGPT response if available
-        if (notes && notes[`step${index + 1}`] && notes[`step${index + 1}`].includes('ChatGPT Response:')) {
-          addWrappedText('ChatGPT Response:', 12, true);
-          const chatGPTResponse = notes[`step${index + 1}`].split('ChatGPT Response:')[1].trim();
-          addWrappedText(chatGPTResponse, 10);
-        }
-
         addPageBreak();
       });
     }
