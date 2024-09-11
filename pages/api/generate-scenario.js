@@ -1,6 +1,7 @@
 import { connectToDatabase } from '../../lib/mongodb';
 import { authenticateUser } from '../../middleware/auth';
 import ReactDOMServer from 'react-dom/server';
+import checkAuth from '../../middleware/checkAuth';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
