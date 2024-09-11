@@ -2,7 +2,7 @@ import { connectToDatabase } from '../../../lib/mongodb';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
-import checkAuth from '../../middleware/checkAuth';
+import checkAuth from '../../../middleware/checkAuth';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
