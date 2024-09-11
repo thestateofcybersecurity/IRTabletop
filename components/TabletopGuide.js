@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getRandomInject } from '/components/Injects';
+import { getChatGPTResponse } from '../utils/api';  // Add this import
 import { jsPDF } from 'jspdf';
 import parse from 'html-react-parser';
 
@@ -7,6 +8,8 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [actions, setActions] = useState([]);
   const [notes, setNotes] = useState({});
+  const [chatGPTResponse, setChatGPTResponse] = useState('');
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
   
   useEffect(() => {
     const injectInterval = setInterval(() => {
@@ -28,12 +31,20 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       timestamp: new Date().toLocaleTimeString()
     }];
 
+   // Include ChatGPT response in notes
+    const updatedNotes = {
+      ...notes,
+      [`step${currentStepIndex + 1}`]: `${notes[`step${currentStepIndex + 1}`] || ''}\n\nChatGPT Response:\n${chatGPTResponse}`
+    };
+
     if (currentStepIndex < scenario.steps.length - 1) {
       setCurrentStepIndex(currentStepIndex + 1);
       setActions(newActions);
+      setNotes(updatedNotes);
+      setChatGPTResponse(''); // Clear ChatGPT response
     } else {
       // This is the final step
-      onComplete(newActions, notes);
+      onComplete(newActions, updatedNotes);
     }
   };
 
@@ -42,6 +53,19 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       ...prevNotes,
       [`step${currentStepIndex + 1}`]: e.target.value
     }));
+  };
+
+  const handleGetChatGPTResponse = async (prompt) => {
+    setIsLoadingResponse(true);
+    try {
+      const response = await getChatGPTResponse(scenario, scenario.steps[currentStepIndex], prompt);
+      setChatGPTResponse(response);
+    } catch (error) {
+      console.error('Error getting ChatGPT response:', error);
+      setChatGPTResponse('Error: Unable to get response from ChatGPT.');
+    } finally {
+      setIsLoadingResponse(false);
+    }
   };
 
   const parseHtml = (htmlString) => {
@@ -67,9 +91,12 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
         <p><strong>Title:</strong> {scenario.title}</p>
         <div className="mt-2">
           <strong>Description:</strong>
-          {scenario.description.map((paragraph, index) => (
-            <p key={index} className="mt-2">{paragraph}</p>
-          ))}
+          {Array.isArray(scenario.description) 
+            ? scenario.description.map((paragraph, index) => (
+                <p key={index} className="mt-2">{paragraph}</p>
+              ))
+            : <p className="mt-2">{scenario.description}</p>
+          }
         </div>
       </div>
 
@@ -81,6 +108,19 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
         {parseHtml(currentStep.discussionPrompts)}
+        <button 
+          onClick={() => handleGetChatGPTResponse(currentStep.discussionPrompts)}
+          className="bg-blue-500 text-white p-2 rounded mt-2"
+          disabled={isLoadingResponse}
+        >
+          {isLoadingResponse ? 'Loading...' : 'Get ChatGPT Response'}
+        </button>
+        {chatGPTResponse && (
+          <div className="mt-4 p-4 bg-gray-100 rounded">
+            <h4 className="font-semibold">ChatGPT Response:</h4>
+            <p>{chatGPTResponse}</p>
+          </div>
+        )}
       </div>
     
       <div className="mb-4">
