@@ -20,7 +20,7 @@ export default async function handler(req) {
   }
 
   try {
-    const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement } = await req.json();
+    const { irExperience, securityMaturity, industrySector, complianceRequirements, stakeholderInvolvement, organizationSize, geographicLocation, infrastructureComplexity, thirdPartyDependencies, businessFunctions, riskTolerance, teamStructure, previousIncidents, securityStack } = await req.json();
 
     const response = await openai.createChatCompletion({
       model: 'gpt-4',
