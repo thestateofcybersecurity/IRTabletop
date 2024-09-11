@@ -27,7 +27,7 @@ export default async function handler(req) {
       messages: [
         {
           role: 'system',
-          content: 'You are a JSON generator. Your responses should always be in valid JSON format, with no additional text or formatting.'
+          content: 'You are a JSON generator. Your responses should always be in valid JSON format, with no additional text, formatting, or line breaks. Do not include any quotes around the entire JSON object.'
         },
         {
           role: 'user',
@@ -46,8 +46,8 @@ export default async function handler(req) {
           5. A list of 8 steps (Detection, Initial Evaluation, Containment, Forensics and Evidence Gathering, Notification and Stakeholder Involvement, Mitigation and Eradication, Recovery, and Post-Incident Review) for the tabletop exercise, each with:
            - A title
            - An initial question
-           - Content (as bullet points)
-           - Recommendations
+           - Content (as an array of strings)
+           - Recommendations (as a string)
 
           Format the response as a valid JSON object with the following structure:
           {
@@ -55,14 +55,22 @@ export default async function handler(req) {
             "description": ["string", "string", ...],
             "attackVector": "string",
             "businessImpact": "string",
-            "steps": "string"
+            "steps": [
+              {
+                "title": "string",
+                "initialQuestion": "string",
+                "content": ["string", "string", ...],
+                "recommendations": "string"
+              },
+              ...
+            ]
           }
 
           Ensure all string values are properly escaped. The response should be a single, valid JSON object and nothing else.`
         }
       ],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 2000,
       stream: true,
     });
 
