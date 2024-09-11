@@ -67,13 +67,21 @@ export const generateChatGPTScenario = async (params) => {
       result += decoder.decode(value, { stream: true });
     }
 
+    // Clean up the result
+    result = result.replace(/^\d+:/gm, '');  // Remove number prefixes
+    result = result.replace(/\\n/g, '');     // Remove escaped newlines
+    result = result.replace(/\\/g, '');      // Remove remaining backslashes
+    result = result.trim();                  // Trim whitespace
+    
+    console.log('Cleaned response:', result);
+
     // Parse the JSON response
     let generatedScenario;
     try {
       generatedScenario = JSON.parse(result);
     } catch (parseError) {
       console.error('Error parsing JSON:', parseError);
-      console.error('Raw response:', result);
+      console.error('Cleaned response:', result);
       throw new Error('Failed to parse scenario data');
     }
 
@@ -95,7 +103,6 @@ export const generateChatGPTScenario = async (params) => {
     throw error;
   }
 };
-
 // Add other API calls here...
 
 export default api;
