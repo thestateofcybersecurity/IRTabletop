@@ -153,17 +153,25 @@ function parseStreamResponse(response) {
   let cleanedText = '';
   
   for (const line of lines) {
-    // Remove quotation marks and trim whitespace
-    const cleanedLine = line.replace(/"/g, '').trim();
+    // Remove quotation marks, parentheses around single letters, and trim whitespace
+    const cleanedLine = line.replace(/"/g, '')
+                            .replace(/\(\s*([A-Za-z])\s*\)/g, '$1')
+                            .replace(/\s+/g, ' ')
+                            .trim();
     
     if (cleanedLine) {
-      // Add a space between words, but not before punctuation
-      cleanedText += cleanedLine.replace(/\s+/g, ' ').replace(/\s+([.,;!?])/g, '$1') + ' ';
+      // Add the cleaned line to the result
+      cleanedText += cleanedLine + ' ';
     }
   }
   
-  // Trim any leading/trailing whitespace and return
-  return cleanedText.trim();
+  // Final cleanup
+  cleanedText = cleanedText.replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+                           .replace(/\s+([.,;!?])/g, '$1') // Remove spaces before punctuation
+                           .replace(/\s*\n\s*/g, '\n') // Clean up newlines
+                           .trim(); // Remove leading/trailing whitespace
+  
+  return cleanedText;
 }
 
 // Add other API calls here...
