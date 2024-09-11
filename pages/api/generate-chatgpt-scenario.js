@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai-edge';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
+import checkAuth from '../../middleware/checkAuth';
 
 export const config = {
   runtime: 'edge',
