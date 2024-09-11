@@ -37,35 +37,25 @@ export default async function handler(req) {
           - Industry Sector: ${industrySector}
           - Compliance Requirements: ${complianceRequirements}
           - Key Stakeholders: ${stakeholderInvolvement}
-
+      
+          Ensure that the scenario is adjusted based on the IR Experience Level and Security Maturity:
+          - If the IR Experience Level or Security Maturity is low, provide detailed, over-explained instructions and break down the incident in simple terms as if explaining to someone with no technical background.
+          - If the IR Experience Level or Security Maturity is high, provide more complex scenarios and assume some prior knowledge.
+      
           The scenario should include:
-          1. A title
-          2. A detailed description of the incident (as an array of strings, each string being a paragraph)
-          3. The attack vector used
-          4. Potential business impact
-          5. A list of 8 steps (Detection, Initial Evaluation, Containment, Forensics and Evidence Gathering, Notification and Stakeholder Involvement, Mitigation and Eradication, Recovery, and Post-Incident Review) for the tabletop exercise, each with:
-           - A title
-           - An initial question
-           - Content (as an array of strings)
-           - Recommendations (as a string)
-
+          1. A title.
+          2. A detailed description of the incident (as an array of strings, each string being a paragraph). If the experience level or maturity is low, explain each step thoroughly, including what the attackers are doing, why they are doing it, and how it impacts the organization. Use clear and simple language as if explaining to someone who knows nothing about cybersecurity. For higher experience levels, you can use more advanced terminology and expect some understanding.
+          3. The attack vector used. Make sure the attack vector is realistic for the industry and highlight why this method was chosen by the attacker. Explain how the attack vector exploits potential vulnerabilities, especially for lower security maturity.
+          4. Potential business impact. Tailor the business impact explanation to compliance requirements and stakeholder involvement. For lower experience levels, explain why the potential impacts are severe, what the consequences might be, and why it's important to address these issues promptly. For higher experience levels, focus on regulatory impacts, loss of customer trust, and financial implications.
+      
           Format the response as a valid JSON object with the following structure:
           {
             "title": "string",
             "description": ["string", "string", ...],
             "attackVector": "string",
-            "businessImpact": "string",
-            "steps": [
-              {
-                "title": "string",
-                "initialQuestion": "string",
-                "content": ["string", "string", ...],
-                "recommendations": "string"
-              },
-              ...
-            ]
+            "businessImpact": "string"
           }
-
+      
           Ensure all string values are properly escaped. The response should be a single, valid JSON object and nothing else.`
         }
       ],
