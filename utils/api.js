@@ -136,12 +136,43 @@ export const getChatGPTResponse = async (scenario, currentStep, prompt) => {
       result += decoder.decode(value, { stream: true });
     }
 
-    return result;
+    // Parse and clean the result
+    const cleanedResult = parseStreamResponse(result);
+    return cleanedResult;
   } catch (error) {
     console.error('Error getting ChatGPT response:', error);
     throw error;
   }
 };
+
+// Helper function to parse and clean the stream response
+function parseStreamResponse(response) {
+  // Split the response into lines
+  const lines = response.split('\n');
+  
+  // Initialize an empty array to store the cleaned words
+  let cleanedWords = [];
+  
+  // Process each line
+  for (const line of lines) {
+    // Split the line by the colon character
+    const parts = line.split(':');
+    
+    // If there are at least two parts (number and word)
+    if (parts.length >= 2) {
+      // Get the word part (everything after the first colon)
+      const word = parts.slice(1).join(':').trim();
+      
+      // If the word is not empty, add it to the cleaned words array
+      if (word) {
+        cleanedWords.push(word);
+      }
+    }
+  }
+  
+  // Join the cleaned words into a single string
+  return cleanedWords.join(' ');
+}
 
 // Add other API calls here...
 
