@@ -40,6 +40,23 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     }
   };
 
+   // Include ChatGPT response in notes
+    const updatedNotes = {
+      ...notes,
+      [`step${currentStepIndex + 1}`]: `${notes[`step${currentStepIndex + 1}`] || ''}\n\nChatGPT Response:\n${chatGPTResponse}`
+    };
+
+    if (currentStepIndex < scenario.steps.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1);
+      setActions(newActions);
+      setNotes(updatedNotes);
+      setChatGPTResponse(''); // Clear ChatGPT response
+    } else {
+      // This is the final step
+      onComplete(newActions, updatedNotes);
+    }
+  };
+
   const handleNoteChange = (e) => {
     setNotes(prevNotes => ({
       ...prevNotes,
