@@ -108,6 +108,41 @@ export const generateChatGPTScenario = async (params) => {
   }
 };
 
+export const getChatGPTResponse = async (scenario, currentStep, prompt) => {
+  try {
+    const response = await fetch('/api/chatgpt-prompt-response', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        scenario,
+        currentStep,
+        prompt,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let result = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      result += decoder.decode(value, { stream: true });
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error getting ChatGPT response:', error);
+    throw error;
+  }
+};
+
 // Add other API calls here...
 
 export default api;
