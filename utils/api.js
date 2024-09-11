@@ -75,6 +75,9 @@ export const generateChatGPTScenario = async (params) => {
     result = result.replace(/\s+/g, ' ');    // Replace multiple spaces with single space
     result = result.replace(/^"|"$/g, '');   // Remove leading and trailing quotes
     result = result.trim();                  // Trim whitespace
+    result = result.replace(/}"+$/, '}');    // Remove any trailing quotes after the closing brace
+
+    console.log('Cleaned response:', result);
 
     // Attempt to parse the JSON
     let generatedScenario;
