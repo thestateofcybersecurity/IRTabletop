@@ -46,35 +46,11 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
     }));
   };
 
-    const getChatGPTResponse = async (prompt) => {
+  const handleGetChatGPTResponse = async (prompt) => {
     setIsLoadingResponse(true);
     try {
-      const response = await fetch('/api/chatgpt-prompt-response', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          scenario,
-          currentStep: scenario.steps[currentStepIndex],
-          prompt,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let result = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        result += decoder.decode(value, { stream: true });
-        setChatGPTResponse(prevResponse => prevResponse + result);
-      }
+      const response = await getChatGPTResponse(scenario, scenario.steps[currentStepIndex], prompt);
+      setChatGPTResponse(response);
     } catch (error) {
       console.error('Error getting ChatGPT response:', error);
       setChatGPTResponse('Error: Unable to get response from ChatGPT.');
@@ -124,7 +100,7 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
         <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
         {parseHtml(currentStep.discussionPrompts)}
         <button 
-          onClick={() => getChatGPTResponse(currentStep.discussionPrompts)}
+          onClick={() => handleGetChatGPTResponse(currentStep.discussionPrompts)}
           className="bg-blue-500 text-white p-2 rounded mt-2"
           disabled={isLoadingResponse}
         >
