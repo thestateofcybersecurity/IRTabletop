@@ -71,11 +71,12 @@ export const generateChatGPTScenario = async (params) => {
     result = result.replace(/^\d+:/gm, '');  // Remove number prefixes
     result = result.replace(/\\n/g, '');     // Remove escaped newlines
     result = result.replace(/\\/g, '');      // Remove remaining backslashes
+    result = result.replace(/"\s+"/g, '');   // Remove spaces between quotes
+    result = result.replace(/\s+/g, ' ');    // Replace multiple spaces with single space
+    result = result.replace(/^"|"$/g, '');   // Remove leading and trailing quotes
     result = result.trim();                  // Trim whitespace
-    
-    console.log('Cleaned response:', result);
 
-    // Parse the JSON response
+    // Attempt to parse the JSON
     let generatedScenario;
     try {
       generatedScenario = JSON.parse(result);
@@ -103,6 +104,7 @@ export const generateChatGPTScenario = async (params) => {
     throw error;
   }
 };
+
 // Add other API calls here...
 
 export default api;
