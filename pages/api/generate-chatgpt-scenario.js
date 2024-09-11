@@ -27,7 +27,7 @@ export default async function handler(req) {
       messages: [
         {
           role: 'system',
-          content: 'You are a JSON generator. Your responses should always be in valid JSON format, with no additional text, formatting, or line breaks. Do not include any quotes around the entire JSON object.'
+          content: 'You are a JSON generator. Your responses should always be in valid JSON format, with no additional text, formatting, or characters before or after the JSON object. Do not include any quotes around the entire JSON object or any trailing characters after the closing brace.'
         },
         {
           role: 'user',
