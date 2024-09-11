@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getRandomInject } from '/components/Injects';
+import { getChatGPTResponse } from '../utils/api';  // Add this import
 import { jsPDF } from 'jspdf';
 import parse from 'html-react-parser';
 
