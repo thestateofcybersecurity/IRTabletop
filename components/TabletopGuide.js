@@ -7,6 +7,8 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [actions, setActions] = useState([]);
   const [notes, setNotes] = useState({});
+  const [chatGPTResponse, setChatGPTResponse] = useState('');
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
   
   useEffect(() => {
     const injectInterval = setInterval(() => {
@@ -42,6 +44,43 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       ...prevNotes,
       [`step${currentStepIndex + 1}`]: e.target.value
     }));
+  };
+
+    const getChatGPTResponse = async (prompt) => {
+    setIsLoadingResponse(true);
+    try {
+      const response = await fetch('/api/chatgpt-prompt-response', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          scenario,
+          currentStep: scenario.steps[currentStepIndex],
+          prompt,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let result = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        result += decoder.decode(value, { stream: true });
+        setChatGPTResponse(prevResponse => prevResponse + result);
+      }
+    } catch (error) {
+      console.error('Error getting ChatGPT response:', error);
+      setChatGPTResponse('Error: Unable to get response from ChatGPT.');
+    } finally {
+      setIsLoadingResponse(false);
+    }
   };
 
   const parseHtml = (htmlString) => {
@@ -84,6 +123,19 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Discussion Prompts:</h3>
         {parseHtml(currentStep.discussionPrompts)}
+        <button 
+          onClick={() => getChatGPTResponse(currentStep.discussionPrompts)}
+          className="bg-blue-500 text-white p-2 rounded mt-2"
+          disabled={isLoadingResponse}
+        >
+          {isLoadingResponse ? 'Loading...' : 'Get ChatGPT Response'}
+        </button>
+        {chatGPTResponse && (
+          <div className="mt-4 p-4 bg-gray-100 rounded">
+            <h4 className="font-semibold">ChatGPT Response:</h4>
+            <p>{chatGPTResponse}</p>
+          </div>
+        )}
       </div>
     
       <div className="mb-4">
