@@ -31,15 +31,6 @@ export default function TabletopGuide({ scenario, roles, onComplete }) {
       timestamp: new Date().toLocaleTimeString()
     }];
 
-    if (currentStepIndex < scenario.steps.length - 1) {
-      setCurrentStepIndex(currentStepIndex + 1);
-      setActions(newActions);
-    } else {
-      // This is the final step
-      onComplete(newActions, notes);
-    }
-  };
-
    // Include ChatGPT response in notes
     const updatedNotes = {
       ...notes,
