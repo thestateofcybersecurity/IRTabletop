@@ -1,7 +1,9 @@
+// pages/api/auth/register.js
 import { connectToDatabase } from '../../../lib/mongodb';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { isEmail } from 'validator';
+import speakeasy from 'speakeasy';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -31,6 +33,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
+ // Generate secret for MFA
+    const secret = speakeasy.generateSecret({ length: 20 });
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -39,7 +44,9 @@ export default async function handler(req, res) {
       username: username,
       email: email,
       password: hashedPassword,
-      createdAt: new Date()
+      createdAt: new Date(),
+      mfaEnabled: false, // Initially MFA is disabled
+      mfaSecret: secret.base32 // Store the MFA secret
     });
 
     // Generate JWT
@@ -52,7 +59,8 @@ export default async function handler(req, res) {
     res.status(201).json({ 
       message: 'User registered successfully', 
       user: { id: result.insertedId, username, email },
-      token 
+      token,
+      mfaQR: secret.otpauth_url // Send the QR code URL for MFA setup
     });
   } catch (error) {
     console.error('Registration error:', error);
