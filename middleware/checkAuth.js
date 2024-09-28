@@ -1,18 +1,18 @@
+// middleware/checkAuth.js
 import axios from 'axios';
+import jwt from 'jsonwebtoken'; // Import jwt here
 
 const checkAuth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]; // Get token from Authorization header
+    const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
 
-  try {
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // No need for promisify
     const userId = decodedToken.userId;
 
-    // Fetch user data from the serverless function
     const userResponse = await axios.get(`/api/db/users/${userId}`);
     const user = userResponse.data;
 
@@ -31,4 +31,4 @@ const checkAuth = async (req, res, next) => {
   }
 };
 
-export default checkAuth;
+export default checkAuth; // This is allowed for default exports
