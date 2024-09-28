@@ -35,7 +35,6 @@ export default async function handler(req, res) {
       // Send MFA challenge
       res.status(200).json({ mfaRequired: true });
     } else {
-    
     // Generate JWT
     const token = jwt.sign(
       { userId: user._id, email: user.email },
@@ -43,13 +42,10 @@ export default async function handler(req, res) {
       { expiresIn: '1d' } // Token expires in 1 day
     );
 
-    res.status(200).json({ 
-      message: 'Login successful', 
-      user: { id: user._id, username: user.username, email: user.email },
-      token,
-    });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Error during login' });
-  }
+      res.status(200).json({
+        message: 'Login successful',
+        user: { id: user._id, username: user.username, email: user.email },
+        token,
+      });
+    }
 }
