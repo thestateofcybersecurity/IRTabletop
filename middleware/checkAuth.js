@@ -1,5 +1,4 @@
-import jwt from 'jsonwebtoken';
-import { findUserById } from '../lib/db/users'; // Adjust path as needed
+import axios from 'axios';
 
 const checkAuth = async (req, res, next) => {
   try {
@@ -9,17 +8,20 @@ const checkAuth = async (req, res, next) => {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
 
+  try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.userId;
 
-    // Fetch user from database to ensure token is still valid
-    const user = await findUserById(decodedToken.userId);
+    // Fetch user data from the serverless function
+    const userResponse = await axios.get(`/api/db/users/${userId}`);
+    const user = userResponse.data;
 
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized: Invalid token' });
     }
 
-    req.user = user; // Add user object to the request
-    next(); // Continue to the next middleware/route handler
+    req.user = user;
+    next();
   } catch (error) {
     console.error('Authentication error:', error);
     if (error.name === 'TokenExpiredError') {
