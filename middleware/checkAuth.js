@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { findUserById } from '../../lib/db/users'; // Adjust path as needed
+import { findUserById } from '../lib/db/users'; // Adjust path as needed
 
 const checkAuth = async (req, res, next) => {
   try {
