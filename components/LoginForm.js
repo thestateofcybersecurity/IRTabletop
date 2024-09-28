@@ -4,8 +4,8 @@ export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
-  console.log('LoginForm rendered, onLogin type:', typeof onLogin); // Debugging log
+  const [mfaCode, setMfaCode] = useState(''); // New state for MFA code
+  const [mfaRequired, setMfaRequired] = useState(false); // New state to track if MFA is required
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,16 +17,14 @@ export default function LoginForm({ onLogin }) {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      if (response.ok) {
+        const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
-      }
-
-      console.log('Login successful, data:', data); // Debugging log
-
-      if (typeof onLogin === 'function') {
-        onLogin(data);
+        if (data.mfaRequired) {
+          setMfaRequired(true); // Show MFA input
+        } else {
+          onLogin(data);
+        }
       } else {
         console.error('onLogin is not a function', onLogin); // Debugging log
         throw new Error('onLogin is not a function');
@@ -37,8 +35,43 @@ export default function LoginForm({ onLogin }) {
     }
   };
 
+  const handleMfaSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/auth/verify-mfa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, mfaCode }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token); // Store the token
+        onLogin({token: data.token, user: {email}}); // Call onLogin with token and basic user details
+      } else {
+        const errorData = await response.json();
+        // ... handle MFA verification error
+      }
+    } catch (error) {
+      // ... handle error
+    }
+  }
+  
   return (
-    <form onSubmit={handleSubmit}>
+     <div>
+      {mfaRequired ? (
+        <form onSubmit={handleMfaSubmit}>
+          <input
+            type="text"
+            placeholder="MFA Code"
+            value={mfaCode}
+            onChange={(e) => setMfaCode(e.target.value)}
+            required
+          />
+          <button type="submit">Verify MFA</button>
+        </form>
+      ) : (
+        <form onSubmit={handleSubmit}>
       <input
         type="email"
         value={email}
@@ -55,6 +88,8 @@ export default function LoginForm({ onLogin }) {
       />
       {error && <p className="error">{error}</p>}
       <button type="submit">Login</button>
-    </form>
+        </form>
+      )}
+    </div>
   );
 }
