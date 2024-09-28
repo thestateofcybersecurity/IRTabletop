@@ -1,4 +1,4 @@
-/ pages/api/db/users/[id].js (Vercel Serverless Function)
+// pages/api/db/users/[id].js (Vercel Serverless Function)
 import { connectToDatabase } from '../../../../lib/mongodb'; // Adjust path as needed
 import { ObjectId } from 'mongodb';
 
