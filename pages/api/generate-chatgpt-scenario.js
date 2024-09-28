@@ -88,29 +88,11 @@ export default async function handler(req) {
       stream: true,
     });
 
-   const stream = OpenAIStream(response);
+    // Transform the response into a readable stream
+    const stream = OpenAIStream(response);
 
-    // Create a transform stream to clean the output
-    const transformStream = new TransformStream({
-      transform(chunk, controller) {
-        let data = Buffer.from(chunk).toString('utf-8'); // Convert chunk to string
-
-        try {
-          // Attempt to parse as JSON. If it fails, we'll clean it as a string.
-          const parsed = JSON.parse(data);
-          data = JSON.stringify(parsed); // Restringify to remove extra whitespace in JSON structure
-        } catch (e) {
-          // Clean as a string if parsing fails
-          data = data.replace(/\s+/g, ' ').replace(/\n\s*\n/g, '\n').trim();
-        }
-
-        controller.enqueue(Buffer.from(data)); // Enqueue the cleaned chunk
-      },
-    });
-
-
-    return new StreamingTextResponse(stream.pipeThrough(transformStream)); // Pipe through the transform stream
-
+    // Return a StreamingTextResponse, which can be consumed by the client
+    return new StreamingTextResponse(stream);
   } catch (error) {
     console.error('Error generating ChatGPT scenario:', error);
     return new Response(JSON.stringify({ error: 'Error generating scenario', details: error.message }), {
