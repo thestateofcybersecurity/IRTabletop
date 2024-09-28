@@ -46,7 +46,7 @@ export default async function handler(req, res) {
       password: hashedPassword,
       createdAt: new Date(),
       mfaEnabled: false, // Initially MFA is disabled
-      mfaSecret: secret.base32 // Store the MFA secret
+      mfaSecret: secret.base32, // Store the MFA secret
     });
 
     // Generate JWT
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
       message: 'User registered successfully', 
       user: { id: result.insertedId, username, email },
       token,
-      mfaQR: secret.otpauth_url // Send the QR code URL for MFA setup
+      mfaQR: secret.otpauth_url, // Send the QR code URL for MFA setup
     });
   } catch (error) {
     console.error('Registration error:', error);
