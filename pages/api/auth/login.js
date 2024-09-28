@@ -30,6 +30,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
+    // Check if MFA is enabled
+    if (user.mfaEnabled) {
+      // Send MFA challenge
+      res.status(200).json({ mfaRequired: true });
+    } else {
+    
     // Generate JWT
     const token = jwt.sign(
       { userId: user._id, email: user.email },
